@@ -2,6 +2,6 @@
   "version": "0.0.1",
   "autoPort": true,
   "configurations": [
-    { "name": "site", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000, "autoPort": true }
+    { "name": "frontend", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--prefix", "frontend"], "port": 5173, "autoPort": true }
   ]
 }
