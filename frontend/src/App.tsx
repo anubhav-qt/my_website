@@ -2,6 +2,7 @@ import { Nav } from './components/Nav';
 import { Now } from './components/sections/Now';
 import { Work } from './components/sections/Work';
 import { Log } from './components/sections/Log';
+import { Scratchpad } from './components/sections/Scratchpad';
 import { Stuff } from './components/sections/Stuff';
 import { Footer } from './components/Footer';
 
@@ -13,6 +14,7 @@ export default function App() {
         <Now />
         <Work />
         <Log />
+        <Scratchpad />
         <Stuff />
         <Footer />
       </main>

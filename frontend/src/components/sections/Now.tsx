@@ -1,44 +1,60 @@
-import { Mail } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { LinkedinIcon } from '../icons/LinkedinIcon';
-import { PROFILE, STACK, EXPERIENCE, EDUCATION } from '@/content/site';
+import { PROFILE, STACK, CURRENTLY_MAKING, EXPERIENCE, EDUCATION } from '@/content/site';
 
 export function Now() {
   return (
     <section id="now" className="scroll-mt-16 mb-14">
-      <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
-        <div>
-          <h1 className="text-heading text-2xl font-bold leading-tight">{PROFILE.name}</h1>
-          <p className="text-amber font-semibold text-sm mt-0.5">{PROFILE.role}</p>
-          <p className="text-dim text-xs mt-0.5">{PROFILE.location}</p>
+      <div className="mb-5">
+        <h1 className="text-heading text-2xl font-bold leading-tight">{PROFILE.name}</h1>
+        <p className="text-amber font-semibold text-sm mt-0.5">{PROFILE.role}</p>
+        <div className="flex items-center justify-between gap-3 mt-0.5 max-w-xs">
+          <span className="inline-flex items-center gap-1.5 text-dim text-xs">
+            <MapPin size={14} />
+            {PROFILE.location}
+          </span>
+          <div className="flex items-center gap-3">
+            <a href={`mailto:${PROFILE.email}`} aria-label="Email" className="text-dim hover:text-amber transition-colors">
+              <Mail size={16} />
+            </a>
+            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-dim hover:text-amber transition-colors">
+              <SiGithub size={16} />
+            </a>
+            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-dim hover:text-amber transition-colors">
+              <LinkedinIcon size={16} />
+            </a>
+          </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 border border-rose text-rose text-xs font-bold px-2.5 py-1 rounded-xl shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose" />
-          available for hire
-        </span>
       </div>
 
-      <div className="flex items-center gap-3 mb-5">
-        <a href={`mailto:${PROFILE.email}`} aria-label="Email" className="text-dim hover:text-amber transition-colors">
-          <Mail size={16} />
-        </a>
-        <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-dim hover:text-amber transition-colors">
-          <SiGithub size={16} />
-        </a>
-        <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-dim hover:text-amber transition-colors">
-          <LinkedinIcon size={16} />
-        </a>
+      <div className="mb-7">
+        <div className="text-heading text-xs font-bold uppercase tracking-wide mb-2">currently making</div>
+        <p className="text-sm font-bold text-heading">{CURRENTLY_MAKING.title}</p>
+        <p className="text-xs opacity-80 leading-relaxed mt-1">
+          {CURRENTLY_MAKING.description}
+          <span className="text-rose">{CURRENTLY_MAKING.highlight}</span>
+          {CURRENTLY_MAKING.descriptionEnd}
+        </p>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+          {CURRENTLY_MAKING.tags.map((t) => (
+            <a key={t.label} href={t.href} className="text-amber text-xs font-bold underline-offset-4 hover:text-heading hover:underline transition-colors">
+              {t.label}
+            </a>
+          ))}
+        </div>
       </div>
 
       <p className="text-sm leading-relaxed mb-6 max-w-lg">{PROFILE.tagline}</p>
 
       <div className="mb-7">
         <div className="text-heading text-xs font-bold uppercase tracking-wide mb-2.5">stack</div>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
           {STACK.map((s) => (
-            <span key={s} className="bg-surface border border-border text-xs px-2.5 py-1 rounded-xl">
+            <div key={s} className="flex items-center gap-1.5 text-xs">
+              <span className="w-1 h-1 shrink-0 bg-dim" />
               {s}
-            </span>
+            </div>
           ))}
         </div>
       </div>

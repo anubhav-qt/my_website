@@ -1,11 +1,22 @@
 export const PROFILE = {
   name: 'Anubhav Joshi',
-  role: 'Backend Engineer, AI Infrastructure',
+  role: 'Backend Engineer (AI & Infrastructure)',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
   linkedin: 'https://linkedin.com/in/anubhav-qt',
   tagline: "Currently building the async, rate-limited, provably-correct machinery behind AI products — so the model never has to be trusted with anything expensive to get wrong.",
+};
+
+export const CURRENTLY_MAKING = {
+  title: 'Spoin — CQRS Pipeline & Quota Governor',
+  description: '5,004 cards live. Ship it wrong and the ',
+  highlight: 'auditor',
+  descriptionEnd: ' finds you.',
+  tags: [
+    { label: 'case study', href: '#work' },
+    { label: 'systems', href: '#work' },
+  ],
 };
 
 export const STACK = [
