@@ -14,8 +14,8 @@ export const CURRENTLY_MAKING = {
   highlight: 'auditor',
   descriptionEnd: ' finds you.',
   tags: [
-    { label: 'case study', href: '#work' },
-    { label: 'systems', href: '#work' },
+    { label: 'case study', href: '/projects' },
+    { label: 'systems', href: '/projects' },
   ],
 };
 

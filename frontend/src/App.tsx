@@ -1,21 +1,20 @@
+import { Routes, Route } from 'react-router-dom';
 import { Nav } from './components/Nav';
-import { Now } from './components/sections/Now';
-import { Work } from './components/sections/Work';
-import { Log } from './components/sections/Log';
-import { Scratchpad } from './components/sections/Scratchpad';
-import { Stuff } from './components/sections/Stuff';
+import Home from './pages/Home';
+import Projects from './pages/Projects';
+import Scratchpad from './pages/Scratchpad';
 import { Footer } from './components/Footer';
 
 export default function App() {
   return (
     <div className="min-h-screen bg-bg text-body">
       <Nav />
-      <main className="max-w-2xl mx-auto px-5 pt-4">
-        <Now />
-        <Work />
-        <Log />
-        <Scratchpad />
-        <Stuff />
+      <main className="max-w-2xl mx-auto px-5 pt-[6px]">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/scratchpad" element={<Scratchpad />} />
+        </Routes>
         <Footer />
       </main>
     </div>

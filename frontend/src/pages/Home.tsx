@@ -1,12 +1,13 @@
+import { Link } from 'react-router-dom';
 import { Mail, MapPin } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
-import { LinkedinIcon } from '../icons/LinkedinIcon';
+import { LinkedinIcon } from '../components/icons/LinkedinIcon';
 import { PROFILE, STACK, CURRENTLY_MAKING, EXPERIENCE, EDUCATION } from '@/content/site';
 
-export function Now() {
+export default function Home() {
   return (
-    <section id="now" className="scroll-mt-16 mb-10">
-      <div className="mb-3">
+    <div>
+      <div className="mb-[15px]">
         <h1 className="text-heading text-2xl font-bold leading-tight">{PROFILE.name}</h1>
         <p className="text-amber font-semibold text-sm mt-0.5">{PROFILE.role}</p>
         <div className="flex items-center justify-between gap-3 mt-0.5 max-w-xs">
@@ -28,20 +29,20 @@ export function Now() {
         </div>
       </div>
 
-      <div className="mb-5">
+      <div className="mb-4">
         <div className="text-heading text-xs font-bold uppercase tracking-wide mb-1.5">currently making</div>
         <div className="flex gap-3 items-start">
-          <div className="w-16 h-16 shrink-0 rounded-lg border border-border bg-surface p-1.5 flex flex-col gap-1.5">
-            <div className="h-1 rounded-full bg-border overflow-hidden shrink-0">
-              <div className="h-full w-2/3 rounded-full bg-amber" />
+          <div className="w-32 h-[72px] shrink-0 border border-border bg-surface p-1 flex flex-col gap-1">
+            <div className="h-1 bg-border overflow-hidden shrink-0">
+              <div className="h-full w-2/3 bg-amber" />
             </div>
-            <div className="flex flex-1 gap-1 min-h-0">
-              <div className="flex-[1.4] rounded border border-border flex items-center justify-center">
-                <div className="w-4 h-4 rounded-full border-2 border-sage" />
+            <div className="flex flex-1 gap-1 min-h-0 items-stretch">
+              <div className="aspect-square h-full shrink-0 border border-border flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full border-2 border-sage" />
               </div>
-              <div className="flex flex-col gap-1 w-4 shrink-0">
-                <div className="flex-1 rounded-sm bg-border" />
-                <div className="flex-1 rounded-sm bg-border" />
+              <div className="flex-1 flex flex-col gap-1">
+                <div className="flex-1 bg-border" />
+                <div className="flex-1 bg-border" />
               </div>
             </div>
           </div>
@@ -49,13 +50,13 @@ export function Now() {
             <p className="text-sm font-bold text-heading leading-snug">{CURRENTLY_MAKING.title}</p>
             <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
               {CURRENTLY_MAKING.tags.map((t) => (
-                <a
+                <Link
                   key={t.label}
-                  href={t.href}
+                  to={t.href}
                   className="text-amber text-xs font-bold underline underline-offset-4 hover:text-heading transition-colors"
                 >
                   {t.label}
-                </a>
+                </Link>
               ))}
             </div>
             <p className="text-xs opacity-80 leading-relaxed mt-1.5">
@@ -67,10 +68,10 @@ export function Now() {
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed mb-4 max-w-lg">{PROFILE.tagline}</p>
+      <p className="text-sm leading-relaxed mb-3 max-w-lg">{PROFILE.tagline}</p>
 
-      <div className="mb-5">
-        <div className="text-heading text-xs font-bold uppercase tracking-wide mb-2">stack</div>
+      <div className="mb-4">
+        <div className="text-heading text-xs font-bold uppercase tracking-wide mb-1.5">stack</div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1">
           {STACK.map((s) => (
             <div key={s} className="flex items-center gap-1.5 text-xs">
@@ -81,8 +82,8 @@ export function Now() {
         </div>
       </div>
 
-      <div className="mb-5">
-        <div className="text-heading text-xs font-bold uppercase tracking-wide mb-2">career</div>
+      <div className="mb-4">
+        <div className="text-heading text-xs font-bold uppercase tracking-wide mb-1.5">career</div>
         <div className="space-y-3">
           {EXPERIENCE.map((e) => (
             <div key={e.id}>
@@ -111,6 +112,6 @@ export function Now() {
           {EDUCATION.period} · {EDUCATION.detail}
         </p>
       </div>
-    </section>
+    </div>
   );
 }
