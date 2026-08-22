@@ -10,7 +10,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-bg text-body">
       <Nav />
-      <main className="max-w-2xl mx-auto px-5 pt-8">
+      <main className="max-w-2xl mx-auto px-5 pt-4">
         <Now />
         <Work />
         <Log />

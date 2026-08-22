@@ -39,7 +39,7 @@ export function Now() {
               <div className="flex-[1.4] rounded border border-border flex items-center justify-center">
                 <div className="w-4 h-4 rounded-full border-2 border-sage" />
               </div>
-              <div className="flex flex-col gap-1 w-2.5 shrink-0">
+              <div className="flex flex-col gap-1 w-4 shrink-0">
                 <div className="flex-1 rounded-sm bg-border" />
                 <div className="flex-1 rounded-sm bg-border" />
               </div>
