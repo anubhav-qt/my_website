@@ -1,0 +1,135 @@
+{
+  "spoin": {
+    "architecture": [
+      {
+        "id": "overview",
+        "title": "Architecture Overview: The Determinism Wall & CQRS Separation",
+        "sourcePath": "E:/spoin_bundle/docs/architecture/overview.md",
+        "category": "Architecture",
+        "summary": "The foundational premise: feed read path must never touch an LLM (< 50ms). CQRS separation between async content factory and Postgres read serving."
+      },
+      {
+        "id": "generation-pipeline",
+        "title": "Generation Pipeline: LangGraph Fan-Out & Quota Governance",
+        "sourcePath": "E:/spoin_bundle/docs/architecture/generation-pipeline.md",
+        "category": "Architecture",
+        "summary": "Detailed breakdown of the LangGraph execution flow: topic planning, group-concurrent tier-sequential card generation, two-pass quality gate, and group-level persistence."
+      },
+      {
+        "id": "content-model",
+        "title": "Content Model & Corpus Taxonomy",
+        "sourcePath": "E:/spoin_bundle/docs/architecture/content-model.md",
+        "category": "Architecture",
+        "summary": "Data contracts for Topics, Subtopics, Cards, Archetypes, and Quiz Questions. The card lifecycle and structural constraints."
+      },
+      {
+        "id": "generation-pipeline-run-2-benchmark",
+        "title": "Run 2 Benchmark: 5,004 Cards & The Concurrency Breakthrough",
+        "sourcePath": "E:/spoin_bundle/docs/architecture/generation-pipeline-run-2-benchmark.md",
+        "category": "Benchmark",
+        "summary": "Empirical benchmark across 40+ API keys. Eliminating the legacy semaphore bottleneck (ADR-0047) increased throughput from 16 to 130+ cards/min."
+      }
+    ],
+    "adrs": [
+      {
+        "id": "0028-key-model-quota-ladder",
+        "adrNumber": 28,
+        "title": "ADR-0028: Per-key-per-model quota grid with two-pool fallback ladder",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0028-key-model-quota-ladder.md",
+        "status": "Accepted",
+        "date": "2026-08-17",
+        "summary": "Transition from a flat API key list to a 2D (key × model) quota grid with independent thinking and generator fallback ladders."
+      },
+      {
+        "id": "0029-questions-join-generator-pool",
+        "adrNumber": 29,
+        "title": "ADR-0029: Questions join generator pool",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0029-questions-join-generator-pool.md",
+        "status": "Accepted",
+        "date": "2026-08-17",
+        "summary": "Moving question generation from the constrained thinking pool to the high-throughput generator pool."
+      },
+      {
+        "id": "0030-two-pass-quality-gate",
+        "adrNumber": 30,
+        "title": "ADR-0030: Two-pass, self-correcting quality gate",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0030-two-pass-quality-gate.md",
+        "status": "Accepted",
+        "date": "2026-08-17",
+        "summary": "Replacing discard-only validation with Pass 1 in-place topic/factual correction, local dedup, and Pass 2 difficulty verification."
+      },
+      {
+        "id": "0031-verification-feedback-and-per-tier-gate-durability",
+        "adrNumber": 31,
+        "title": "ADR-0031: Verification feedback and per-tier gate durability",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0031-verification-feedback-and-per-tier-gate-durability.md",
+        "status": "Accepted",
+        "date": "2026-08-18",
+        "summary": "Threading rejection feedback into subsequent generation runs and making gating durable at the subtopic-tier level."
+      },
+      {
+        "id": "0040-per-cell-call-serialization",
+        "adrNumber": 40,
+        "title": "ADR-0040: Serialize actual network calls per (key, model) cell",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0040-per-cell-call-serialization.md",
+        "status": "Accepted",
+        "date": "2026-08-19",
+        "summary": "Eliminating false 429 burst errors by locking same-cell network invocations while preserving full concurrency across independent grid cells."
+      },
+      {
+        "id": "0041-per-group-gate-and-persist",
+        "adrNumber": 41,
+        "title": "ADR-0041: Per-group gate and persist",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0041-per-group-gate-and-persist.md",
+        "status": "Accepted",
+        "date": "2026-08-19",
+        "summary": "Persisting cards and making them live in the feed as soon as their subtopic group finishes, removing global fan-in write bottlenecks."
+      },
+      {
+        "id": "0026-one-shot-generation-to-completion",
+        "adrNumber": 26,
+        "title": "ADR-0026: One-shot generation to completion",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0026-one-shot-generation-to-completion.md",
+        "status": "Accepted",
+        "date": "2026-08-16",
+        "summary": "Idempotent topic pipeline design ensuring interrupted runs safely pick up where they left off without duplicate generation."
+      },
+      {
+        "id": "0025-batched-llm-topic-matching",
+        "adrNumber": 25,
+        "title": "ADR-0025: Batched LLM topic matching",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0025-batched-llm-topic-matching.md",
+        "status": "Accepted",
+        "date": "2026-08-16",
+        "summary": "Two-stage topic deduplication: cheap local pgvector nearest-neighbor search followed by a single batched LLM classification call."
+      },
+      {
+        "id": "0047-removal-of-legacy-concurrency-semaphore",
+        "adrNumber": 47,
+        "title": "ADR-0047: Removal of legacy concurrency semaphore",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0047-removal-of-legacy-concurrency-semaphore.md",
+        "status": "Accepted",
+        "date": "2026-08-21",
+        "summary": "Removing the obsolete global asyncio.Semaphore(5) bottle-neck and delegating all rate limiting to the multi-key QuotaGovernor."
+      }
+    ]
+  },
+  "continuum": {
+    "docs": [
+      {
+        "id": "architecture",
+        "title": "Continuum System Architecture: Event-Sourced Directed Multigraph",
+        "sourcePath": "E:/continuum/docs/ARCHITECTURE.md",
+        "category": "Architecture",
+        "summary": "Production continuity engine treating a film as an immutable event ledger in ClickHouse with multi-agent orchestration via Vertex AI."
+      },
+      {
+        "id": "product-spec",
+        "title": "Product Specification: AI-Native Virtual Studio OS",
+        "sourcePath": "E:/continuum/docs/PRODUCT_SPEC.md",
+        "category": "Specification",
+        "summary": "Coordination model for Director, Producer, Writer, Actor, and Department Portals with bi-directional cascade invalidation."
+      }
+    ]
+  }
+}

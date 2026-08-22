@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "autoPort": true,
+  "configurations": [
+    { "name": "site", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000, "autoPort": true }
+  ]
+}
