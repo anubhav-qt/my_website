@@ -31,13 +31,15 @@ export function Now() {
       <div className="mb-5">
         <div className="text-heading text-xs font-bold uppercase tracking-wide mb-1.5">currently making</div>
         <div className="flex gap-3 items-start">
-          <div className="w-16 h-16 shrink-0 rounded border border-border bg-surface p-1.5 flex flex-col gap-1">
-            <div className="h-1 rounded-full bg-border overflow-hidden">
+          <div className="w-16 h-16 shrink-0 rounded-lg border border-border bg-surface p-1.5 flex flex-col gap-1.5">
+            <div className="h-1 rounded-full bg-border overflow-hidden shrink-0">
               <div className="h-full w-2/3 rounded-full bg-amber" />
             </div>
-            <div className="flex flex-1 gap-1">
-              <div className="flex-1 rounded-full border border-sage" />
-              <div className="flex-1 flex flex-col gap-1">
+            <div className="flex flex-1 gap-1 min-h-0">
+              <div className="flex-[1.4] rounded border border-border flex items-center justify-center">
+                <div className="w-4 h-4 rounded-full border-2 border-sage" />
+              </div>
+              <div className="flex flex-col gap-1 w-2.5 shrink-0">
                 <div className="flex-1 rounded-sm bg-border" />
                 <div className="flex-1 rounded-sm bg-border" />
               </div>
