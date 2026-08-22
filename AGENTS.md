@@ -1,12 +1,8 @@
 # This repo
 
-Personal single-page site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript +
-Tailwind v4, no framework beyond that — no Next.js, no React Router). A `backend/` directory
-will show up later, in FastAPI, once there's a reason for one; there isn't yet.
+Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tailwind v4).
 
-The whole site is one route (`/`). Nav links (`#now #work #log #stuff`) scroll to sections in
-place — don't reach for a router to add a new "page." If content needs its own URL later,
-that's a deliberate decision to make explicitly, not a default.
+> **Current status**: Only the **Home** page (`/`) has been refined and hand-designed. The remaining pages (`/projects`, `/scratchpad`, `/contact`) are temporary initial scaffolds / WIP and need to be crafted properly.
 
 Design direction: warm dev-log terminal aesthetic — dark plum/amber palette, IBM Plex Mono,
 dense list-based sections, small line icons, no big hero graphics. See

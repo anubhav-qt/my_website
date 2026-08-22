@@ -3,7 +3,7 @@ import { Nav } from './components/Nav';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Scratchpad from './pages/Scratchpad';
-import { Footer } from './components/Footer';
+import Contact from './pages/Contact';
 
 export default function App() {
   return (
@@ -14,8 +14,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/scratchpad" element={<Scratchpad />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
-        <Footer />
       </main>
     </div>
   );

@@ -1,11 +1,11 @@
 export const PROFILE = {
   name: 'Anubhav Joshi',
-  role: 'Backend Engineer (AI & Infrastructure)',
+  role: 'Backend Engineer',
+  status: '2026 CS Graduate; Open to Backend, AI Infrastructure, and Systems Engineering Roles.',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
   linkedin: 'https://linkedin.com/in/anubhav-qt',
-  tagline: "Currently building the async, rate-limited, provably-correct machinery behind AI products — so the model never has to be trusted with anything expensive to get wrong.",
 };
 
 export const CURRENTLY_MAKING = {
@@ -14,26 +14,51 @@ export const CURRENTLY_MAKING = {
   highlight: 'auditor',
   descriptionEnd: ' finds you.',
   tags: [
-    { label: 'case study', href: '/projects' },
-    { label: 'systems', href: '/projects' },
+    { label: 'case study', href: '/projects#spoin' },
+    { label: 'systems', href: '/projects#spoin' },
   ],
 };
 
-export const STACK = [
-  'Python',
-  'TypeScript',
-  'FastAPI',
-  'PostgreSQL',
-  'Redis',
-  'Docker',
-  'PyTorch',
-  'LangChain',
-  'LangGraph',
-  'Next.js',
-  'GCP',
-  'AWS',
-  'React Native',
-  'Supabase',
+export type Accent = 'amber' | 'sage' | 'rose' | 'clay' | 'gold';
+
+export interface StackGroup {
+  label: string;
+  icon: 'code' | 'server' | 'brain' | 'device' | 'cloud';
+  accent: Accent;
+  items: string[];
+}
+
+export const STACK_GROUPS: StackGroup[] = [
+  {
+    label: 'Languages',
+    icon: 'code',
+    accent: 'amber',
+    items: ['Python 3.11+', 'TypeScript'],
+  },
+  {
+    label: 'AI & Frameworks',
+    icon: 'brain',
+    accent: 'rose',
+    items: ['FastAPI', 'PyTorch', 'Google ADK', 'LangGraph', 'MCP'],
+  },
+  {
+    label: 'Data & Persistence',
+    icon: 'server',
+    accent: 'sage',
+    items: ['PostgreSQL', 'Neon', 'Redis', 'pgvector / Pinecone', 'CockroachDB'],
+  },
+  {
+    label: 'Cloud & DevOps',
+    icon: 'cloud',
+    accent: 'gold',
+    items: ['Google Cloud', 'Docker', 'Vercel', 'Render'],
+  },
+  {
+    label: 'UI/UX',
+    icon: 'device',
+    accent: 'clay',
+    items: ['Next.js', 'React Native'],
+  },
 ];
 
 export interface ExperienceEntry {
@@ -41,6 +66,7 @@ export interface ExperienceEntry {
   company: string;
   role: string;
   period: string;
+  headline: string;
   bullets: string[];
 }
 
@@ -49,27 +75,34 @@ export const EXPERIENCE: ExperienceEntry[] = [
     id: 'anchorate',
     company: 'Anchorate',
     role: 'Co-Founder & CTO',
-    period: 'Jan 2026 — Present',
+    period: 'Jan 2026 to Present',
+    headline: 'Two products built and scrapped, still looking for the next problem worth solving.',
     bullets: [
-      'Runtime policy firewall between AI agents and tools — PII redaction, injection detection, pgvector audit log.',
-      'Own architecture and infra (AWS/GCP, Docker, CI/CD) for two shipping products.',
+      'Built Anchor8, a policy layer that sat between AI agents and their tools: PII redaction, prompt injection detection, and anomaly detection over an append only audit log using pgvector similarity. Packaged it as a PyPI SDK with a three line LangChain integration. Scrapped it once it was clear the market for it was not there yet.',
+      'Also built Cargonto, which turned invoice photos and packing lists into structured freight paperwork. Scrapped that one too.',
+      'Ran AWS and GCP infra, Docker, and CI/CD for both while they were live. Still CTO here, currently figuring out what to build next.',
     ],
   },
   {
     id: 'blinkadz',
     company: 'Blinkadz',
     role: 'SDE Intern',
-    period: 'Feb 2025 — Apr 2025',
+    period: 'Feb 2025 to Apr 2025',
+    headline: 'Where I learned an AI pipeline is mostly orchestration, not model magic.',
     bullets: [
-      '12-agent AI pipeline (Google ADK + FastAPI) cut video ad creation time 95%.',
-      'Benchmarked 20 LLMs across 3 production use cases to drive model selection.',
+      'Built a 12 agent pipeline on Google ADK and FastAPI that cut video ad creation time by 95 percent. Most of the effort went into clean handoffs between agents, not making any single one smarter.',
+      'Automated LinkedIn campaign setup through their Marketing API, which mostly meant learning to live with rate limits and retries.',
+      'Wrote Playwright suites for the modules I trusted least, got coverage to 90 percent, and stopped dreading deploys.',
+      'Benchmarked 20 LLMs across production use cases to pick models for avatar and video generation. First time I understood model choice as a cost and latency call as much as a quality one.',
     ],
   },
 ];
 
 export const EDUCATION = {
-  degree: 'B.Tech, Computer Science (AI & ML)',
+  degree: 'B.Tech, Computer Science (Artificial Intelligence and Machine Learning)',
   school: 'Manipal University Jaipur',
-  period: 'Aug 2022 – Jul 2026',
-  detail: 'CGPA 9.28/10 · Dean’s List, all 8 semesters',
+  period: 'Aug 2022 to Jul 2026',
+  cgpa: '9.28/10',
+  honor: "Dean's List and Student Excellence Award, all 8 semesters",
+  note: 'Also spent a good chunk of the degree as Vice Chair of the IEEE GRSS student chapter.',
 };

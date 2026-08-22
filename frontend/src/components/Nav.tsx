@@ -4,6 +4,7 @@ const LINKS = [
   { to: '/', label: 'home' },
   { to: '/projects', label: 'projects' },
   { to: '/scratchpad', label: 'scratchpad' },
+  { to: '/contact', label: 'contact' },
 ];
 
 export function Nav() {

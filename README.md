@@ -1,6 +1,8 @@
 # anubhavqt
 
-Personal site. A single scrolling page — nav links scroll to sections in place, nothing reloads.
+Personal site.
+
+> **Status note**: Only the **Home** page is hand-crafted and finalized. All other pages/sections (`/projects`, `/scratchpad`, `/contact`) are temporary initial scaffolds / WIP placeholders that will be designed and built properly.
 
 ## Stack
 

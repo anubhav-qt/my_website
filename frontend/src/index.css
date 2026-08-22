@@ -3,15 +3,17 @@
 @theme {
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --color-bg: #241b1d;
-  --color-surface: #2e2224;
-  --color-heading: #f1e4d0;
-  --color-body: #cdb9a8;
-  --color-dim: #8c7466;
-  --color-border: #3c2d2c;
-  --color-amber: #e8a33d;
-  --color-rose: #d97a86;
-  --color-sage: #9bb08a;
+  --color-bg: #1b1e24;
+  --color-surface: #23272f;
+  --color-heading: #eef0f4;
+  --color-body: #a7afbd;
+  --color-dim: #5c6472;
+  --color-border: #2c313b;
+  --color-amber: #d98a4f;
+  --color-rose: #e08a9a;
+  --color-sage: #7bc9a8;
+  --color-clay: #6fa8dc;
+  --color-gold: #c9b673;
 }
 
 @layer base {
@@ -20,6 +22,7 @@
   }
   html {
     scroll-behavior: smooth;
+    font-size: 18px;
   }
   body {
     background: var(--color-bg);
