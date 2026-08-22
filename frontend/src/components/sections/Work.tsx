@@ -13,7 +13,7 @@ export function Work() {
   const rest = PROJECTS.filter((p) => !p.featured);
 
   return (
-    <section id="work" className="scroll-mt-16 mb-14">
+    <section id="work" className="scroll-mt-16 mb-10">
       <h2 className="text-heading text-lg font-bold mb-4">Featured Work</h2>
 
       <ul className="space-y-3">

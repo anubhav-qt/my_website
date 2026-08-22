@@ -9,7 +9,7 @@ export function Log() {
   const visible = expanded ? LOG_ENTRIES : LOG_ENTRIES.slice(0, VISIBLE_COUNT);
 
   return (
-    <section id="log" className="scroll-mt-16 mb-14">
+    <section id="log" className="scroll-mt-16 mb-10">
       <h2 className="text-heading text-lg font-bold mb-2">Log</h2>
       <p className="text-xs opacity-75 mb-4">I write architecture decisions down. Mostly about what broke.</p>
 
