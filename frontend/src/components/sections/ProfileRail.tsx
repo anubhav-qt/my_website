@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { Link } from 'react-router-dom';
 import { Cloud, Waypoints, Bot, Cpu, Database, Workflow } from 'lucide-react';
 import {
@@ -96,6 +96,11 @@ function projectsUsing(item: string) {
 function StackPanel() {
   const [selected, setSelected] = useState<string | null>(null);
   const matches = selected ? projectsUsing(selected) : [];
+  const usedInRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selected) usedInRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [selected]);
 
   return (
     <div>
@@ -137,7 +142,7 @@ function StackPanel() {
       </div>
 
       {selected && (
-        <div className="mt-2.5 pt-2 border-t border-dashed border-border text-[12px]">
+        <div ref={usedInRef} className="mt-2.5 pt-2 border-t border-dashed border-border text-[12px]">
           {matches.length > 0 ? (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
