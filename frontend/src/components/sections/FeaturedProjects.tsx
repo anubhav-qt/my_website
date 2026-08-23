@@ -27,7 +27,7 @@ export function FeaturedProjects() {
                 aria-label={p.title}
                 aria-pressed={isActive}
                 className={`
-                  text-xs font-bold px-2.5 py-1 border transition-all duration-200
+                  text-xs font-bold px-2.5 py-1 border transition-all duration-200 lowercase
                   ${isActive
                     ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
                     : 'border-border text-dim hover:text-body hover:border-dim'}
@@ -54,7 +54,7 @@ export function FeaturedProjects() {
         {/* Project title row */}
         <div className="relative flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="text-heading font-bold text-sm">{project.title.split(':')[0]}</span>
+            <span className="text-heading font-bold text-sm lowercase">{project.title.split(':')[0]}</span>
             {project.repoUrl && (
               <a
                 href={project.repoUrl}

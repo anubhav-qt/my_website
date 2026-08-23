@@ -53,7 +53,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
               ) : (
                 <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
               )}
-              <span className={`text-xs font-semibold leading-relaxed ${TEXT[accent]}`}>{entry.title}</span>
+              <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
             </div>
             {isOpen && (
               <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1 pl-[71px]">{entry.body}</p>
@@ -125,7 +125,7 @@ export default function Scratchpad() {
                     className="w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 hover:border-amber/70 hover:bg-surface/60 transition-colors"
                   >
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="text-heading text-sm font-bold leading-snug">{w.title}</span>
+                      <span className="text-heading text-sm font-bold leading-snug lowercase">{w.title}</span>
                       <span className="text-dim text-[11px] shrink-0">{w.date}</span>
                     </div>
                     <p className="text-xs text-dim leading-relaxed mt-1.5">{w.dek}</p>

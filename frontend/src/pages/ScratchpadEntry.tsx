@@ -36,7 +36,7 @@ export default function ScratchpadEntry() {
       </div>
 
       <div>
-        <h1 className="text-heading text-xl font-bold leading-snug mb-2">{entry.title}</h1>
+        <h1 className="text-heading text-xl font-bold leading-snug mb-2 lowercase">{entry.title}</h1>
 
         <div className="flex items-center gap-3 pb-3 border-b-2 border-border mb-5">
           <span className="text-dim text-[11px]">{entry.date}</span>
@@ -62,7 +62,7 @@ export default function ScratchpadEntry() {
             className="flex-1 border-l-2 border-amber/35 bg-surface/45 px-3 py-2 hover:border-amber/70 hover:bg-surface/60 transition-colors"
           >
             <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">previous</div>
-            <div className="text-body text-xs leading-snug">{prev.title}</div>
+            <div className="text-body text-xs leading-snug lowercase">{prev.title}</div>
           </Link>
         ) : (
           <div className="flex-1 border-l-2 border-border/80 bg-surface/30 px-3 py-2">
@@ -76,7 +76,7 @@ export default function ScratchpadEntry() {
             className="flex-1 border-l-2 border-amber/35 bg-surface/45 px-3 py-2 hover:border-amber/70 hover:bg-surface/60 transition-colors"
           >
             <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">next</div>
-            <div className="text-body text-xs leading-snug">{next.title}</div>
+            <div className="text-body text-xs leading-snug lowercase">{next.title}</div>
           </Link>
         ) : (
           <div className="flex-1 border-l-2 border-border/80 bg-surface/30 px-3 py-2">

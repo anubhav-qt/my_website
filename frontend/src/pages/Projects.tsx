@@ -41,7 +41,7 @@ export default function Projects() {
                 aria-label={p?.title}
                 aria-pressed={isActive}
                 className={`
-                  text-xs font-bold px-2.5 py-1 border transition-all duration-200
+                  text-xs font-bold px-2.5 py-1 border transition-all duration-200 lowercase
                   ${isActive
                     ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
                     : 'border-border text-dim hover:text-body hover:border-dim'}
@@ -76,7 +76,7 @@ export default function Projects() {
           </div>
         </div>
         <div className="relative min-w-0">
-          <p className="text-sm font-bold text-heading leading-snug">{building.title}</p>
+          <p className="text-sm font-bold text-heading leading-snug lowercase">{building.title}</p>
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
             {building.tags.map((t) => (
               <Link
@@ -123,7 +123,7 @@ export default function Projects() {
                 />
                 <div className="relative flex items-start justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
+                    <span className="text-heading font-bold text-sm lowercase">{p.title.split(':')[0]}</span>
                     <span className="text-dim text-[10px] uppercase tracking-wide font-bold">{p.category}</span>
                   </div>
                   <div className="flex items-center gap-2.5">

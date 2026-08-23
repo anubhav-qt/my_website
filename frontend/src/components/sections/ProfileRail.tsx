@@ -146,7 +146,7 @@ function StackPanel() {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
               {matches.map((p) => (
-                <Link key={p.id} to={`/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors">
+                <Link key={p.id} to={`/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors lowercase">
                   → {p.title.split(':')[0]}
                 </Link>
               ))}
@@ -178,7 +178,7 @@ function CareerPanel() {
             >
               <div className="flex items-center gap-1.5">
                 <span className="text-amber text-xs font-bold">{e.company}</span>
-                <span className="text-heading text-xs">{e.role}</span>
+                <span className="text-heading text-xs lowercase">{e.role}</span>
                 <span className="ml-auto text-dim text-[11px] shrink-0">{e.period}</span>
               </div>
               <p className="text-dim text-[12px] leading-snug mt-1">{e.headline}</p>
@@ -206,7 +206,7 @@ function CareerPanel() {
 function EducationPanel() {
   return (
     <div>
-      <span className="text-heading text-xs font-bold">{EDUCATION.degree}</span>
+      <span className="text-heading text-xs font-bold lowercase">{EDUCATION.degree}</span>
       <p className="text-body text-xs mt-1">{EDUCATION.school}</p>
       <p className="text-dim text-[12px] mt-0.5">{EDUCATION.period}</p>
 
