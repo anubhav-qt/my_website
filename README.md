@@ -1,13 +1,13 @@
-# anubhavqt
+# anubhavqt (my_website_v1)
 
-Personal site.
+Personal site. Live at [anubhav-qt.dev](https://anubhav-qt.dev).
 
-> **Status note**: Only the **Home** page is hand-crafted and finalized. All other pages/sections (`/projects`, `/scratchpad`, `/contact`) are temporary initial scaffolds / WIP placeholders that will be designed and built properly.
+> **Status note**: v1. All pages (`/`, `/projects`, `/scratchpad`, `/contact`) are hand-crafted and finished. Content is static, sourced from `frontend/src/content/` and `frontend/src/data/synced-docs.json`.
 
 ## Stack
 
-- **frontend/** — React 19 + TypeScript + Vite + Tailwind v4
-- **backend/** — not started yet; planned in FastAPI when there's something for it to do
+- **frontend/** — React 19 + TypeScript + Vite + Tailwind v4, deployed on Vercel
+- **backend/** — not started yet; planned for v2 (see Roadmap below)
 
 ## Getting started
 
@@ -35,3 +35,14 @@ frontend/
     lib/simulator/    # the deterministic quota-governor simulation engine
   content/manifest.json  # points sync-docs at source ADR/architecture markdown
 ```
+
+## Roadmap: v2
+
+Right now everything in `frontend/src/content/` and `synced-docs.json` is static, checked-in
+data that I update by hand. For v2, the plan is to move this behind a real backend:
+
+- All the data currently living in the frontend (profile, stack, experience, projects, ADRs)
+  gets fetched from a connected backend instead of being bundled at build time.
+- GitHub projects update themselves periodically and automatically, pulling latest metrics and
+  data (stars, commits, README changes, etc.) instead of me manually refreshing numbers in
+  `content/projects.ts`.
