@@ -48,7 +48,5 @@ data that I update by hand. For v2:
 - GitHub projects update themselves periodically and automatically, pulling latest metrics and
   data (stars, commits, README changes, etc.) instead of me manually refreshing numbers in
   `content/projects.ts`.
-- Serve all static content (build output, images, the resume PDF) through a CDN instead of
-  straight from the origin.
 - SEO pass: meta tags, Open Graph/social preview cards, sitemap, robots.txt, and whatever else
   is missing for the site to show up and look right when shared or crawled.
