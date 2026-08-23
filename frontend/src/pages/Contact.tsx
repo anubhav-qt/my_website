@@ -22,6 +22,12 @@ const CHANNELS = [
     href: PROFILE.linkedin,
     frequency: 'now and then',
   },
+  {
+    label: 'resume',
+    value: 'download PDF',
+    href: PROFILE.resume,
+    frequency: 'always current',
+  },
 ];
 
 const CONTEXT = [

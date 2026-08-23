@@ -6,6 +6,7 @@ export const PROFILE = {
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
   linkedin: 'https://linkedin.com/in/anubhav-qt',
+  resume: '/resume.pdf',
 };
 
 export const FEATURED_IDS = ['spoin', 'continuum'] as const;
