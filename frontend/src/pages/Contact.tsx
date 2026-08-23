@@ -7,24 +7,24 @@ export default function Contact() {
       label: 'email',
       value: PROFILE.email,
       href: `mailto:${PROFILE.email}`,
-      note: 'Best for engineering roles, systems discussions, or architecture questions.',
+      note: "Best if you want to talk about a role, a system, or an architecture decision.",
     },
     {
       label: 'github',
       value: 'anubhav-qt',
       href: PROFILE.github,
-      note: 'Repos, ADRs, pipelines, and open-source contributions.',
+      note: 'Repos, ADRs, and the pipelines behind them.',
     },
     {
       label: 'linkedin',
       value: 'anubhav-qt',
       href: PROFILE.linkedin,
-      note: 'Professional network & experience timeline.',
+      note: "Where my work history actually lives.",
     },
     {
       label: 'location',
       value: PROFILE.location,
-      note: 'Open to remote roles worldwide and on-site opportunities.',
+      note: "Open to remote work, and on-site if it's worth relocating for.",
     },
   ];
 

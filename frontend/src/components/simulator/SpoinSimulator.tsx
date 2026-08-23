@@ -214,7 +214,7 @@ export function SpoinSimulator() {
         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
           <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
           <span>
-            <strong>Objective:</strong> Watch the ADR-0040 bug in real time — toggle serialization off and count the 429s.
+            <strong>Objective:</strong> Watch the ADR-0040 bug in real time, toggle serialization off and count the 429s.
           </span>
         </div>
 
@@ -509,7 +509,7 @@ export function SpoinSimulator() {
                   {/* Fan-Out Connector */}
                   <div className="flex items-center justify-center text-[10px] text-[var(--text-muted)] gap-1">
                     <ArrowDown className="w-3.5 h-3.5" />
-                    <span>Send(topic_id) — Independent Fan-Out</span>
+                    <span>Send(topic_id): Independent Fan-Out</span>
                   </div>
 
                   {/* Node 2: resolve_and_plan_topic */}
@@ -547,7 +547,7 @@ export function SpoinSimulator() {
                   {/* Fan-Out Connector */}
                   <div className="flex items-center justify-center text-[10px] text-[var(--text-muted)] gap-1">
                     <ArrowDown className="w-3.5 h-3.5" />
-                    <span>Send(group_id) — Concurrent Subtopic Group Fan-Out</span>
+                    <span>Send(group_id): Concurrent Subtopic Group Fan-Out</span>
                   </div>
 
                   {/* Node 3: generate_subtopic_cards & Two-Pass Quality Gate */}

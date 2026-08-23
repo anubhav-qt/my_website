@@ -185,7 +185,7 @@ function CareerPanel() {
                 {entry?.bullets.map((b, i) => (
                   <li
                     key={i}
-                    className="text-[12px] leading-relaxed pl-3 relative before:content-['—'] before:absolute before:left-0 before:text-dim"
+                    className="text-[12px] leading-relaxed pl-3 relative before:content-['-'] before:absolute before:left-0 before:text-dim"
                   >
                     {b}
                   </li>

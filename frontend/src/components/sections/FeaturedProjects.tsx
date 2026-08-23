@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '@/content/projects';
+import { FEATURED_IDS } from '@/content/site';
 
-const FEATURED_IDS = ['spoin', 'continuum'];
 const FEATURED_PROJECTS = FEATURED_IDS.map((id) => PROJECTS.find((p) => p.id === id)!);
 
 export function FeaturedProjects() {

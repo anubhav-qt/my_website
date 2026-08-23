@@ -1,22 +1,45 @@
 export const PROFILE = {
   name: 'Anubhav Joshi',
   role: 'Backend Engineer',
-  status: '2026 CS Graduate; Open to Backend, AI Infrastructure, and Systems Engineering Roles.',
+  status: 'Graduating in 2026, looking for backend, AI infrastructure, and systems engineering roles.',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
   linkedin: 'https://linkedin.com/in/anubhav-qt',
 };
 
-export const CURRENTLY_MAKING = {
-  title: 'Spoin — CQRS Pipeline & Quota Governor',
-  description: '5,004 cards live. Ship it wrong and the ',
-  highlight: 'auditor',
-  descriptionEnd: ' finds you.',
-  tags: [
-    { label: 'case study', href: '/projects#spoin' },
-    { label: 'systems', href: '/projects#spoin' },
-  ],
+export const FEATURED_IDS = ['spoin', 'continuum'] as const;
+
+export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
+  title: string;
+  progress: number;
+  description: string;
+  highlight: string;
+  descriptionEnd: string;
+  tags: { label: string; href: string }[];
+}> = {
+  spoin: {
+    title: 'Spoin: CQRS Pipeline & Quota Governor',
+    progress: 90,
+    description: '10,247 cards live, 52 ADRs deep, pipeline is done. What is left is UI polish, ',
+    highlight: 'manually quality-checking cards',
+    descriptionEnd: ' in the frontend, and filling out the last topics.',
+    tags: [
+      { label: 'case study', href: '/projects#spoin' },
+      { label: 'systems', href: '/projects#spoin' },
+    ],
+  },
+  continuum: {
+    title: 'Continuum: Film Studio Continuity OS',
+    progress: 25,
+    description: 'Event ledger and multigraph design are drafted, ',
+    highlight: 'the multi-agent orchestration layer',
+    descriptionEnd: ' is still being worked out before any of this is built.',
+    tags: [
+      { label: 'case study', href: '/projects#continuum' },
+      { label: 'architecture', href: '/projects#continuum' },
+    ],
+  },
 };
 
 export type Accent = 'amber' | 'sage' | 'rose' | 'clay' | 'gold';

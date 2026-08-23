@@ -28,6 +28,13 @@
         "sourcePath": "E:/spoin_bundle/docs/architecture/generation-pipeline-run-2-benchmark.md",
         "category": "Benchmark",
         "summary": "Empirical benchmark across 40+ API keys. Eliminating the legacy semaphore bottleneck (ADR-0047) increased throughput from 16 to 130+ cards/min."
+      },
+      {
+        "id": "generation-pipeline-run-3-benchmark",
+        "title": "Run 3 Benchmark: 10,247 Cards & The Multi-Domain Scaling Milestone",
+        "sourcePath": "E:/spoin_bundle/docs/architecture/generation-pipeline-run-3-benchmark.md",
+        "category": "Benchmark",
+        "summary": "Five simultaneous topics, a cleaned 16-key pool, and a self-pacing quota queue push the corpus past the 10,000-card mark at 135+ cards/min."
       }
     ],
     "adrs": [
@@ -111,6 +118,51 @@
         "status": "Accepted",
         "date": "2026-08-21",
         "summary": "Removing the obsolete global asyncio.Semaphore(5) bottle-neck and delegating all rate limiting to the multi-key QuotaGovernor."
+      },
+      {
+        "id": "0048-cockroachdb-over-neon",
+        "adrNumber": 48,
+        "title": "ADR-0048: CockroachDB Basic over Neon, for corpus storage headroom",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0048-cockroachdb-over-neon.md",
+        "status": "Accepted",
+        "date": "2026-08-22",
+        "summary": "Moving corpus storage to CockroachDB Basic ahead of Neon's 500MB free-tier ceiling, measured against real per-topic storage costs."
+      },
+      {
+        "id": "0049-no-message-broker-in-v1",
+        "adrNumber": 49,
+        "title": "ADR-0049: No message broker in v1; Kafka is rejected, not deferred-by-accident",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0049-no-message-broker-in-v1.md",
+        "status": "Accepted",
+        "date": "2026-08-22",
+        "summary": "Rejecting a Kafka-based write-decoupling proposal — the queue already lives in Postgres and the premise was never measured."
+      },
+      {
+        "id": "0050-shown-consumes-a-card",
+        "adrNumber": 50,
+        "title": "ADR-0050: Being shown a card consumes it; a difficulty turns over instead of running dry",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0050-shown-consumes-a-card.md",
+        "status": "Accepted",
+        "date": "2026-08-21",
+        "summary": "Fixing a feed that could show the same slate forever: an impression now marks a card deferred and actually drives the difficulty cycle forward."
+      },
+      {
+        "id": "0051-topic-color-opt-out",
+        "adrNumber": 51,
+        "title": "ADR-0051: A \"no color\" opt-out for per-topic accent, via a sentinel hue",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0051-topic-color-opt-out.md",
+        "status": "Accepted",
+        "date": "2026-08-22",
+        "summary": "Adding a third accent state so a topic can opt out of color tinting entirely, alongside the deterministic-default and chosen-hue states."
+      },
+      {
+        "id": "0052-undo-toast-for-collection-removal",
+        "adrNumber": 52,
+        "title": "ADR-0052: A single-slot undo toast for removal in Notes/Liked/Saved",
+        "sourcePath": "E:/spoin_bundle/docs/adr/0052-undo-toast-for-collection-removal.md",
+        "status": "Accepted",
+        "date": "2026-08-22",
+        "summary": "A 5-second undo toast for removing notes, likes, and bookmarks, plus a cross-view store fixing stale liked/bookmarked state."
       }
     ]
   },
