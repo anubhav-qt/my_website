@@ -42,7 +42,7 @@ export const PROJECTS: ProjectItem[] = [
       { label: 'Throughput', value: '135+ cards/min', detail: 'Across a 16-key verified pool' },
       { label: 'Architecture', value: '52 ADRs', detail: 'Sole system architect' },
     ],
-    tech: ['Python', 'LangGraph', 'PostgreSQL', 'pgvector', 'FastAPI', 'Next.js', 'Docker'],
+    tech: ['Python', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker'],
     team: { note: 'currently building with', collaborators: [{ label: '@mayanks0ni', url: 'https://github.com/mayanks0ni' }] },
     audit: {
       problem:
@@ -147,7 +147,7 @@ export const PROJECTS: ProjectItem[] = [
       { label: 'Backend', value: '28 Modules', detail: 'Vendors, bookings, promos, search, wallet' },
       { label: 'Payments', value: 'Razorpay', detail: 'GST/HSN invoicing built in' },
     ],
-    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Next.js 14', 'Razorpay', 'TanStack Query', 'Socket.IO'],
+    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'Neon', 'TypeORM', 'Next.js 14', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Vercel', 'Render'],
     team: { note: 'built with', collaborators: [{ label: '@ajaniljoshi', url: 'https://github.com/ajaniljoshi' }] },
     audit: {
       problem: 'Supporting independent vendor storefronts, theming, KYC, location, catalog, on one shared marketplace without the checkout paths colliding.',

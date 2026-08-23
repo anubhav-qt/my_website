@@ -23,6 +23,7 @@
   html {
     scroll-behavior: smooth;
     font-size: 18px;
+    scrollbar-gutter: stable both-edges;
   }
   body {
     background: var(--color-bg);

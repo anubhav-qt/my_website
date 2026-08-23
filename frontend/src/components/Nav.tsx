@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
 
 const LINKS = [
-  { to: '/', label: 'home' },
-  { to: '/projects', label: 'projects' },
-  { to: '/scratchpad', label: 'scratchpad' },
-  { to: '/contact', label: 'contact' },
+  { to: '/', label: 'home', end: true },
+  { to: '/projects', label: 'projects', end: true },
+  { to: '/scratchpad', label: 'scratchpad', end: false },
+  { to: '/contact', label: 'contact', end: true },
 ];
 
 export function Nav() {
@@ -16,7 +16,7 @@ export function Nav() {
             <NavLink
               key={l.to}
               to={l.to}
-              end
+              end={l.end}
               className={({ isActive }) =>
                 `text-amber underline-offset-4 hover:text-heading hover:underline transition-colors ${
                   isActive ? 'underline' : ''
