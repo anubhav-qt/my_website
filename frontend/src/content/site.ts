@@ -27,7 +27,6 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
     descriptionEnd: ' in the frontend, and filling out the last topics.',
     tags: [
       { label: 'case study', href: '/projects#spoin' },
-      { label: 'systems', href: '/projects#spoin' },
     ],
   },
   continuum: {
@@ -38,7 +37,6 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
     descriptionEnd: ' is still being worked out before any of this is built.',
     tags: [
       { label: 'case study', href: '/projects#continuum' },
-      { label: 'architecture', href: '/projects#continuum' },
     ],
   },
 };
