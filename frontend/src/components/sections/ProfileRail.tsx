@@ -31,7 +31,6 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: string }>> = {
-  'Python 3.11+': SiPython,
   Python: SiPython,
   TypeScript: SiTypescript,
   'SQL (PostgreSQL / ClickHouse)': Database,

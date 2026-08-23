@@ -56,7 +56,7 @@ export const STACK_GROUPS: StackGroup[] = [
     label: 'Languages',
     icon: 'code',
     accent: 'amber',
-    items: ['Python 3.11+', 'TypeScript'],
+    items: ['Python', 'TypeScript'],
   },
   {
     label: 'AI & Frameworks',

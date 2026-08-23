@@ -37,7 +37,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <div>
+    <div className="max-h-[184px] overflow-y-auto pr-1">
       {entries.map((entry) => {
         const isOpen = openId === entry.id;
         return (
@@ -168,26 +168,28 @@ export default function Scratchpad() {
           {LINKS.length > 0 && (
             <div>
               <SectionHeader color="clay" label="links" count={LINKS.length} latest={LINKS[0]?.date} />
-              {LINKS.map((l) => (
-                <a
-                  key={l.id}
-                  href={l.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block border-b border-dashed border-border/60 py-2 group"
-                >
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-dim text-[11px] w-[52px] shrink-0">{l.date}</span>
-                    <span className="text-clay text-xs font-semibold leading-relaxed group-hover:text-heading group-hover:underline underline-offset-4">
-                      {l.title}
-                    </span>
-                    <ExternalLink size={11} className="text-dim shrink-0 translate-y-px" />
-                    <span className="flex-1" />
-                    <span className="text-dim text-[11px] shrink-0">{l.domain}</span>
-                  </div>
-                  <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[71px]">{l.commentary}</p>
-                </a>
-              ))}
+              <div className="max-h-[192px] overflow-y-auto pr-1">
+                {LINKS.map((l) => (
+                  <a
+                    key={l.id}
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block border-b border-dashed border-border/60 py-2 group"
+                  >
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-dim text-[11px] w-[52px] shrink-0">{l.date}</span>
+                      <span className="text-clay text-xs font-semibold leading-relaxed group-hover:text-heading group-hover:underline underline-offset-4">
+                        {l.title}
+                      </span>
+                      <ExternalLink size={11} className="text-dim shrink-0 translate-y-px" />
+                      <span className="flex-1" />
+                      <span className="text-dim text-[11px] shrink-0">{l.domain}</span>
+                    </div>
+                    <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[71px]">{l.commentary}</p>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
         </div>
