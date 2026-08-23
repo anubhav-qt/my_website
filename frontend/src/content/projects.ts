@@ -34,13 +34,13 @@ export const PROJECTS: ProjectItem[] = [
     featured: true,
     skimDescription: 'A swipeable feed of bite-sized knowledge cards, pick a topic and learn at your own level.',
     deepDescription:
-      "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. 10,047 cards are live so far. The hard part is generation: an async pipeline keeps expensive LLM calls off the read path entirely, so what you actually swipe through comes straight from Postgres, pre-computed and deduplicated, in under 50ms. Generation itself runs behind a 2D quota grid across 16 verified free-tier API keys, with a fallback ladder per model and per-cell serialization (ADR-0040) so a burst of calls does not trip rate limits.",
+      "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. 11,499 cards are live so far. The hard part is generation: an async pipeline keeps expensive LLM calls off the read path entirely, so what you actually swipe through comes straight from Postgres, pre-computed and deduplicated, in under 50ms. Generation itself runs behind a 2D quota grid across 16 verified free-tier API keys, with a fallback ladder per model and per-cell serialization (ADR-0040) so a burst of calls does not trip rate limits.",
     caseStudyHref: '/work/spoin',
     metrics: [
-      { label: 'Corpus Size', value: '10,047 Cards', detail: '8,295 Questions in Postgres' },
+      { label: 'Corpus Size', value: '11,499 Cards', detail: '9,715 Questions in Postgres' },
       { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
-      { label: 'Throughput', value: '135+ cards/min', detail: 'Across a 16-key verified pool' },
-      { label: 'Architecture', value: '52 ADRs', detail: 'Sole system architect' },
+      { label: 'Throughput', value: '74.6 cards/min peak', detail: 'Across 16 active keys' },
+      { label: 'Architecture', value: '55 ADRs', detail: 'Sole system architect' },
     ],
     tech: ['Python', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker'],
     team: { note: 'currently building with', collaborators: [{ label: '@mayanks0ni', url: 'https://github.com/mayanks0ni' }] },
