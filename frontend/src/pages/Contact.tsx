@@ -1,63 +1,99 @@
-import { ArrowUpRight } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { PROFILE } from '@/content/site';
 
+const CHANNELS = [
+  {
+    label: 'github',
+    value: 'anubhav-qt',
+    href: PROFILE.github,
+    frequency: 'here daily',
+  },
+  {
+    label: 'email',
+    value: PROFILE.email,
+    href: `mailto:${PROFILE.email}`,
+    frequency: 'in batches',
+    copyable: true,
+  },
+  {
+    label: 'linkedin',
+    value: 'anubhav-qt',
+    href: PROFILE.linkedin,
+    frequency: 'now and then',
+  },
+];
+
+const CONTEXT = [
+  { label: 'timezone', value: 'IST, UTC+5:30', accent: 'amber' as const },
+  { label: 'open to', value: 'Backend, AI Infrastructure, and Systems Engineering', accent: 'sage' as const },
+];
+
+const DOT = {
+  amber: 'bg-amber',
+  sage: 'bg-sage',
+};
+
+const TEXT = {
+  amber: 'text-amber',
+  sage: 'text-sage',
+};
+
 export default function Contact() {
-  const channels = [
-    {
-      label: 'email',
-      value: PROFILE.email,
-      href: `mailto:${PROFILE.email}`,
-      note: "Best if you want to talk about a role, a system, or an architecture decision.",
-    },
-    {
-      label: 'github',
-      value: 'anubhav-qt',
-      href: PROFILE.github,
-      note: 'Repos, ADRs, and the pipelines behind them.',
-    },
-    {
-      label: 'linkedin',
-      value: 'anubhav-qt',
-      href: PROFILE.linkedin,
-      note: "Where my work history actually lives.",
-    },
-    {
-      label: 'location',
-      value: PROFILE.location,
-      note: "Open to remote work, and on-site if it's worth relocating for.",
-    },
-  ];
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(PROFILE.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   return (
     <div>
-      <h2 className="text-heading text-lg font-bold mb-1">Contact</h2>
-      <p className="text-xs text-dim mb-4">Direct channels to reach me.</p>
+      <div className="border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 mt-3">
+        <div className="flex items-baseline gap-2 mb-3.5">
+          <span className="text-dim text-xs">&gt;</span>
+          <span className="text-heading text-sm font-bold">reach me</span>
+        </div>
 
-      <div className="border-l-2 border-amber/50 bg-surface/60 p-4 space-y-3">
-        {channels.map((c) => (
-          <div
-            key={c.label}
-            className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-border/40 pb-2.5 last:border-b-0 last:pb-0"
-          >
-            <div>
-              <span className="text-amber text-xs font-bold mr-2">{c.label}</span>
-              <p className="text-dim text-[11px] mt-0.5">{c.note}</p>
-            </div>
-            {c.href ? (
+        <div className="flex flex-col gap-2">
+          {CHANNELS.map((c) => (
+            <div key={c.label} className="flex items-baseline gap-3">
+              <span className="text-dim text-xs w-[70px] shrink-0">{c.label}</span>
               <a
                 href={c.href}
                 target={c.href.startsWith('mailto:') ? undefined : '_blank'}
                 rel={c.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                className="inline-flex items-center gap-1 text-heading hover:text-amber text-xs font-semibold transition-colors shrink-0"
+                className="inline-flex items-center gap-1 text-amber hover:text-heading text-sm font-bold transition-colors"
               >
                 {c.value}
-                <ArrowUpRight size={13} />
+                <ArrowUpRight size={11} />
               </a>
-            ) : (
-              <span className="text-body text-xs font-medium shrink-0">{c.value}</span>
-            )}
-          </div>
-        ))}
+              {c.copyable && (
+                <button
+                  onClick={handleCopy}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-dim hover:text-amber border border-border/70 bg-bg/40 px-1.5 py-0.5 transition-colors"
+                >
+                  {copied ? <Check size={10} /> : <Copy size={10} />}
+                  {copied ? 'copied' : 'copy'}
+                </button>
+              )}
+              <span className="flex-1" />
+              <span className="text-dim text-[11px] shrink-0">{c.frequency}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-dashed border-border/60 mt-3.5 pt-3 flex flex-col gap-2">
+          {CONTEXT.map((c) => (
+            <div key={c.label} className="flex items-baseline gap-3">
+              <span className={`w-1.5 h-1.5 shrink-0 -translate-y-0.5 ${DOT[c.accent]}`} />
+              <span className={`text-xs font-bold w-[88px] shrink-0 ${TEXT[c.accent]}`}>{c.label}</span>
+              <span className="flex-1 border-t border-dashed border-border/60" />
+              <span className="text-body text-xs shrink-0">{c.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
