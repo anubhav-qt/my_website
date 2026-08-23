@@ -21,7 +21,7 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
   spoin: {
     title: 'Spoin: CQRS Pipeline & Quota Governor',
     progress: 90,
-    description: '10,247 cards live, 52 ADRs deep, pipeline is done. What is left is UI polish, ',
+    description: '10,047 cards live, 52 ADRs deep, pipeline is done. What is left is UI polish, ',
     highlight: 'manually quality-checking cards',
     descriptionEnd: ' in the frontend, and filling out the last topics.',
     tags: [

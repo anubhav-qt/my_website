@@ -58,6 +58,10 @@ export interface SimSubtopicGroup {
   status: 'pending' | 'generating' | 'gating' | 'completed' | 'failed';
   cards: SimCard[];
   completedAt?: number;
+  // Drafts rejected (near-dup at pass 1, or failed pass 2) for the current tier;
+  // each loops back into generate_subtopic_cards with the rejection reason fed
+  // back as context (ADR-0030 addendum) rather than failing the group.
+  rejectedCount: number;
 }
 
 export interface SimTopic {
@@ -96,7 +100,15 @@ export interface FeedItem {
 export interface SimulationEvent {
   id: string;
   tick: number;
-  type: 'acquire' | 'acquire_failed' | 'burst_429' | 'cell_lock_wait' | 'feed_publish' | 'job_requeue' | 'group_complete';
+  type:
+    | 'acquire'
+    | 'acquire_failed'
+    | 'burst_429'
+    | 'cell_lock_wait'
+    | 'feed_publish'
+    | 'job_requeue'
+    | 'group_complete'
+    | 'card_rejected';
   message: string;
   meta?: Record<string, unknown>;
 }

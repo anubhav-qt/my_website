@@ -28,15 +28,18 @@ export type {
   SimulationState,
 };
 
+// Mirrors Settings.gemini_thinking_ladder / gemini_generator_ladder in
+// apps/api/src/spoin/core/config.py (spoin_bundle), live-verified 2026-08-17.
 export const THINKING_LADDER: ModelLadderEntry[] = [
-  { modelId: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
-  { modelId: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
-  { modelId: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
+  { modelId: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
+  { modelId: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
+  { modelId: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
+  { modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash (Preview)', rpdLimit: 20, rpmLimit: 5, pool: 'thinking' },
 ];
 
 export const GENERATOR_LADDER: ModelLadderEntry[] = [
-  { modelId: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', rpdLimit: 500, rpmLimit: 15, pool: 'generator' },
-  { modelId: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash 8B', rpdLimit: 500, rpmLimit: 15, pool: 'generator' },
+  { modelId: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', rpdLimit: 500, rpmLimit: 15, pool: 'generator' },
+  { modelId: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite', rpdLimit: 500, rpmLimit: 15, pool: 'generator' },
 ];
 
 // Deterministic Mulberry32 PRNG
@@ -60,8 +63,8 @@ export function createInitialState(customConfig?: Partial<SimulationConfig>): Si
       { keyIndex: 1, projectId: 'proj-beta', label: 'Key 1 (Project Beta)' },
       { keyIndex: 2, projectId: 'proj-gamma', label: 'Key 2 (Project Gamma)' },
     ],
-    topicsCount: 2,
-    groupsPerTopic: 2,
+    topicsCount: 3,
+    groupsPerTopic: 3,
     tiersPerGroup: 3,
     autoRequeueOnQuota: true,
     ...customConfig,
@@ -88,12 +91,14 @@ export function createInitialState(customConfig?: Partial<SimulationConfig>): Si
     }
   }
 
-  const topicNames = ['Computer Networking', 'Docker Isolation', 'Operating Systems', 'Distributed Consensus'];
+  // Deliberately spans technical / language / fitness domains -- the real Run 3
+  // benchmark generated across a similar mix (German, FastAPI, Kubernetes, Claude
+  // Code, Study Abroad) to prove the pipeline isn't topic-shaped.
+  const topicNames = ['System Design', 'German (Language)', 'Gym (Physical Fitness)'];
   const groupThemes = [
-    ['TCP/IP Handshake', 'BGP Route Reflection', 'TLS 1.3 Key Exchange'],
-    ['Cgroup Memory Limits', 'Namespace Isolation', 'Overlay Network Drivers'],
-    ['Virtual Memory Paging', 'Lockless Ring Buffers', 'RTOS Interrupt Handling'],
-    ['Raft Leader Election', 'Vector Clocks', 'Two-Phase Commit'],
+    ['CAP Theorem Tradeoffs', 'Load Balancer Algorithms', 'Sharding Strategies'],
+    ['Case Declensions', 'Perfekt vs Präteritum', 'Two-Way Prepositions'],
+    ['Progressive Overload', 'Compound Lift Form', 'Deload Programming'],
   ];
 
   const topics: SimTopic[] = [];
@@ -113,6 +118,7 @@ export function createInitialState(customConfig?: Partial<SimulationConfig>): Si
         currentTierIndex: 0,
         status: 'pending',
         cards: [],
+        rejectedCount: 0,
       });
     }
 
@@ -368,17 +374,23 @@ function handleTaskCompletion(state: SimulationState, task: ActiveTask, rng: () 
       };
 
       // Intra-batch and local FastEmbed near-duplicate check (Local, 0 ticks)
-      const isDuplicate = rng() < 0.05; // 5% chance in simulation
+      const isDuplicate = rng() < 0.12; // simulation-only rate
       if (isDuplicate) {
         card.status = 'rejected';
         card.gateReport.stage = 'near_duplicate';
         card.gateReport.reason = 'Cosine similarity exceeded card_duplicate_threshold (0.90).';
         state.stats.totalCardsRejected += 1;
+        group.rejectedCount += 1;
+        // ADR-0030 addendum: fed back as "don't write anything like this again"
+        // context on the next generate_subtopic_cards call for this tier, not a
+        // failed group -- loop back to card generation instead of stalling.
+        group.status = 'generating';
         state.events.unshift({
-          id: `evt-dedup-${state.tick}`,
+          id: `evt-dedup-${state.tick}-${card.id}`,
           tick: state.tick,
-          type: 'acquire_failed',
-          message: `Near-duplicate rejected on ${card.title} (Local FastEmbed check).`,
+          type: 'card_rejected',
+          message: `Pass 1 near-dup rejected "${card.title}" (${group.name}) — looping back to generate_subtopic_cards with feedback.`,
+          meta: { groupId: group.id },
         });
       } else {
         // Spawn Pass 2 Verification (thinking pool)
@@ -399,6 +411,28 @@ function handleTaskCompletion(state: SimulationState, task: ActiveTask, rng: () 
     const group = topic.groups.find((g) => g.id === task.groupId);
     const card = group?.cards.find((c) => c.tier === task.tier && c.status === 'corrected');
     if (group && card) {
+      const isRejected = rng() < 0.15; // simulation-only rate
+      if (isRejected) {
+        card.status = 'rejected';
+        card.gateReport = {
+          stage: 'pass2_verification',
+          reason: 'Judge rejected: difficulty/factual mismatch against subtopic scope.',
+        };
+        state.stats.totalCardsRejected += 1;
+        group.rejectedCount += 1;
+        // Same loop-back as the pass 1 near-dup case, but with the judge's
+        // actual reason fed back instead of a similarity score (ADR-0030).
+        group.status = 'generating';
+        state.events.unshift({
+          id: `evt-verify-reject-${state.tick}-${card.id}`,
+          tick: state.tick,
+          type: 'card_rejected',
+          message: `Pass 2 rejected "${card.title}" (${group.name}) — looping back to generate_subtopic_cards with judge feedback.`,
+          meta: { groupId: group.id },
+        });
+        return;
+      }
+
       card.status = 'accepted';
       state.stats.totalCardsAccepted += 1;
       card.gateReport = {
@@ -408,6 +442,7 @@ function handleTaskCompletion(state: SimulationState, task: ActiveTask, rng: () 
 
       // Move to next tier sequentially in this group
       group.currentTierIndex += 1;
+      group.rejectedCount = 0;
 
       if (group.currentTierIndex >= group.tiers.length) {
         // Group complete! Trigger ADR-0041 Per-group persist & feed publish
@@ -443,7 +478,8 @@ function handleTaskCompletion(state: SimulationState, task: ActiveTask, rng: () 
 }
 
 function dispatchGraphTasks(state: SimulationState, _rng: () => number) {
-  // Topic planning fan-out
+  // fan_out_topics: every topic's resolve_and_plan_topic is Send() concurrently,
+  // not queued one-at-a-time (graph.py's add_conditional_edges(START, fan_out_topics, ...)).
   for (const topic of state.topics) {
     if (topic.status === 'pending') {
       topic.status = 'planning';
@@ -456,7 +492,6 @@ function dispatchGraphTasks(state: SimulationState, _rng: () => number) {
         totalTicks: 4,
         ticksRemaining: 4,
       });
-      return; // Dispatch in sequence or concurrent
     }
 
     if (topic.status === 'generating') {

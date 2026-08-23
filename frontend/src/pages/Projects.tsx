@@ -53,13 +53,13 @@ export default function Projects() {
           })}
         </div>
       </div>
-      <div className="relative flex gap-3 items-start border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-10">
+      <div className="relative flex gap-3 items-center border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-10">
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.05) 0%, transparent 60%)' }}
         />
         <div className="w-32 shrink-0 flex flex-col gap-1.5">
-          <div className="h-[60px] border border-border bg-bg/40 p-1 flex gap-1 items-stretch">
+          <div className="aspect-video border border-border bg-bg/40 p-1 flex gap-1 items-stretch">
             <div className="aspect-square h-full shrink-0 border border-border flex items-center justify-center">
               <div className="w-9 h-9 rounded-full border-2 border-sage" />
             </div>
@@ -235,12 +235,19 @@ export default function Projects() {
                           className="inline-flex items-center gap-1 text-xs font-bold text-amber hover:text-heading transition-colors"
                         >
                           {simOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                          <span>{simOpen ? 'hide the live simulator' : 'open the live simulator'}</span>
+                          <span>{simOpen ? 'hide the live generation pipeline simulator' : 'open the live generation pipeline simulator'}</span>
                         </button>
                         {simOpen && (
-                          <div className="mt-3 -mx-1 rounded-lg overflow-hidden border border-border">
-                            <SpoinSimulator />
-                          </div>
+                          <>
+                            <p className="text-[11px] text-dim leading-relaxed mt-2.5">
+                              Free-tier Gemini keys cap out fast, so the win here wasn't a bigger model, it was squeezing
+                              135+ cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders and
+                              per-cell serialization (ADR-0040), instead of blocking on one key at a time.
+                            </p>
+                            <div className="mt-2 -mx-1 rounded-lg overflow-hidden border border-border">
+                              <SpoinSimulator />
+                            </div>
+                          </>
                         )}
                       </div>
                     )}

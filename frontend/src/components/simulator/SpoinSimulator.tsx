@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Fragment, useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } from 'react';
 import {
   Play,
   Pause,
@@ -14,10 +14,11 @@ import {
   XCircle,
   Eye,
   Info,
+  ArrowRight,
   ArrowDown,
   Database,
   ShieldCheck,
-  Sparkles,
+  ListChecks,
 } from 'lucide-react';
 import {
   createInitialState,
@@ -25,15 +26,17 @@ import {
   THINKING_LADDER,
   GENERATOR_LADDER,
 } from '@/lib/simulator/engine';
-import type {
-  SimulationState,
-  SimTopic,
-  SimSubtopicGroup,
-  DifficultyTier,
-  FeedItem,
-  KeyConfig,
-  ModelLadderEntry,
-} from '@/lib/simulator/types';
+import type { SimulationState, KeyConfig, ModelLadderEntry } from '@/lib/simulator/types';
+
+interface Line {
+  id: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color: string;
+  poisoned: boolean;
+}
 
 export function SpoinSimulator() {
   const [state, setState] = useState<SimulationState>(() => createInitialState());
@@ -41,16 +44,17 @@ export function SpoinSimulator() {
   const [selectedCellKey, setSelectedCellKey] = useState<string | null>(null);
   const [showStaticFallback, setShowStaticFallback] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'diagram' | 'tree' | 'feed'>('diagram');
+  const [lines, setLines] = useState<Line[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const liveRegionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const topicRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const groupRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Check user prefers-reduced-motion
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mediaQuery.matches) {
-      setShowStaticFallback(true);
-    }
+    if (mediaQuery.matches) setShowStaticFallback(true);
   }, []);
 
   const handleStep = useCallback(() => {
@@ -60,16 +64,13 @@ export function SpoinSimulator() {
   const handleReset = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setState((prev: SimulationState) => createInitialState({ ...prev.config }));
+    setSelectedCellKey(null);
   }, []);
 
   const toggleRun = useCallback(() => {
-    setState((prev: SimulationState) => {
-      const nextIsRunning = !prev.isRunning;
-      return { ...prev, isRunning: nextIsRunning };
-    });
+    setState((prev: SimulationState) => ({ ...prev, isRunning: !prev.isRunning }));
   }, []);
 
-  // Tick timer
   useEffect(() => {
     if (state.isRunning) {
       timerRef.current = setInterval(() => {
@@ -80,26 +81,21 @@ export function SpoinSimulator() {
           return tickSimulation(prev);
         });
       }, speedMs);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
+    } else if (timerRef.current) {
+      clearInterval(timerRef.current);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [state.isRunning, speedMs]);
 
-  // Handle ADR-0040 toggle
   const toggleSerialization = () => {
     setState((prev: SimulationState) => ({
       ...prev,
-      config: {
-        ...prev.config,
-        serializeSameCellCalls: !prev.config.serializeSameCellCalls,
-      },
+      config: { ...prev.config, serializeSameCellCalls: !prev.config.serializeSameCellCalls },
     }));
   };
 
-  // Run Failure Case preset (Off serialization + 3 shared project keys)
   const handleRunFailureCase = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     const failureKeys: KeyConfig[] = [
@@ -107,15 +103,11 @@ export function SpoinSimulator() {
       { keyIndex: 1, projectId: 'proj-alpha', label: 'Key 1 (Shared Proj-Alpha)' },
       { keyIndex: 2, projectId: 'proj-alpha', label: 'Key 2 (Shared Proj-Alpha)' },
     ];
-    const newState = createInitialState({
-      keys: failureKeys,
-      serializeSameCellCalls: false,
-    });
+    const newState = createInitialState({ keys: failureKeys, serializeSameCellCalls: false });
     newState.isRunning = true;
     setState(newState);
   };
 
-  // Run Optimal Case preset (On serialization + 3 independent project keys)
   const handleRunOptimalCase = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     const optimalKeys: KeyConfig[] = [
@@ -123,196 +115,193 @@ export function SpoinSimulator() {
       { keyIndex: 1, projectId: 'proj-beta', label: 'Key 1 (Proj Beta)' },
       { keyIndex: 2, projectId: 'proj-gamma', label: 'Key 2 (Proj Gamma)' },
     ];
-    const newState = createInitialState({
-      keys: optimalKeys,
-      serializeSameCellCalls: true,
-    });
+    const newState = createInitialState({ keys: optimalKeys, serializeSameCellCalls: true });
     newState.isRunning = true;
     setState(newState);
   };
 
-  // Add a new key
   const handleAddKey = (isSameProject: boolean) => {
     setState((prev: SimulationState) => {
       const nextIndex = prev.config.keys.length;
       const projectId = isSameProject ? 'proj-alpha' : `proj-${String.fromCharCode(97 + nextIndex)}`;
       const label = `Key ${nextIndex} (${isSameProject ? 'Shared Proj-Alpha' : 'New Project'})`;
       const nextKeys = [...prev.config.keys, { keyIndex: nextIndex, projectId, label }];
-      return createInitialState({
-        ...prev.config,
-        keys: nextKeys,
-      });
+      return createInitialState({ ...prev.config, keys: nextKeys });
     });
   };
 
-  // Force 429 on selected cell
   const handleForce429 = (cellKey: string) => {
     setState((prev: SimulationState) => {
       const cell = prev.cells[cellKey];
       if (!cell) return prev;
       const updated: SimulationState = { ...prev };
-      updated.cells[cellKey] = {
-        ...cell,
-        isPoisoned429: true,
-        rpdSpent: cell.rpdLimit,
-      };
+      updated.cells[cellKey] = { ...cell, isPoisoned429: true, rpdSpent: cell.rpdLimit };
       updated.stats.total429BurstErrors += 1;
       updated.events.unshift({
-        id: `evt-force-429-${Date.now()}`,
+        id: `evt-force-429-${state.tick}-${cellKey}`,
         tick: updated.tick,
         type: 'burst_429',
-        message: `Manual 429 injected into [Key ${cell.keyIndex}:${cell.modelId}]. Cell marked exhausted.`,
+        message: `Manual 429 injected into [Key ${cell.keyIndex}:${cell.modelId}].`,
       });
       return updated;
     });
   };
 
-  // Drain RPD on selected cell
   const handleDrainRPD = (cellKey: string) => {
     setState((prev: SimulationState) => {
       const cell = prev.cells[cellKey];
       if (!cell) return prev;
       const updated: SimulationState = { ...prev };
-      updated.cells[cellKey] = {
-        ...cell,
-        rpdSpent: cell.rpdLimit,
-      };
-      updated.events.unshift({
-        id: `evt-drain-${Date.now()}`,
-        tick: updated.tick,
-        type: 'acquire_failed',
-        message: `Drained daily RPD on [Key ${cell.keyIndex}:${cell.modelId}] (${cell.rpdLimit}/${cell.rpdLimit} spent).`,
-      });
+      updated.cells[cellKey] = { ...cell, rpdSpent: cell.rpdLimit };
       return updated;
     });
   };
 
-  const allModels: ModelLadderEntry[] = useMemo(() => [...THINKING_LADDER, ...GENERATOR_LADDER], []);
-
-  // Compute active stages in LangGraph
-  const isPlanningActive = state.activeTasks.some((t) => t.type === 'curriculum');
-  const isCardGenActive = state.activeTasks.some((t) => t.type === 'card_gen');
-  const isPass1Active = state.activeTasks.some((t) => t.type === 'pass1_correction');
-  const isPass2Active = state.activeTasks.some((t) => t.type === 'pass2_verification');
-
-  // Count poisoned cells
   const poisonedCellCount = Object.values(state.cells).filter((c) => c.isPoisoned429).length;
+
+  // Groups that had a card looped back (rejected) on the tick just simulated,
+  // so the loop-back arrow in their chip can flash instead of staying static.
+  const justRejectedGroupIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const evt of state.events) {
+      if (evt.tick !== state.tick) break;
+      if (evt.type === 'card_rejected' && evt.meta?.groupId) ids.add(evt.meta.groupId as string);
+    }
+    return ids;
+  }, [state.events, state.tick]);
+
+  // Recompute the pipeline -> quota-cell connector lines whenever active tasks change.
+  // Each line starts at the exact topic/subtopic-group element driving the call.
+  useLayoutEffect(() => {
+    const recompute = () => {
+      const containerEl = containerRef.current;
+      if (!containerEl) return;
+      const containerRect = containerEl.getBoundingClientRect();
+      const next: Line[] = [];
+
+      for (const task of state.activeTasks) {
+        if (!task.targetCell) continue;
+        const originEl = task.type === 'curriculum' ? topicRefs.current[task.topicId] : task.groupId ? groupRefs.current[task.groupId] : null;
+        const cellKey = `${task.targetCell.keyIndex}:${task.targetCell.modelId}`;
+        const cellEl = cellRefs.current[cellKey];
+        if (!originEl || !cellEl) continue;
+
+        const originRect = originEl.getBoundingClientRect();
+        const cellRect = cellEl.getBoundingClientRect();
+
+        next.push({
+          id: task.id,
+          x1: originRect.left + originRect.width / 2 - containerRect.left,
+          y1: originRect.bottom - containerRect.top,
+          x2: cellRect.left + cellRect.width / 2 - containerRect.left,
+          y2: cellRect.top - containerRect.top,
+          color: task.burstTriggered429 ? '#e08a9a' : '#d98a4f',
+          poisoned: Boolean(task.burstTriggered429),
+        });
+      }
+      setLines(next);
+    };
+
+    const raf = requestAnimationFrame(recompute);
+    window.addEventListener('resize', recompute);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', recompute);
+    };
+  }, [state.activeTasks, state.tick, showAdvanced]);
+
+  const registerTopicRef = (key: string) => (el: HTMLDivElement | null) => {
+    topicRefs.current[key] = el;
+  };
+  const registerGroupRef = (key: string) => (el: HTMLDivElement | null) => {
+    groupRefs.current[key] = el;
+  };
+  const registerCellRef = (key: string) => (el: HTMLDivElement | null) => {
+    cellRefs.current[key] = el;
+  };
+
+  const cellColor = (cell: SimulationState['cells'][string]) => {
+    if (cell.isPoisoned429) return 'bg-rose/70 border-rose text-bg';
+    if (cell.rpdSpent >= cell.rpdLimit) return 'bg-dim/20 border-border text-dim';
+    if (cell.isLocked) return 'bg-amber/70 border-amber text-bg';
+    if (cell.rpmInFlightCount > 0) return 'bg-amber/40 border-amber/60 text-heading';
+    return 'bg-sage/10 border-sage/40 text-body';
+  };
 
   return (
     <div
-      className="rounded-xl border border-[var(--border-strong)] bg-[var(--bg-surface)] overflow-hidden shadow-xl"
+      className="rounded-xl border border-border bg-surface overflow-hidden shadow-xl"
       role="region"
-      aria-label="Spoin Generation Pipeline and Quota Governor Interactive Simulator"
+      aria-label="Spoin generation pipeline and quota governor, interactive simulator"
     >
-      {/* Screen Reader Live Announcements */}
       <div ref={liveRegionRef} className="sr-only" aria-live="polite">
         {state.events[0]?.message || 'Simulator ready'}
       </div>
 
-      {/* Top Banner: One-Line Objective */}
-      <div className="px-4 py-3 bg-[var(--bg-subtle)] border-b border-[var(--border-subtle)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-          <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
-          <span>
-            <strong>Objective:</strong> Watch the ADR-0040 bug in real time, toggle serialization off and count the 429s.
-          </span>
-        </div>
+      {/* Control bar */}
+      <div className="px-3 py-2 border-b border-border bg-bg/40 flex flex-wrap items-center gap-2 text-[11px] font-mono">
+        <button
+          onClick={toggleRun}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded font-bold text-bg transition-colors ${
+            state.isRunning ? 'bg-amber hover:bg-amber/80' : 'bg-sage hover:bg-sage/80'
+          }`}
+          aria-label={state.isRunning ? 'Pause simulation' : 'Start simulation'}
+        >
+          {state.isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+          {state.isRunning ? 'Pause' : 'Run'}
+        </button>
+        <button
+          onClick={handleStep}
+          disabled={state.isRunning || state.status === 'completed'}
+          className="flex items-center gap-1 px-2 py-1 rounded border border-border text-body hover:text-heading hover:border-dim disabled:opacity-40 transition-colors"
+          title="Advance one tick"
+        >
+          <StepForward className="w-3 h-3" /> Step
+        </button>
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-1 px-2 py-1 rounded border border-border text-body hover:text-heading hover:border-dim transition-colors"
+          title="Reset simulation"
+        >
+          <RotateCcw className="w-3 h-3" /> Reset
+        </button>
 
-        {/* 1-Click Presets */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={handleRunFailureCase}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-rose-600/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-600/20 font-bold transition-colors"
-            title="Preset: Trigger the ADR-0040 race condition bug"
-          >
-            <Flame className="w-3.5 h-3.5" />
-            <span>Run Failure Case</span>
-          </button>
-          <button
-            onClick={handleRunOptimalCase}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600/20 font-bold transition-colors"
-            title="Preset: Run serialized pipeline across independent keys"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Run Serialized (Fixed)</span>
-          </button>
-        </div>
-      </div>
+        <div className="w-px h-4 bg-border mx-0.5" />
 
-      {/* Primary Control Bar */}
-      <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] flex flex-wrap items-center justify-between gap-3">
-        {/* Playback Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleRun}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-white transition-all shadow-sm ${
-              state.isRunning
-                ? 'bg-amber-600 hover:bg-amber-700'
-                : 'bg-emerald-600 hover:bg-emerald-700'
-            }`}
-            aria-label={state.isRunning ? 'Pause simulation' : 'Start simulation'}
-          >
-            {state.isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span>{state.isRunning ? 'Pause' : 'Run'}</span>
-          </button>
+        <button
+          onClick={toggleSerialization}
+          title={
+            state.config.serializeSameCellCalls
+              ? 'ADR-0040 serialization ON: same (key, model) cell calls are locked sequentially, zero phantom 429s'
+              : 'ADR-0040 serialization OFF: concurrent calls can burst a cell past its RPM ceiling'
+          }
+          className={`flex items-center gap-1 px-2 py-1 rounded font-bold transition-colors ${
+            state.config.serializeSameCellCalls
+              ? 'bg-amber/15 border border-amber/50 text-amber'
+              : 'bg-rose/15 border border-rose/50 text-rose'
+          }`}
+        >
+          <Zap className={`w-3 h-3 ${!state.config.serializeSameCellCalls ? 'animate-pulse' : ''}`} />
+          ADR-0040 {state.config.serializeSameCellCalls ? 'ON' : 'OFF'}
+        </button>
 
-          <button
-            onClick={handleStep}
-            disabled={state.isRunning || state.status === 'completed'}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] disabled:opacity-40 transition-colors"
-            title="Advance 1 step"
-            aria-label="Step simulation forward by one tick"
-          >
-            <StepForward className="w-3.5 h-3.5" />
-            <span>Step</span>
-          </button>
+        <button
+          onClick={handleRunFailureCase}
+          title="Preset: shared-project keys, serialization off — triggers the ADR-0040 race"
+          className="flex items-center gap-1 px-2 py-1 rounded bg-rose/10 border border-rose/30 text-rose hover:bg-rose/20 transition-colors"
+        >
+          <Flame className="w-3 h-3" /> Failure Case
+        </button>
+        <button
+          onClick={handleRunOptimalCase}
+          title="Preset: independent-project keys, serialization on — the fixed path"
+          className="flex items-center gap-1 px-2 py-1 rounded bg-sage/10 border border-sage/30 text-sage hover:bg-sage/20 transition-colors"
+        >
+          <ShieldCheck className="w-3 h-3" /> Fixed
+        </button>
 
-          <button
-            onClick={handleReset}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors"
-            title="Reset simulation state"
-            aria-label="Reset simulation"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset</span>
-          </button>
-        </div>
-
-        {/* The ADR-0040 Serialization Switch */}
-        <div className="flex items-center gap-3 bg-[var(--bg-subtle)] px-3 py-1.5 rounded-lg border border-[var(--border-strong)]">
-          <div className="flex items-center gap-2">
-            <Zap
-              className={`w-4 h-4 ${
-                state.config.serializeSameCellCalls ? 'text-amber-500' : 'text-rose-500 animate-pulse'
-              }`}
-            />
-            <div className="flex flex-col">
-              <span className="text-[11px] font-bold text-[var(--text-primary)] font-mono">
-                ADR-0040 Serialization
-              </span>
-              <span className="text-[9px] font-mono text-[var(--text-muted)]">
-                {state.config.serializeSameCellCalls ? 'Locked sequentially (Zero 429s)' : 'Concurrent burst past RPM (Buggy)'}
-              </span>
-            </div>
-          </div>
-
-          <button
-            onClick={toggleSerialization}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all ${
-              state.config.serializeSameCellCalls
-                ? 'bg-amber-600 text-white hover:bg-amber-700'
-                : 'bg-rose-600 text-white hover:bg-rose-700'
-            }`}
-            aria-pressed={state.config.serializeSameCellCalls}
-          >
-            {state.config.serializeSameCellCalls ? 'ON' : 'OFF'}
-          </button>
-        </div>
-
-        {/* Speed & Advanced Options */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-xs font-mono text-[var(--text-muted)]">
-            <span className="text-[10px]">Speed:</span>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="flex items-center gap-1 text-dim">
             {[
               { label: '1x', ms: 600 },
               { label: '2x', ms: 300 },
@@ -321,621 +310,351 @@ export function SpoinSimulator() {
               <button
                 key={spd.ms}
                 onClick={() => setSpeedMs(spd.ms)}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-mono border ${
-                  speedMs === spd.ms
-                    ? 'bg-[var(--accent-subtle)] border-[var(--accent-border)] text-[var(--accent)] font-semibold'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                className={`px-1.5 py-0.5 rounded border ${
+                  speedMs === spd.ms ? 'border-amber/50 text-amber' : 'border-transparent hover:text-heading'
                 }`}
               >
                 {spd.label}
               </button>
             ))}
           </div>
-
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] underline"
+            className="text-dim hover:text-heading underline underline-offset-2"
           >
-            {showAdvanced ? 'Hide Advanced' : 'Advanced'}
+            {showAdvanced ? 'hide keys' : 'keys'}
           </button>
+          <span
+            title="Watch the ADR-0040 bug: toggle serialization off and count the phantom 429s. Lines below trace each in-flight call down to the exact (key, model) cell it acquired."
+            className="shrink-0"
+          >
+            <Info className="w-3.5 h-3.5 text-dim" />
+          </span>
         </div>
       </div>
 
-      {/* Advanced Drawer */}
       {showAdvanced && (
-        <div className="p-3 bg-[var(--bg-subtle)] border-b border-[var(--border-subtle)] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="px-3 py-2 border-b border-border bg-bg/20 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono">
           <div className="flex items-center gap-2">
-            <span className="text-[var(--text-muted)]">Key Management:</span>
             <button
               onClick={() => handleAddKey(false)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-border text-body hover:text-heading"
             >
-              <Plus className="w-3 h-3" />
-              <span>+ Independent Project Key</span>
+              <Plus className="w-2.5 h-2.5" /> independent key
             </button>
             <button
               onClick={() => handleAddKey(true)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-amber/30 text-amber hover:bg-amber/10"
             >
-              <AlertTriangle className="w-3 h-3" />
-              <span>+ Same-Project Key (Shares RPM)</span>
+              <AlertTriangle className="w-2.5 h-2.5" /> same-project key
             </button>
           </div>
-
           <button
             onClick={() => setShowStaticFallback(!showStaticFallback)}
-            className="flex items-center gap-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            className="flex items-center gap-1 text-dim hover:text-heading"
           >
-            <Eye className="w-3.5 h-3.5" />
-            <span>{showStaticFallback ? 'Interactive Canvas' : 'Static Fallback Diagram'}</span>
+            <Eye className="w-3 h-3" /> {showStaticFallback ? 'interactive' : 'static'}
           </button>
         </div>
       )}
 
-      {/* Post-Run Outcome Readout Banner */}
       {(state.status === 'completed' || state.status === 'exhausted_requeued') && (
         <div
-          className={`p-3.5 border-b text-xs font-mono flex items-center justify-between gap-3 ${
+          className={`px-3 py-2 border-b text-[11px] font-mono flex items-center justify-between gap-2 ${
             state.stats.total429BurstErrors > 0
-              ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
-              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+              ? 'bg-rose/10 border-rose/30 text-rose'
+              : 'bg-sage/10 border-sage/30 text-sage'
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {state.stats.total429BurstErrors > 0 ? (
-              <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
+              <XCircle className="w-3.5 h-3.5 shrink-0" />
             ) : (
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
             )}
-            <div>
-              <strong>Run Result:</strong>{' '}
-              {state.config.serializeSameCellCalls ? (
-                <span>
-                  <strong>Serialized (ADR-0040):</strong> 0 phantom rate-limit errors,{' '}
-                  {state.stats.totalCardsAccepted} cards committed cleanly, 0 cells poisoned.
-                </span>
-              ) : (
-                <span>
-                  <strong>Unserialized:</strong> {state.stats.total429BurstErrors} phantom 429 errors,{' '}
-                  {poisonedCellCount} cell(s) poisoned due to concurrent burst calls exceeding project limits.
-                </span>
-              )}
-            </div>
+            <span>
+              {state.stats.totalCardsAccepted} cards committed · {state.stats.total429BurstErrors} phantom 429s ·{' '}
+              {poisonedCellCount} cell(s) poisoned
+            </span>
           </div>
-          <button
-            onClick={handleReset}
-            className="px-2 py-0.5 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[10px] text-[var(--text-primary)] hover:border-[var(--border-strong)]"
-          >
-            Reset Run
+          <button onClick={handleReset} className="text-[10px] underline underline-offset-2 hover:text-heading">
+            reset
           </button>
         </div>
       )}
 
-      {/* Static Fallback for Reduced Motion */}
       {showStaticFallback ? (
-        <div className="p-6 bg-[var(--bg-subtle)] space-y-6">
-          <div className="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
-            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-              Static Architecture Diagram &amp; Run State Summary
-            </h4>
-            <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">
-              This static representation explains the LangGraph pipeline and Quota Governor grid without active animations.
-            </p>
-            <div className="font-mono text-xs p-4 rounded bg-[var(--bg-page)] border border-[var(--border-subtle)] text-[var(--text-secondary)] space-y-2">
-              <div><strong>Status:</strong> {state.status.toUpperCase()} (Tick {state.tick})</div>
-              <div><strong>Active API Keys:</strong> {state.config.keys.length} configured</div>
-              <div><strong>ADR-0040 Serialization:</strong> {state.config.serializeSameCellCalls ? 'ENABLED' : 'DISABLED'}</div>
-              <div><strong>Production Cards Committed:</strong> {state.stats.totalCardsAccepted}</div>
-              <div><strong>Phantom 429 Errors:</strong> {state.stats.total429BurstErrors}</div>
-              <div><strong>Feed Items Published:</strong> {state.feed.length} items live</div>
-            </div>
-          </div>
+        <div className="p-4 bg-bg/20 text-[11px] font-mono text-body space-y-1">
+          <div>Status: <strong className="text-heading">{state.status.toUpperCase()}</strong> (tick {state.tick})</div>
+          <div>ADR-0040 serialization: <strong className="text-heading">{state.config.serializeSameCellCalls ? 'ON' : 'OFF'}</strong></div>
+          <div>Cards committed: <strong className="text-sage">{state.stats.totalCardsAccepted}</strong></div>
+          <div>Phantom 429s: <strong className="text-rose">{state.stats.total429BurstErrors}</strong></div>
         </div>
       ) : (
-        /* Main Two-Half Simulation Canvas */
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[580px] divide-y lg:divide-y-0 lg:divide-x divide-[var(--border-subtle)]">
-          {/* ======================================================== */}
-          {/* LEFT HALF (6 cols): LangGraph Architecture Pipeline Flow */}
-          {/* ======================================================== */}
-          <div className="lg:col-span-6 p-4 flex flex-col justify-between bg-[var(--bg-surface)]">
-            <div>
-              {/* Header with accessible tabs */}
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] mb-4">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[var(--accent)]" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)] font-mono">
-                    LangGraph Pipeline
-                  </h3>
-                </div>
-                <div role="tablist" className="flex items-center gap-1">
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === 'diagram'}
-                    onClick={() => setActiveTab('diagram')}
-                    className={`px-2 py-0.5 rounded text-[11px] font-mono ${
-                      activeTab === 'diagram'
-                        ? 'bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent-border)]'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                    }`}
-                  >
-                    Flow
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === 'tree'}
-                    onClick={() => setActiveTab('tree')}
-                    className={`px-2 py-0.5 rounded text-[11px] font-mono ${
-                      activeTab === 'tree'
-                        ? 'bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent-border)]'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                    }`}
-                  >
-                    Topics
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === 'feed'}
-                    onClick={() => setActiveTab('feed')}
-                    className={`px-2 py-0.5 rounded text-[11px] font-mono flex items-center gap-1 ${
-                      activeTab === 'feed'
-                        ? 'bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent-border)]'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                    }`}
-                  >
-                    <span>Feed</span>
-                    {state.feed.length > 0 && (
-                      <span className="w-4 h-4 rounded-full bg-emerald-500 text-[9px] text-white flex items-center justify-center font-bold">
-                        {state.feed.length}
-                      </span>
-                    )}
-                  </button>
-                </div>
+        <div ref={containerRef} className="relative">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+            {lines.map((line) => {
+              const path = `M${line.x1} ${line.y1} L${line.x2} ${line.y2}`;
+              return (
+                <g key={line.id}>
+                  <path d={path} stroke={line.color} strokeWidth={1.25} strokeDasharray="3 3" fill="none" opacity={0.5} />
+                  <circle r={2.5} fill={line.color}>
+                    <animateMotion dur="0.9s" repeatCount="indefinite" path={path} />
+                  </circle>
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Pipeline: one swimlane per topic, drawn horizontally, all running in parallel */}
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center gap-2 mb-1">
+              <Layers className="w-3.5 h-3.5 text-amber" />
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-heading">LangGraph Pipeline</h3>
+              <span className="text-[10px] text-dim ml-auto">{state.activeTasks.length} worker task(s)</span>
+            </div>
+            <div
+              className="flex flex-col items-center gap-0.5 mb-2"
+              title="fan_out_topics: START Send()s every topic's resolve_and_plan_topic concurrently, not one at a time."
+            >
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-bg/50 text-[9px] font-mono font-bold text-heading">
+                <ListChecks className="w-3 h-3 text-amber" />
+                {state.topics.length} input topics
               </div>
+              <ArrowDown className="w-3 h-3 text-dim" />
+              <span className="text-[8px] font-mono text-dim">fan out, all concurrent</span>
+            </div>
 
-              {/* TAB 1: Visual Pipeline Flow Diagram */}
-              {activeTab === 'diagram' && (
-                <div className="space-y-3 font-mono text-xs">
-                  {/* Node 1: START */}
-                  <div className="p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-subtle)]/60 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                      <span className="font-bold text-[var(--text-primary)]">START (Job Queue Trigger)</span>
-                    </div>
-                    <span className="text-[10px] text-[var(--text-muted)]">
-                      {state.topics.length} topic(s) claimed
-                    </span>
-                  </div>
-
-                  {/* Fan-Out Connector */}
-                  <div className="flex items-center justify-center text-[10px] text-[var(--text-muted)] gap-1">
-                    <ArrowDown className="w-3.5 h-3.5" />
-                    <span>Send(topic_id): Independent Fan-Out</span>
-                  </div>
-
-                  {/* Node 2: resolve_and_plan_topic */}
+            <div className="space-y-1.5">
+              {state.topics.map((topic) => {
+                const isTopicPlanning = topic.status === 'planning';
+                return (
                   <div
-                    className={`p-3 rounded-lg border transition-all ${
-                      isPlanningActive
-                        ? 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/30'
-                        : state.topics.some((t) => t.curriculumGenerated)
-                        ? 'border-emerald-500/40 bg-emerald-500/5'
-                        : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
+                    key={topic.id}
+                    className={`flex items-stretch gap-1.5 p-1.5 rounded-lg border transition-colors ${
+                      isTopicPlanning || topic.status === 'generating' ? 'border-border bg-bg/20' : 'border-border/60 bg-transparent'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            isPlanningActive
-                              ? 'bg-amber-500 animate-ping'
-                              : state.topics.some((t) => t.curriculumGenerated)
-                              ? 'bg-emerald-500'
-                              : 'bg-slate-400'
-                          }`}
-                        />
-                        <span className="font-bold text-[var(--text-primary)]">resolve_and_plan_topic</span>
-                      </div>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30">
-                        Thinking Pool
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[var(--text-secondary)] font-sans leading-relaxed">
-                      Generates curriculum with exact-title deduplication. Groups Subtopics across difficulty tiers via <code>subtopic_group_id</code>.
-                    </p>
-                  </div>
-
-                  {/* Fan-Out Connector */}
-                  <div className="flex items-center justify-center text-[10px] text-[var(--text-muted)] gap-1">
-                    <ArrowDown className="w-3.5 h-3.5" />
-                    <span>Send(group_id): Concurrent Subtopic Group Fan-Out</span>
-                  </div>
-
-                  {/* Node 3: generate_subtopic_cards & Two-Pass Quality Gate */}
-                  <div
-                    className={`p-3 rounded-lg border transition-all space-y-2 ${
-                      isCardGenActive || isPass1Active || isPass2Active
-                        ? 'border-amber-500 bg-amber-500/5 ring-2 ring-amber-500/20'
-                        : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            isCardGenActive || isPass1Active || isPass2Active
-                              ? 'bg-amber-500 animate-pulse'
-                              : 'bg-slate-400'
-                          }`}
-                        />
-                        <span className="font-bold text-[var(--text-primary)]">generate_subtopic_cards</span>
-                      </div>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                        Generator Pool
-                      </span>
-                    </div>
-
-                    {/* Quality Gate Inner Pipeline */}
-                    <div className="p-2.5 rounded bg-[var(--bg-subtle)] border border-[var(--border-subtle)] space-y-2 text-[10px]">
-                      <div className="font-bold text-[var(--text-primary)] flex items-center justify-between">
-                        <span>Two-Pass Quality Gate (ADR-0030)</span>
-                        <span className="text-[9px] text-[var(--text-muted)] font-normal">Sequential builds_on</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-1.5 text-center">
-                        <div
-                          className={`p-1.5 rounded border ${
-                            isPass1Active
-                              ? 'bg-amber-500/20 text-amber-600 font-bold border-amber-500/40 animate-pulse'
-                              : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-muted)]'
-                          }`}
-                        >
-                          Pass 1: Correction
-                        </div>
-                        <div className="p-1.5 rounded border bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-muted)]">
-                          Local Vector Dedup
-                        </div>
-                        <div
-                          className={`p-1.5 rounded border ${
-                            isPass2Active
-                              ? 'bg-purple-500/20 text-purple-600 font-bold border-purple-500/40 animate-pulse'
-                              : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-muted)]'
-                          }`}
-                        >
-                          Pass 2: Verify
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Fan-In to Persistence */}
-                  <div className="flex items-center justify-center text-[10px] text-[var(--text-muted)] gap-1">
-                    <ArrowDown className="w-3.5 h-3.5" />
-                    <span>ADR-0041: Per-Group Live Feed Persistence</span>
-                  </div>
-
-                  {/* Node 4: gate_and_persist (Lightweight Fan-in) */}
-                  <div className="p-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Database className="w-4 h-4 text-emerald-500" />
-                      <span className="font-bold text-[var(--text-primary)]">
-                        Postgres Content Warehouse (Live)
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                      {state.stats.totalCardsAccepted} cards live
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: Active Topics Hierarchy */}
-              {activeTab === 'tree' && (
-                <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
-                  {state.topics.map((topic: SimTopic) => (
                     <div
-                      key={topic.id}
-                      className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-subtle)]/50 space-y-3"
+                      ref={registerTopicRef(topic.id)}
+                      title={`resolve_and_plan_topic (thinking pool): ${topic.name}. Generates curriculum, groups subtopics by subtopic_group_id.`}
+                      className={`shrink-0 w-[118px] flex flex-col justify-center px-2 py-1 rounded border text-[9px] font-mono transition-colors ${
+                        isTopicPlanning ? 'border-amber bg-amber/15 text-amber' : 'border-border text-body'
+                      }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              topic.status === 'persisted'
-                                ? 'bg-emerald-500'
-                                : topic.status === 'generating'
-                                ? 'bg-amber-500 animate-pulse'
-                                : 'bg-slate-400'
-                            }`}
-                          />
-                          <span className="text-xs font-semibold text-[var(--text-primary)] font-mono">
-                            {topic.name}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-muted)]">
-                          {topic.curriculumGenerated ? 'Curriculum Ready' : 'Planning Pass'}
-                        </span>
-                      </div>
+                      <span className="font-bold leading-snug break-words">{topic.name}</span>
+                      <span className={isTopicPlanning ? 'text-amber' : 'text-dim'}>
+                        {isTopicPlanning ? 'curriculum…' : topic.status === 'pending' ? 'queued' : `${topic.groups.filter((g) => g.status === 'completed').length}/${topic.groups.length} groups`}
+                      </span>
+                    </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {topic.groups.map((group: SimSubtopicGroup) => (
+                    <div className="flex flex-wrap gap-1 flex-1">
+                      {topic.groups.map((group) => {
+                        const stage: 'idle' | 'generate' | 'gate' | 'persist' =
+                          group.status === 'completed' ? 'persist' : group.status === 'gating' ? 'gate' : group.status === 'generating' ? 'generate' : 'idle';
+                        const justLooped = justRejectedGroupIds.has(group.id);
+                        return (
                           <div
                             key={group.id}
-                            className={`p-2.5 rounded border transition-all text-xs ${
-                              group.status === 'completed'
-                                ? 'border-emerald-500/40 bg-emerald-500/5'
-                                : group.status === 'generating' || group.status === 'gating'
-                                ? 'border-amber-500/50 bg-amber-500/5 shadow-xs'
-                                : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
+                            ref={registerGroupRef(group.id)}
+                            title={`${group.name}: tier ${Math.min(group.currentTierIndex + 1, group.tiers.length)}/${group.tiers.length}${
+                              group.rejectedCount ? `, ${group.rejectedCount} rejection(s) fed back this tier` : ''
+                            }`}
+                            className={`flex flex-col gap-1 px-1.5 py-1 rounded border text-[9px] font-mono min-w-[148px] transition-colors ${
+                              stage === 'persist'
+                                ? 'border-sage/40 bg-sage/5'
+                                : stage !== 'idle'
+                                ? 'border-amber/40 bg-amber/5'
+                                : 'border-border bg-transparent'
                             }`}
                           >
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="font-medium text-[var(--text-primary)] truncate max-w-[130px]">
-                                {group.name}
+                            <span className="text-body leading-snug break-words">{group.name}</span>
+
+                            <div className="flex items-center gap-1">
+                              <span
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'generate' ? 'bg-gold text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                              >
+                                gen
                               </span>
-                              <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-subtle)] text-[var(--text-muted)]">
-                                {group.status}
+                              <span className={`flex items-center ${justLooped ? 'text-rose animate-pulse' : 'text-dim'}`} aria-hidden="true">
+                                <RotateCcw className="w-2 h-2" />
                               </span>
+                              <span
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'gate' ? 'bg-amber text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                              >
+                                gate
+                              </span>
+                              <ArrowRight className="w-2 h-2 text-dim" />
+                              <span
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'persist' ? 'bg-sage text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                              >
+                                ✓
+                              </span>
+                              {group.rejectedCount > 0 && (
+                                <span className="text-rose font-bold ml-auto">↺{group.rejectedCount}</span>
+                              )}
                             </div>
 
-                            <div className="flex items-center gap-1 mt-2">
-                              {group.tiers.map((tier: DifficultyTier, idx: number) => {
-                                const isCurrent = idx === group.currentTierIndex && group.status !== 'completed';
-                                const isDone = idx < group.currentTierIndex || group.status === 'completed';
-                                return (
-                                  <div
-                                    key={tier}
-                                    className={`flex-1 py-1 px-1.5 rounded text-[10px] font-mono text-center transition-all ${
-                                      isDone
-                                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30'
-                                        : isCurrent
-                                        ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40 animate-pulse'
-                                        : 'bg-[var(--bg-subtle)] text-[var(--text-muted)] border border-transparent'
-                                    }`}
-                                  >
-                                    {tier.slice(0, 3).toUpperCase()}
-                                  </div>
-                                );
-                              })}
+                            <div className="flex items-center gap-0.5">
+                              {group.tiers.map((tier, idx) => (
+                                <div
+                                  key={tier}
+                                  className={`flex-1 h-1 rounded-full ${
+                                    idx < group.currentTierIndex || group.status === 'completed'
+                                      ? 'bg-sage'
+                                      : idx === group.currentTierIndex
+                                      ? 'bg-amber'
+                                      : 'bg-border'
+                                  }`}
+                                />
+                              ))}
                             </div>
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {/* TAB 3: Live Feed */}
-              {activeTab === 'feed' && (
-                <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-                  {state.feed.length === 0 ? (
-                    <div className="py-12 text-center text-xs font-mono text-[var(--text-muted)]">
-                      Feed is empty. Cards appear here immediately as subtopic groups complete (ADR-0041).
-                    </div>
-                  ) : (
-                    state.feed.map((item: FeedItem) => (
-                      <div
-                        key={item.id}
-                        className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] space-y-1 text-xs"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-[var(--text-primary)]">{item.title}</span>
-                          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                            &lt; 50ms Read Path
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[var(--text-secondary)]">{item.summary}</p>
-                        <div className="flex items-center gap-2 pt-1 font-mono text-[9px] text-[var(--text-muted)]">
-                          <span>Tier: {item.tier}</span>
-                          <span>·</span>
-                          <span>Topic: {item.topicName}</span>
-                          <span>·</span>
-                          <span className="text-emerald-500">Live in Postgres</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Left Footer Info */}
-            <div className="mt-4 pt-3 border-t border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-muted)] flex items-center justify-between">
-              <span>LangGraph v0.2.x</span>
-              <span className="text-[var(--text-primary)] font-bold">
-                {state.activeTasks.length} active worker task(s)
-              </span>
+            {/* Fan-in: every lane's gate_and_persist converges on Postgres (ADR-0041) */}
+            <div className="flex flex-col items-center gap-0.5 mt-3 pt-2.5 border-t border-dashed border-border/60">
+              <ArrowDown className="w-3 h-3 text-dim" />
+              <span className="text-[8px] font-mono text-dim">fan in, per-group as each finishes</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-sage/40 bg-sage/10 text-[9px] font-mono font-bold text-sage">
+                <Database className="w-3 h-3" />
+                {state.stats.totalCardsAccepted} cards persisted in Postgres
+              </div>
             </div>
+
+            {state.feed.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2">
+                {state.feed.slice(0, 4).map((item) => (
+                  <span
+                    key={item.id}
+                    title={item.title}
+                    className="px-1.5 py-0.5 rounded border border-sage/30 bg-sage/5 text-[9px] font-mono text-sage max-w-[180px] break-words"
+                  >
+                    {item.title}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* ======================================================== */}
-          {/* RIGHT HALF (6 cols): 2D Quota Governor Grid (Key × Model) */}
-          {/* ======================================================== */}
-          <div className="lg:col-span-6 p-4 flex flex-col justify-between bg-[var(--bg-subtle)]/40">
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] mb-4">
-                <div className="flex items-center gap-2">
-                  <Cpu className="w-4 h-4 text-[var(--accent)]" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)] font-mono">
-                    2D Quota Grid (ADR-0028)
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                    {state.config.keys.length} API Keys Active
-                  </span>
-                </div>
-              </div>
+          {/* Quota governor grid */}
+          <div className="p-4 bg-bg/20">
+            <div className="flex items-center gap-2 mb-3">
+              <Cpu className="w-3.5 h-3.5 text-amber" />
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-heading">Quota Governor</h3>
+              <span className="text-[10px] text-dim">{state.config.keys.length} keys</span>
+              <span
+                title="ADR-0028 search order: model top-down, then key index. Grid exhaustion raises QuotaExhaustedError, which requeues the job as pending, never failed."
+                className="ml-auto shrink-0"
+              >
+                <Info className="w-3 h-3 text-dim" />
+              </span>
+            </div>
 
-              {/* The 2D Grid Table with responsive overflow */}
-              <div className="overflow-x-auto border border-[var(--border-subtle)] rounded-lg bg-[var(--bg-surface)]">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
-                      <th className="p-2 border-r border-[var(--border-subtle)]">Model Ladder</th>
-                      <th className="p-2 border-r border-[var(--border-subtle)]">Pool</th>
-                      {state.config.keys.map((k: KeyConfig) => (
-                        <th key={k.keyIndex} className="p-2 text-center border-r border-[var(--border-subtle)] last:border-r-0">
-                          <div>Key {k.keyIndex}</div>
-                          <div className="text-[8px] text-[var(--text-muted)] font-normal truncate max-w-[80px]">
-                            {k.projectId}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-subtle)] font-mono text-[11px]">
-                    {allModels.map((model: ModelLadderEntry) => (
-                      <tr key={model.modelId} className="hover:bg-[var(--bg-subtle)]/40 transition-colors">
-                        <td className="p-2 border-r border-[var(--border-subtle)] font-semibold text-[var(--text-primary)]">
-                          <div>{model.name}</div>
-                          <div className="text-[9px] text-[var(--text-muted)] font-normal">
-                            RPD: {model.rpdLimit} · RPM: {model.rpmLimit}
-                          </div>
-                        </td>
-                        <td className="p-2 border-r border-[var(--border-subtle)] text-[10px]">
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[9px] ${
-                              model.pool === 'thinking'
-                                ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30'
-                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-                            }`}
-                          >
-                            {model.pool}
-                          </span>
-                        </td>
-
-                        {/* Cells for each key */}
+            {(['thinking', 'generator'] as const).map((pool) => {
+              const models = pool === 'thinking' ? THINKING_LADDER : GENERATOR_LADDER;
+              return (
+                <div key={pool} className="mb-3 last:mb-0">
+                  <div className="flex items-center gap-1.5 mb-1 text-[9px] font-mono">
+                    <span className={`px-1 py-0.5 rounded ${pool === 'thinking' ? 'bg-clay/15 text-clay' : 'bg-gold/15 text-gold'}`}>
+                      {pool}
+                    </span>
+                  </div>
+                  <div className="grid gap-1" style={{ gridTemplateColumns: `82px repeat(${state.config.keys.length}, 1fr)` }}>
+                    <div />
+                    {state.config.keys.map((k: KeyConfig) => (
+                      <div key={k.keyIndex} className="text-center text-[8px] font-mono text-dim truncate" title={k.label}>
+                        K{k.keyIndex}
+                      </div>
+                    ))}
+                    {models.map((model: ModelLadderEntry) => (
+                      <Fragment key={model.modelId}>
+                        <div
+                          className="text-[9px] font-mono text-body truncate pr-1 self-center"
+                          title={`${model.name} — RPD ${model.rpdLimit}, RPM ${model.rpmLimit}`}
+                        >
+                          {model.name.replace('Gemini ', '')}
+                        </div>
                         {state.config.keys.map((key: KeyConfig) => {
                           const cellKey = `${key.keyIndex}:${model.modelId}`;
                           const cell = state.cells[cellKey];
-                          if (!cell) return <td key={key.keyIndex} />;
-
-                          const isCursorHere =
-                            state.searchCursor &&
-                            state.searchCursor.keyIndex === key.keyIndex &&
-                            allModels[state.searchCursor.modelIndex]?.modelId === model.modelId;
-
+                          if (!cell) return <div key={cellKey} />;
                           return (
-                            <td
-                              key={key.keyIndex}
+                            <div
+                              key={cellKey}
+                              ref={registerCellRef(cellKey)}
                               onClick={() => setSelectedCellKey(cellKey)}
-                              className={`p-2 text-center border-r border-[var(--border-subtle)] last:border-r-0 cursor-pointer transition-all ${
-                                selectedCellKey === cellKey
-                                  ? 'ring-2 ring-[var(--accent)] bg-[var(--accent-subtle)]'
-                                  : ''
-                              } ${
-                                cell.isPoisoned429
-                                  ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold'
-                                  : cell.rpdSpent >= cell.rpdLimit
-                                  ? 'bg-slate-800/40 text-slate-500 opacity-60'
-                                  : cell.isLocked
-                                  ? 'bg-amber-500/20 text-amber-600 font-bold'
-                                  : isCursorHere
-                                  ? 'bg-amber-500/30 text-amber-600 animate-pulse'
-                                  : 'text-[var(--text-secondary)]'
-                              }`}
+                              title={`Key ${cell.keyIndex} · ${model.name}: ${cell.rpdSpent}/${cell.rpdLimit} RPD, ${cell.rpmWindowCalls.length}/${cell.rpmLimit} RPM`}
+                              className={`h-6 rounded border cursor-pointer transition-colors flex items-center justify-center text-[8px] font-mono font-bold ${cellColor(
+                                cell
+                              )} ${selectedCellKey === cellKey ? 'ring-2 ring-amber' : ''}`}
                             >
-                              <div className="text-[10px] font-bold">
-                                {cell.isPoisoned429 ? (
-                                  <span className="flex items-center justify-center gap-0.5 text-rose-500">
-                                    <XCircle className="w-3 h-3" /> 429
-                                  </span>
-                                ) : (
-                                  <span>
-                                    {cell.rpdSpent}/{cell.rpdLimit}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="text-[8px] text-[var(--text-muted)] mt-0.5">
-                                {cell.rpmWindowCalls.length} req/min
-                              </div>
-                            </td>
+                              {cell.isPoisoned429 ? <XCircle className="w-2.5 h-2.5" /> : ''}
+                            </div>
                           );
                         })}
-                      </tr>
+                      </Fragment>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Cell Inspector & Interventions */}
-              {selectedCellKey && state.cells[selectedCellKey] && (
-                <div className="mt-3 p-3 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] text-xs space-y-2">
-                  <div className="flex items-center justify-between font-mono">
-                    <span className="font-bold text-[var(--text-primary)]">
-                      Selected Cell: [{selectedCellKey}]
-                    </span>
-                    <span className="text-[10px] text-[var(--text-muted)]">
-                      Project: {state.cells[selectedCellKey].projectId}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 pt-1">
-                    <button
-                      onClick={() => handleForce429(selectedCellKey)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-mono bg-rose-600 text-white hover:bg-rose-700"
-                      title="Force false 429 to test ledger poisoning"
-                    >
-                      <Flame className="w-3 h-3" />
-                      <span>Inject 429</span>
-                    </button>
-                    <button
-                      onClick={() => handleDrainRPD(selectedCellKey)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-mono border border-[var(--border-subtle)] bg-[var(--bg-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                    >
-                      <span>Drain Daily RPD</span>
-                    </button>
                   </div>
                 </div>
-              )}
+              );
+            })}
+
+            <div className="flex items-center gap-3 text-[9px] font-mono text-dim mt-1">
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-sage/30 border border-sage/40" /> open</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber/70 border border-amber" /> locked / in-flight</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-rose/70 border border-rose" /> poisoned (429)</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-dim/20 border border-border" /> RPD spent</span>
             </div>
 
-            {/* Bottom Callout: Quota Search Order */}
-            <div className="mt-4 pt-3 border-t border-[var(--border-subtle)] text-[11px] text-[var(--text-secondary)] font-mono flex items-start gap-2 bg-[var(--bg-surface)] p-2.5 rounded border border-[var(--border-subtle)]">
-              <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-              <span>
-                <strong>ADR-0028 Search Order:</strong> Model top-down, then Key index. When all cells exhaust, <code>QuotaExhaustedError</code> requeues the job as <code>pending</code> (never <code>failed</code>).
-              </span>
-            </div>
+            {selectedCellKey && state.cells[selectedCellKey] && (
+              <div className="mt-2 p-2 rounded border border-border bg-surface flex items-center justify-between gap-2 text-[10px] font-mono">
+                <span className="text-body">
+                  [{selectedCellKey}] {state.cells[selectedCellKey].rpdSpent}/{state.cells[selectedCellKey].rpdLimit} RPD
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => handleForce429(selectedCellKey)}
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose text-bg font-bold hover:bg-rose/80"
+                    title="Force a false 429 on this cell"
+                  >
+                    <Flame className="w-2.5 h-2.5" /> 429
+                  </button>
+                  <button
+                    onClick={() => handleDrainRPD(selectedCellKey)}
+                    className="px-1.5 py-0.5 rounded border border-border text-body hover:text-heading"
+                    title="Drain today's RPD on this cell"
+                  >
+                    drain
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Simulator Bottom Status Bar */}
-      <div className="p-3 border-t border-[var(--border-subtle)] bg-[var(--bg-subtle)] flex flex-wrap items-center justify-between text-xs font-mono text-[var(--text-muted)] gap-3">
-        <div className="flex items-center gap-4">
-          <div>
-            Tick: <strong className="text-[var(--text-primary)]">{state.tick}</strong>
-          </div>
-          <div>
-            Status:{' '}
-            <strong
-              className={
-                state.status === 'completed'
-                  ? 'text-emerald-500'
-                  : state.status === 'exhausted_requeued'
-                  ? 'text-amber-500'
-                  : 'text-amber-600 dark:text-amber-400'
-              }
-            >
-              {state.status.toUpperCase()}
-            </strong>
-          </div>
-          <div>
-            Cards Committed:{' '}
-            <strong className="text-emerald-500">{state.stats.totalCardsAccepted}</strong>
-          </div>
-          <div>
-            Phantom 429s:{' '}
-            <strong className={state.stats.total429BurstErrors > 0 ? 'text-rose-500 font-bold' : 'text-slate-400'}>
-              {state.stats.total429BurstErrors}
-            </strong>
-          </div>
-        </div>
-
-        <div className="text-[11px] text-[var(--text-secondary)] truncate max-w-md">
-          {state.events[0]?.message || 'Pipeline standing by.'}
-        </div>
+      {/* Status bar */}
+      <div className="px-3 py-1.5 border-t border-border bg-bg/40 flex flex-wrap items-center gap-3 text-[10px] font-mono text-dim">
+        <span>tick <strong className="text-heading">{state.tick}</strong></span>
+        <span>
+          <strong
+            className={
+              state.status === 'completed' ? 'text-sage' : state.status === 'exhausted_requeued' ? 'text-amber' : 'text-body'
+            }
+          >
+            {state.status.replace('_', ' ')}
+          </strong>
+        </span>
+        <span>cards <strong className="text-sage">{state.stats.totalCardsAccepted}</strong></span>
+        <span>429s <strong className={state.stats.total429BurstErrors > 0 ? 'text-rose' : 'text-dim'}>{state.stats.total429BurstErrors}</strong></span>
+        <span className="ml-auto truncate max-w-xs text-body/70">{state.events[0]?.message || 'standing by'}</span>
       </div>
     </div>
   );
