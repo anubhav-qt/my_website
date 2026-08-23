@@ -1,7 +1,7 @@
 export const PROFILE = {
   name: 'Anubhav Joshi',
   role: 'Backend Engineer',
-  status: 'Graduating in 2026, looking for backend, AI infrastructure, and systems engineering roles.',
+  status: '2026 CS Graduate; Open to Backend, AI Infrastructure, and Systems Engineering Roles.',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
