@@ -76,14 +76,25 @@ One Supabase project backs four things, all degrading gracefully when unconfigur
 - **Likes, two scopes** — a page-level like (one heart for "this writeup"/"this project"
   as a whole) and a separate per-comment like (Reddit-style, one per individual comment).
   Both are session-scoped and independently toggleable.
-- **Views** — one per browser session, deduped at the database level, and only recorded
-  on actual engagement (opening a writeup, expanding a collapsed entry) rather than just
-  from a list rendering.
+- **Views, two scopes** — per-content views (one per browser session per writeup/project/
+  scratchpad entry, only recorded on actual engagement: opening a writeup, expanding a
+  collapsed entry, not just from a list rendering) and a separate site-wide view, one per
+  browser session for the whole site regardless of how many pages that session visits,
+  recorded once on app load and shown as the badge in the nav. The two are not the same
+  number — the nav badge does not sum every per-content view.
 
 Schema and RLS policies live in `frontend/supabase/schema.sql` (source of truth, paste
 into the Supabase SQL editor to apply). Everything anonymous visitors touch is
 insert-only or delete-only-their-own; nothing they do can read or overwrite what someone
 else wrote.
+
+Both view scopes share one dedup rule: the `views` table's primary key is
+`(target_type, target_id, session_id)`, so any number of reloads, tab closes/reopens, or
+new windows in the same browser collapse to a single row — a new row only appears from a
+genuinely different `localStorage` (a different browser, a private/incognito window, or a
+different device). Site-wide view recording has been live since **2026-08-24 21:25:57
+UTC** (the first row in the `views` table with `target_type = 'site'`) — any total shown
+reflects visits from that point on, not all-time traffic before the feature existed.
 
 ### Updating a metric
 
