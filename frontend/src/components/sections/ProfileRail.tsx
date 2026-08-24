@@ -96,9 +96,18 @@ const STACK_HINT_SEEN_KEY = 'stack-hint-seen';
 
 function StackPanel() {
   const [selected, setSelected] = useState<string | null>(null);
-  const [hintSeen, setHintSeen] = useState(() => typeof localStorage !== 'undefined' && localStorage.getItem(STACK_HINT_SEEN_KEY) === '1');
+  // Starts hidden (matches the prerendered static snapshot, which has no
+  // access to any visitor's localStorage) and only reveals itself after
+  // mount, once we've confirmed this browser hasn't seen it yet -- avoids
+  // the flash-then-vanish that reading localStorage in the initializer
+  // caused on every reload of a returning visitor.
+  const [hintSeen, setHintSeen] = useState(true);
   const matches = selected ? projectsUsing(selected) : [];
   const usedInRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (localStorage.getItem(STACK_HINT_SEEN_KEY) !== '1') setHintSeen(false);
+  }, []);
 
   useEffect(() => {
     if (selected) usedInRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
