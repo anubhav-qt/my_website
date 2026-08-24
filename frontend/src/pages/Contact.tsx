@@ -62,7 +62,7 @@ export default function Contact() {
   };
 
   return (
-    <div>
+    <div className="pb-12">
       <div className="border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 mt-3">
         <div className="flex items-baseline gap-2 mb-3.5">
           <span className="text-dim text-xs">&gt;</span>

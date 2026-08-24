@@ -29,7 +29,7 @@ export default function ScratchpadEntry() {
   }
 
   return (
-    <div>
+    <div className="pb-12">
       <div className="flex items-center gap-2 mb-4">
         <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors">
           <ChevronLeft size={11} />

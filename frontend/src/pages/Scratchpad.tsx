@@ -48,7 +48,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
             onClick={() => setOpenId(isOpen ? null : entry.id)}
           >
             <div className="flex items-baseline gap-2">
-              <span className="text-dim text-[11px] w-[52px] shrink-0">{entry.date}</span>
+              <span className="text-dim text-[11px] w-[78px] shrink-0">{entry.date}</span>
               {isOpen ? (
                 <ChevronDown size={10} className={`${TEXT[accent]} shrink-0 translate-y-px`} />
               ) : (
@@ -57,7 +57,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
               <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
             </div>
             {isOpen && (
-              <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1 pl-[71px]">{entry.body}</p>
+              <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1 pl-[97px]">{entry.body}</p>
             )}
           </div>
         );
@@ -87,7 +87,7 @@ export default function Scratchpad() {
     LINKS.length === 0;
 
   return (
-    <div>
+    <div className="pb-12">
       <p className="text-xs opacity-75 mb-6">weird and non-weird stuff that came to my mind</p>
 
       {isEmpty ? (
@@ -185,7 +185,7 @@ export default function Scratchpad() {
                     className="block border-b border-dashed border-border/60 py-2 group"
                   >
                     <div className="flex items-baseline gap-2">
-                      <span className="text-dim text-[11px] w-[52px] shrink-0">{l.date}</span>
+                      <span className="text-dim text-[11px] w-[78px] shrink-0">{l.date}</span>
                       <span className="text-clay text-xs font-semibold leading-relaxed group-hover:text-heading group-hover:underline underline-offset-4">
                         {l.title}
                       </span>
@@ -193,7 +193,7 @@ export default function Scratchpad() {
                       <span className="flex-1" />
                       <span className="text-dim text-[11px] shrink-0">{l.domain}</span>
                     </div>
-                    <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[71px]">{l.commentary}</p>
+                    <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[97px]">{l.commentary}</p>
                   </a>
                 ))}
               </div>
