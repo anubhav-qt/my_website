@@ -105,9 +105,18 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
         >
           {link.title}
         </a>
-        <ExternalLink size={11} className="text-dim shrink-0 translate-y-px" />
         <span className="flex-1" />
         <span className="text-dim text-[11px] shrink-0">{link.domain}</span>
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="text-dim hover:text-clay transition-colors shrink-0"
+          aria-label={`open ${link.title}`}
+        >
+          <ExternalLink size={11} className="translate-y-px" />
+        </a>
         <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
       </div>
       <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[97px]">{link.commentary}</p>
@@ -190,7 +199,7 @@ export default function Scratchpad() {
 
   return (
     <div className="pb-12">
-      <div className="flex items-center justify-between gap-3 mb-6">
+      <div className="flex items-center justify-between gap-3 mb-3">
         <p className="text-xs opacity-75">weird and non-weird stuff that came to my mind</p>
         {!isEmpty && <AudienceFilterBar selected={selectedAudiences} onToggle={toggleAudience} />}
       </div>

@@ -36,17 +36,10 @@ export default function ScratchpadEntry() {
 
   return (
     <div className="pb-12">
-      <div className="flex items-center gap-2 mb-4">
-        <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors">
-          <ChevronLeft size={11} />
-          scratchpad
-        </Link>
-        <span className="flex-1 border-t border-dashed border-border" />
-        <span className="flex items-center gap-1.5 shrink-0">
-          <span className="w-1.5 h-1.5 bg-amber inline-block" />
-          <span className="text-dim text-[11px] uppercase tracking-widest font-bold">writeup</span>
-        </span>
-      </div>
+      <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors mb-4">
+        <ChevronLeft size={11} />
+        scratchpad
+      </Link>
 
       <div>
         <h1 className="text-heading text-xl font-bold leading-snug mb-2 lowercase">{entry.title}</h1>
@@ -102,6 +95,11 @@ export default function ScratchpadEntry() {
           </div>
         )}
       </div>
+
+      <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors mt-4">
+        <ChevronLeft size={11} />
+        scratchpad
+      </Link>
     </div>
   );
 }
