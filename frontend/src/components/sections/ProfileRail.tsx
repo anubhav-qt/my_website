@@ -92,8 +92,11 @@ function projectsUsing(item: string) {
   );
 }
 
+const STACK_HINT_SEEN_KEY = 'stack-hint-seen';
+
 function StackPanel() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [hintSeen, setHintSeen] = useState(() => typeof localStorage !== 'undefined' && localStorage.getItem(STACK_HINT_SEEN_KEY) === '1');
   const matches = selected ? projectsUsing(selected) : [];
   const usedInRef = useRef<HTMLDivElement>(null);
 
@@ -101,10 +104,18 @@ function StackPanel() {
     if (selected) usedInRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }, [selected]);
 
+  function selectItem(s: string, isSelected: boolean) {
+    if (!hintSeen) {
+      localStorage.setItem(STACK_HINT_SEEN_KEY, '1');
+      setHintSeen(true);
+    }
+    setSelected(isSelected ? null : s);
+  }
+
   return (
     <div>
       <div className="flex flex-col gap-2">
-        {STACK_GROUPS.map((group) => {
+        {STACK_GROUPS.map((group, groupIdx) => {
           const accent = ACCENT[group.accent];
           return (
             <div key={group.label} className="flex items-start gap-2">
@@ -119,7 +130,7 @@ function StackPanel() {
                   return (
                     <button
                       key={s}
-                      onClick={() => setSelected(isSelected ? null : s)}
+                      onClick={() => selectItem(s, isSelected)}
                       disabled={!hasMatches}
                       className={`inline-flex items-center gap-1 text-[12px] px-1.5 py-0.5 border transition-colors ${
                         isSelected
@@ -135,6 +146,11 @@ function StackPanel() {
                   );
                 })}
               </div>
+              {groupIdx === 0 && !hintSeen && (
+                <span className="hidden sm:inline-block shrink-0 pt-0.5 text-dim text-[11px] italic whitespace-nowrap">
+                  {'<--- click to see where it\'s used'}
+                </span>
+              )}
             </div>
           );
         })}
