@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Build-time generated data, see scripts/fetch-metrics.mjs
+src/data/live-metrics.json
+
+# Supabase CLI local link/cache state
+supabase/.temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

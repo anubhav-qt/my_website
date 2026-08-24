@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
-import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry } from '@/content/scratchpad';
+import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry, type Audience } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 
 type Accent = 'amber' | 'gold' | 'sage' | 'clay';
@@ -73,6 +73,43 @@ const SECTIONS: { key: string; color: Accent; label: string }[] = [
   { key: 'links', color: 'clay', label: 'links' },
 ];
 
+type AudienceFilter = 'all' | Audience;
+
+const FILTER_OPTIONS: { value: AudienceFilter; label: string }[] = [
+  { value: 'all', label: 'all' },
+  { value: 'technical', label: 'technical' },
+  { value: 'non-technical', label: 'non-technical' },
+];
+
+function AudienceFilterBar({ value, onChange }: { value: AudienceFilter; onChange: (v: AudienceFilter) => void }) {
+  return (
+    <div className="flex items-center gap-3 mb-6">
+      <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Filter</span>
+      <span className="flex-1 border-t border-dashed border-border" />
+      <div className="flex gap-1 shrink-0">
+        {FILTER_OPTIONS.map((opt) => {
+          const isActive = value === opt.value;
+          return (
+            <button
+              key={opt.value}
+              onClick={() => onChange(opt.value)}
+              aria-pressed={isActive}
+              className={`
+                text-[11px] font-bold px-2.5 py-1 border transition-all duration-200 lowercase
+                ${isActive
+                  ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
+                  : 'border-border text-dim hover:text-body hover:border-dim'}
+              `}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function Scratchpad() {
   useSEO({
     title: 'Scratchpad',
@@ -86,9 +123,19 @@ export default function Scratchpad() {
     RANDOM_IDEAS.length === 0 &&
     LINKS.length === 0;
 
+  const [audienceFilter, setAudienceFilter] = useState<AudienceFilter>('all');
+  const matches = (audience: Audience) => audienceFilter === 'all' || audienceFilter === audience;
+
+  const filteredWriteups = WRITEUPS.filter((w) => matches(w.audience));
+  const filteredMildlyInteresting = MILDLY_INTERESTING_STUFF.filter((e) => matches(e.audience));
+  const filteredRandomIdeas = RANDOM_IDEAS.filter((e) => matches(e.audience));
+  const filteredLinks = LINKS.filter((l) => matches(l.audience));
+
   return (
     <div className="pb-12">
       <p className="text-xs opacity-75 mb-6">weird and non-weird stuff that came to my mind</p>
+
+      {!isEmpty && <AudienceFilterBar value={audienceFilter} onChange={setAudienceFilter} />}
 
       {isEmpty ? (
         <>
@@ -121,11 +168,18 @@ export default function Scratchpad() {
         </>
       ) : (
         <div className="flex flex-col gap-8">
-          {WRITEUPS.length > 0 && (
+          {filteredWriteups.length === 0 &&
+            filteredMildlyInteresting.length === 0 &&
+            filteredRandomIdeas.length === 0 &&
+            filteredLinks.length === 0 && (
+              <p className="text-dim text-xs italic">nothing matches that filter yet</p>
+            )}
+
+          {filteredWriteups.length > 0 && (
             <div>
-              <SectionHeader color="amber" label="writeups" count={WRITEUPS.length} latest={WRITEUPS[0]?.date} />
+              <SectionHeader color="amber" label="writeups" count={filteredWriteups.length} latest={filteredWriteups[0]?.date} />
               <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1">
-                {WRITEUPS.map((w) => (
+                {filteredWriteups.map((w) => (
                   <Link
                     key={w.id}
                     to={`/scratchpad/${w.slug}`}
@@ -153,30 +207,30 @@ export default function Scratchpad() {
             </div>
           )}
 
-          {MILDLY_INTERESTING_STUFF.length > 0 && (
+          {filteredMildlyInteresting.length > 0 && (
             <div>
               <SectionHeader
                 color="gold"
                 label="mildly interesting stuff"
-                count={MILDLY_INTERESTING_STUFF.length}
-                latest={MILDLY_INTERESTING_STUFF[0]?.date}
+                count={filteredMildlyInteresting.length}
+                latest={filteredMildlyInteresting[0]?.date}
               />
-              <CollapsibleList entries={MILDLY_INTERESTING_STUFF} accent="gold" />
+              <CollapsibleList entries={filteredMildlyInteresting} accent="gold" />
             </div>
           )}
 
-          {RANDOM_IDEAS.length > 0 && (
+          {filteredRandomIdeas.length > 0 && (
             <div>
-              <SectionHeader color="sage" label="random ideas" count={RANDOM_IDEAS.length} latest={RANDOM_IDEAS[0]?.date} />
-              <CollapsibleList entries={RANDOM_IDEAS} accent="sage" />
+              <SectionHeader color="sage" label="random ideas" count={filteredRandomIdeas.length} latest={filteredRandomIdeas[0]?.date} />
+              <CollapsibleList entries={filteredRandomIdeas} accent="sage" />
             </div>
           )}
 
-          {LINKS.length > 0 && (
+          {filteredLinks.length > 0 && (
             <div>
-              <SectionHeader color="clay" label="links" count={LINKS.length} latest={LINKS[0]?.date} />
+              <SectionHeader color="clay" label="links" count={filteredLinks.length} latest={filteredLinks[0]?.date} />
               <div className="max-h-[192px] overflow-y-auto pr-1">
-                {LINKS.map((l) => (
+                {filteredLinks.map((l) => (
                   <a
                     key={l.id}
                     href={l.url}

@@ -1,7 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Eye } from 'lucide-react';
 import { WRITEUPS } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
+import { useViewTracking } from '@/hooks/useViewTracking';
+import { CommentThread } from '@/components/CommentThread';
 
 export default function ScratchpadEntry() {
   const { slug } = useParams<{ slug: string }>();
@@ -9,6 +11,7 @@ export default function ScratchpadEntry() {
   const entry = index >= 0 ? WRITEUPS[index] : undefined;
   const prev = index > 0 ? WRITEUPS[index - 1] : undefined;
   const next = index >= 0 && index < WRITEUPS.length - 1 ? WRITEUPS[index + 1] : undefined;
+  const views = useViewTracking('scratchpad', slug ?? '');
 
   useSEO({
     title: entry ? entry.title : 'Scratchpad',
@@ -53,6 +56,11 @@ export default function ScratchpadEntry() {
               {t}
             </span>
           ))}
+          <span className="flex-1" />
+          <span className="flex items-center gap-1 text-dim text-[11px]">
+            <Eye size={11} />
+            {views}
+          </span>
         </div>
 
         {entry.body.map((p, i) => (
@@ -60,6 +68,8 @@ export default function ScratchpadEntry() {
             {p}
           </p>
         ))}
+
+        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" />
       </div>
 
       <div className="flex gap-3 pt-3 border-t-2 border-border">

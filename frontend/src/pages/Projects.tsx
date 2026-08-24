@@ -4,6 +4,8 @@ import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
 import { SpoinSimulator } from '../components/simulator/SpoinSimulator';
+import { SpoinTopics } from '@/components/SpoinTopics';
+import { CommentThread } from '@/components/CommentThread';
 import { useSEO } from '@/hooks/useSEO';
 
 export default function Projects() {
@@ -256,8 +258,11 @@ export default function Projects() {
                             </div>
                           </>
                         )}
+                        <SpoinTopics />
                       </div>
                     )}
+
+                    <CommentThread targetType="project" targetId={p.id} accent="amber" />
                   </div>
                 )}
               </li>
