@@ -4,8 +4,15 @@ import { LinkedinIcon } from '../components/icons/LinkedinIcon';
 import { PROFILE } from '@/content/site';
 import { ProfileRail } from '@/components/sections/ProfileRail';
 import { FeaturedProjects } from '@/components/sections/FeaturedProjects';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function Home() {
+  useSEO({
+    title: `${PROFILE.name} — ${PROFILE.role}`,
+    description: 'Backend engineer working on AI infrastructure. Spoin, Continuum, and the systems in between.',
+    path: '/',
+  });
+
   return (
     <div>
       <div className="mb-2">

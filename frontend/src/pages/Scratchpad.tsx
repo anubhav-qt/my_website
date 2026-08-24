@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
 import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry } from '@/content/scratchpad';
+import { useSEO } from '@/hooks/useSEO';
 
 type Accent = 'amber' | 'gold' | 'sage' | 'clay';
 
@@ -73,6 +74,12 @@ const SECTIONS: { key: string; color: Accent; label: string }[] = [
 ];
 
 export default function Scratchpad() {
+  useSEO({
+    title: 'Scratchpad',
+    description: 'Weird and non-weird stuff: writeups, half-formed ideas, and links worth remembering.',
+    path: '/scratchpad',
+  });
+
   const isEmpty =
     WRITEUPS.length === 0 &&
     MILDLY_INTERESTING_STUFF.length === 0 &&

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        background: #1b1e24;
+        font-family: 'IBM Plex Mono', monospace;
+        overflow: hidden;
+      }
+      .card {
+        width: 1200px;
+        height: 630px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 90px;
+        position: relative;
+      }
+      .prompt {
+        color: #5c6472;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 18px;
+      }
+      .name {
+        color: #eef0f4;
+        font-size: 64px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .role {
+        color: #d98a4f;
+        font-size: 28px;
+        font-weight: 600;
+        margin-top: 14px;
+      }
+      .tagline {
+        color: #a7afbd;
+        font-size: 20px;
+        margin-top: 28px;
+        max-width: 780px;
+        line-height: 1.5;
+      }
+      .bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background: #d98a4f;
+      }
+      .url {
+        position: absolute;
+        bottom: 48px;
+        left: 90px;
+        color: #5c6472;
+        font-size: 18px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="bar"></div>
+      <div class="prompt">&gt; whoami</div>
+      <div class="name">Anubhav Joshi</div>
+      <div class="role">backend engineer</div>
+      <div class="tagline">
+        working on AI infrastructure. Spoin, Continuum, and the systems in between.
+      </div>
+      <div class="url">anubhav-qt.dev</div>
+    </div>
+  </body>
+</html>
