@@ -96,6 +96,15 @@ different device). Site-wide view recording has been live since **2026-08-24 21:
 UTC** (the first row in the `views` table with `target_type = 'site'`) — any total shown
 reflects visits from that point on, not all-time traffic before the feature existed.
 
+`frontend/src/lib/bot.ts` skips recording (and skips the wake-ping) for requests that look
+like a link-preview crawler (LinkedIn, Slack, Discord, Twitter, etc. all self-identify in
+their user-agent, and most run stock headless Chrome without hiding `navigator.webdriver`)
+-- sharing a link and having that platform unfurl it no longer inflates the count. This is
+a best-effort filter for polite, self-identifying bots, not real bot detection: anything
+actively trying to look like a real browser gets through, same as it would for any
+client-side check. Treat the counter as a rough engagement number, not analytics-grade
+traffic -- Vercel Analytics (already wired up) is the real source for that.
+
 ### Updating a metric
 
 Project metrics (corpus size, throughput, etc. on `/projects`) are static at build time,
