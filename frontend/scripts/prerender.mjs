@@ -79,6 +79,15 @@ async function main() {
       if (req.url().includes('/_vercel/')) req.abort();
       else req.continue();
     });
+    // This headless browser has no visitor's real localStorage, so any
+    // "have you seen this before" UI (e.g. the stack panel's one-time hint,
+    // see ProfileRail.tsx) would otherwise always render as "first visit"
+    // in the static snapshot -- which most real visitors, being returning
+    // ones, have already dismissed. Force it to the seen state so crawlers
+    // and the pre-JS paint don't show a hint most people no longer see.
+    await page.evaluateOnNewDocument(() => {
+      localStorage.setItem('stack-hint-seen', '1');
+    });
 
     for (const route of ROUTES) {
       await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0' });

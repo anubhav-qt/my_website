@@ -96,18 +96,17 @@ const STACK_HINT_SEEN_KEY = 'stack-hint-seen';
 
 function StackPanel() {
   const [selected, setSelected] = useState<string | null>(null);
-  // Starts hidden (matches the prerendered static snapshot, which has no
-  // access to any visitor's localStorage) and only reveals itself after
-  // mount, once we've confirmed this browser hasn't seen it yet -- avoids
-  // the flash-then-vanish that reading localStorage in the initializer
-  // caused on every reload of a returning visitor.
-  const [hintSeen, setHintSeen] = useState(true);
+  // main.tsx uses createRoot (not hydrateRoot) -- the client fully replaces
+  // the prerendered static HTML in one synchronous commit, it never
+  // reconciles against it. So reading localStorage directly here is already
+  // correct on the very first real paint; no hydration mismatch to guard
+  // against. (The prerender step itself forces this to 'seen' so the static
+  // snapshot -- which crawlers and pre-JS page loads briefly show -- never
+  // bakes in a hint that most real visitors have already dismissed; see
+  // scripts/prerender.mjs.)
+  const [hintSeen, setHintSeen] = useState(() => localStorage.getItem(STACK_HINT_SEEN_KEY) === '1');
   const matches = selected ? projectsUsing(selected) : [];
   const usedInRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (localStorage.getItem(STACK_HINT_SEEN_KEY) !== '1') setHintSeen(false);
-  }, []);
 
   useEffect(() => {
     if (selected) usedInRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
