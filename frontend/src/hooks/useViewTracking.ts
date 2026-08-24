@@ -40,3 +40,16 @@ export function useViewTracking(targetType: TargetType, targetId: string, record
   const { data } = useSupabaseQuery(() => fetchViewCount(targetType, targetId), [targetType, targetId]);
   return data ?? 0;
 }
+
+async function fetchTotalViews(): Promise<number> {
+  if (!supabase) return 0;
+  const { count, error } = await supabase.from('views').select('*', { count: 'exact', head: true });
+  if (error) throw error;
+  return count ?? 0;
+}
+
+// Site-wide total across every target -- read-only, records nothing.
+export function useTotalViews(): number {
+  const { data } = useSupabaseQuery(fetchTotalViews, []);
+  return data ?? 0;
+}

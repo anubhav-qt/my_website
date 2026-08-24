@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom';
+import { Eye } from 'lucide-react';
+import { useTotalViews } from '@/hooks/useViewTracking';
 
 const LINKS = [
   { to: '/', label: 'home', end: true },
@@ -8,10 +10,12 @@ const LINKS = [
 ];
 
 export function Nav() {
+  const totalViews = useTotalViews();
+
   return (
     <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur">
       <div className="max-w-2xl mx-auto px-5 pt-3">
-        <nav className="flex gap-5 text-sm font-bold border-b-2 border-border pb-[7px]">
+        <nav className="flex items-center gap-5 text-sm font-bold border-b-2 border-border pb-[7px]">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
@@ -26,6 +30,11 @@ export function Nav() {
               {l.label}
             </NavLink>
           ))}
+          <span className="flex-1" />
+          <span className="flex items-center gap-1 text-dim text-[11px] font-normal border border-border px-1.5 py-0.5 shrink-0">
+            <Eye size={11} />
+            {totalViews}
+          </span>
         </nav>
       </div>
     </header>

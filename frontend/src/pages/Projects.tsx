@@ -37,7 +37,6 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
           <span className="text-dim text-[10px] uppercase tracking-wide font-bold">{p.category}</span>
         </div>
         <div className="flex items-center gap-2.5">
-          <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
           {p.repoUrl && (
             <a
               href={p.repoUrl}
@@ -50,6 +49,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               <ExternalLink size={12} />
             </a>
           )}
+          <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
           <ChevronDown
             size={13}
             className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
