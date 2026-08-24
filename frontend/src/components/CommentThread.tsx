@@ -73,12 +73,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
   },
 };
 
-interface LikeRow {
-  target_type: TargetType;
-  target_id: string;
-  session_id: string;
-}
-
 interface ThreadNode extends Comment {
   children: ThreadNode[];
 }
@@ -120,27 +114,46 @@ async function fetchComments(targetType: TargetType, targetId: string): Promise<
   return data as Comment[];
 }
 
-async function fetchLikes(targetType: TargetType, targetId: string): Promise<LikeRow[]> {
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from('likes')
-    .select('target_type, target_id, session_id')
-    .eq('target_type', targetType)
-    .eq('target_id', targetId);
+interface CommentLikeRow {
+  comment_id: string;
+  session_id: string;
+}
+
+async function fetchCommentLikes(commentIds: string[]): Promise<CommentLikeRow[]> {
+  if (!supabase || commentIds.length === 0) return [];
+  const { data, error } = await supabase.from('comment_likes').select('comment_id, session_id').in('comment_id', commentIds);
   if (error) throw error;
-  return data as LikeRow[];
+  return data as CommentLikeRow[];
 }
 
 const POST_COOLDOWN_MS = 15_000;
 
-export function CommentThread({ targetType, targetId, accent }: { targetType: TargetType; targetId: string; accent: Accent }) {
+interface LikeState {
+  liked: boolean;
+  count: number;
+  toggle: () => void;
+  available: boolean;
+}
+
+export function CommentThread({
+  targetType,
+  targetId,
+  accent,
+  like,
+}: {
+  targetType: TargetType;
+  targetId: string;
+  accent: Accent;
+  like: LikeState;
+}) {
   const { data: comments, refetch: refetchComments } = useSupabaseQuery(
     () => fetchComments(targetType, targetId),
     [targetType, targetId],
   );
-  const { data: likes, refetch: refetchLikes } = useSupabaseQuery(
-    () => fetchLikes(targetType, targetId),
-    [targetType, targetId],
+  const commentIds = useMemo(() => (comments ?? []).map((c) => c.id), [comments]);
+  const { data: commentLikes, refetch: refetchCommentLikes } = useSupabaseQuery(
+    () => fetchCommentLikes(commentIds),
+    [commentIds.join(',')],
   );
 
   const [nickname, setNickname] = useState('');
@@ -153,6 +166,24 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
   const sessionId = useMemo(() => getSessionId(), []);
 
   const onCooldown = Date.now() - lastPostedAt < POST_COOLDOWN_MS;
+
+  function commentLikeCount(commentId: string): number {
+    return (commentLikes ?? []).filter((l) => l.comment_id === commentId).length;
+  }
+
+  function commentLikedByMe(commentId: string): boolean {
+    return (commentLikes ?? []).some((l) => l.comment_id === commentId && l.session_id === sessionId);
+  }
+
+  async function toggleCommentLike(commentId: string) {
+    if (!supabase) return;
+    if (commentLikedByMe(commentId)) {
+      await supabase.from('comment_likes').delete().eq('comment_id', commentId).eq('session_id', sessionId);
+    } else {
+      await supabase.from('comment_likes').insert({ comment_id: commentId, session_id: sessionId });
+    }
+    refetchCommentLikes();
+  }
 
   async function post(parentId: string | null, nick: string, text: string, onDone: () => void) {
     if (!supabase || onCooldown || !nick.trim() || !text.trim()) return;
@@ -170,26 +201,10 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
     }
   }
 
-  async function toggleLike() {
-    if (!supabase) return;
-    const alreadyLiked = (likes ?? []).length > 0 && likedByMe(likes ?? [], sessionId);
-    if (alreadyLiked) {
-      await supabase.from('likes').delete().eq('target_type', targetType).eq('target_id', targetId).eq('session_id', sessionId);
-    } else {
-      await supabase.from('likes').insert({ target_type: targetType, target_id: targetId, session_id: sessionId });
-    }
-    refetchLikes();
-  }
-
-  function likedByMe(rows: LikeRow[], sid: string): boolean {
-    return rows.some((r) => r.session_id === sid);
-  }
-
-  const liked = likedByMe(likes ?? [], sessionId);
-
   function renderNode(node: ThreadNode, depth: number) {
     const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-4' : 'ml-8';
     const borderClass = depth === 0 ? ACCENT[accent].border30 : depth === 1 ? ACCENT[accent].border18 : 'border-border';
+    const liked = commentLikedByMe(node.id);
     return (
       <div key={node.id} className={`pl-2.5 py-2 border-l-2 ${borderClass} ${indentClass}`}>
         <div className="flex items-baseline gap-2">
@@ -197,12 +212,22 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
           <span className="text-dim text-[10.5px]">{relativeTime(node.created_at)}</span>
         </div>
         <p className="text-body/90 text-[12.5px] leading-relaxed mt-0.5">{node.body}</p>
-        <button
-          onClick={() => setReplyingTo(replyingTo === node.id ? null : node.id)}
-          className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors mt-1`}
-        >
-          reply
-        </button>
+        <div className="flex items-center gap-3 mt-1">
+          <button
+            onClick={() => toggleCommentLike(node.id)}
+            disabled={!supabase}
+            className={`flex items-center gap-1 text-[10.5px] font-bold disabled:opacity-40 transition-colors ${liked ? ACCENT[accent].likeActive : ACCENT[accent].replyLink}`}
+          >
+            <Heart size={10} fill={liked ? 'currentColor' : 'none'} />
+            <span>{commentLikeCount(node.id)}</span>
+          </button>
+          <button
+            onClick={() => setReplyingTo(replyingTo === node.id ? null : node.id)}
+            className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors`}
+          >
+            reply
+          </button>
+        </div>
         {replyingTo === node.id && (
           <div className="mt-2 p-2 bg-surface border-l-2 border-border">
             <div className="flex gap-1.5">
@@ -245,15 +270,21 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
     <div className="mt-4 pt-3 border-t border-dashed border-border">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
-        <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Discussion</span>
+        <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
         <span className="flex-1 border-t border-dashed border-border" />
+        <span className="text-dim text-[10px] shrink-0 mr-1">{(comments ?? []).length}</span>
         <button
-          onClick={toggleLike}
-          disabled={!supabase}
-          className={`flex items-center gap-1 text-[10.5px] disabled:opacity-40 transition-colors ${liked ? ACCENT[accent].likeActive : ACCENT[accent].replyLink}`}
+          onClick={like.toggle}
+          disabled={!like.available}
+          aria-pressed={like.liked}
+          className={`flex items-center gap-1.5 text-xs font-bold px-2 py-1 border disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${
+            like.liked
+              ? `${ACCENT[accent].border} ${ACCENT[accent].likeActive} bg-current/10`
+              : `border-border text-dim hover:${ACCENT[accent].text} hover:${ACCENT[accent].border}`
+          }`}
         >
-          <Heart size={11} fill={liked ? 'currentColor' : 'none'} />
-          <span>{(likes ?? []).length}</span>
+          <Heart size={13} fill={like.liked ? 'currentColor' : 'none'} />
+          <span>{like.count}</span>
         </button>
       </div>
 

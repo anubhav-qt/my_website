@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
-import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry, type Audience } from '@/content/scratchpad';
+import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry, type LinkEntry, type Audience } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
+import { useViewTracking } from '@/hooks/useViewTracking';
+import { useLikeTracking } from '@/hooks/useLikeTracking';
+import { ContentMeta } from '@/components/ContentMeta';
+import { CommentThread } from '@/components/CommentThread';
 
 type Accent = 'amber' | 'gold' | 'sage' | 'clay';
 
@@ -34,34 +38,84 @@ function SectionHeader({ color, label, count, latest }: { color: Accent; label: 
   );
 }
 
+function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: CollapsibleEntry; accent: Accent; isOpen: boolean; onToggleOpen: () => void }) {
+  const views = useViewTracking('scratchpad', entry.id, isOpen);
+  const like = useLikeTracking('scratchpad', entry.id);
+
+  return (
+    <div className="border-b border-dashed border-border/60 py-1.5">
+      <div className="flex items-baseline gap-2 cursor-pointer" onClick={onToggleOpen}>
+        <span className="text-dim text-[11px] w-[78px] shrink-0">{entry.date}</span>
+        {isOpen ? (
+          <ChevronDown size={10} className={`${TEXT[accent]} shrink-0 translate-y-px`} />
+        ) : (
+          <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
+        )}
+        <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
+        <span className="flex-1" />
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+      </div>
+      {isOpen && (
+        <div className="pl-[97px] pr-1">
+          <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1">{entry.body}</p>
+          <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} like={like} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; accent: Accent }) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <div className="max-h-[184px] overflow-y-auto pr-1">
-      {entries.map((entry) => {
-        const isOpen = openId === entry.id;
-        return (
-          <div
-            key={entry.id}
-            className="border-b border-dashed border-border/60 py-1.5 cursor-pointer"
-            onClick={() => setOpenId(isOpen ? null : entry.id)}
-          >
-            <div className="flex items-baseline gap-2">
-              <span className="text-dim text-[11px] w-[78px] shrink-0">{entry.date}</span>
-              {isOpen ? (
-                <ChevronDown size={10} className={`${TEXT[accent]} shrink-0 translate-y-px`} />
-              ) : (
-                <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
-              )}
-              <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
-            </div>
-            {isOpen && (
-              <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1 pl-[97px]">{entry.body}</p>
-            )}
-          </div>
-        );
-      })}
+    <div className="max-h-none overflow-y-auto pr-1">
+      {entries.map((entry) => (
+        <CollapsibleRow
+          key={entry.id}
+          entry={entry}
+          accent={accent}
+          isOpen={openId === entry.id}
+          onToggleOpen={() => setOpenId(openId === entry.id ? null : entry.id)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: boolean; onToggleOpen: () => void }) {
+  const views = useViewTracking('scratchpad', link.id, isOpen);
+  const like = useLikeTracking('scratchpad', link.id);
+
+  return (
+    <div className="border-b border-dashed border-border/60 py-2">
+      <div className="flex items-baseline gap-2 cursor-pointer group" onClick={onToggleOpen}>
+        <span className="text-dim text-[11px] w-[78px] shrink-0">{link.date}</span>
+        {isOpen ? (
+          <ChevronDown size={10} className="text-clay shrink-0 translate-y-px" />
+        ) : (
+          <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
+        )}
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="text-clay text-xs font-semibold leading-relaxed hover:text-heading hover:underline underline-offset-4"
+        >
+          {link.title}
+        </a>
+        <ExternalLink size={11} className="text-dim shrink-0 translate-y-px" />
+        <span className="flex-1" />
+        <span className="text-dim text-[11px] shrink-0">{link.domain}</span>
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+      </div>
+      <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[97px]">{link.commentary}</p>
+      {isOpen && (
+        <div className="pl-[97px] pr-1">
+          <CommentThread targetType="scratchpad" targetId={link.id} accent="clay" like={like} />
+        </div>
+      )}
     </div>
   );
 }
@@ -73,39 +127,34 @@ const SECTIONS: { key: string; color: Accent; label: string }[] = [
   { key: 'links', color: 'clay', label: 'links' },
 ];
 
-type AudienceFilter = 'all' | Audience;
-
-const FILTER_OPTIONS: { value: AudienceFilter; label: string }[] = [
-  { value: 'all', label: 'all' },
+const FILTER_OPTIONS: { value: Audience; label: string }[] = [
   { value: 'technical', label: 'technical' },
   { value: 'non-technical', label: 'non-technical' },
 ];
 
-function AudienceFilterBar({ value, onChange }: { value: AudienceFilter; onChange: (v: AudienceFilter) => void }) {
+// No "all" pill: none selected (or both selected) both mean "show
+// everything". Only one selected narrows the list.
+function AudienceFilterBar({ selected, onToggle }: { selected: Set<Audience>; onToggle: (v: Audience) => void }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
-      <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Filter</span>
-      <span className="flex-1 border-t border-dashed border-border" />
-      <div className="flex gap-1 shrink-0">
-        {FILTER_OPTIONS.map((opt) => {
-          const isActive = value === opt.value;
-          return (
-            <button
-              key={opt.value}
-              onClick={() => onChange(opt.value)}
-              aria-pressed={isActive}
-              className={`
-                text-[11px] font-bold px-2.5 py-1 border transition-all duration-200 lowercase
-                ${isActive
-                  ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
-                  : 'border-border text-dim hover:text-body hover:border-dim'}
-              `}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex gap-1 shrink-0">
+      {FILTER_OPTIONS.map((opt) => {
+        const isActive = selected.has(opt.value);
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onToggle(opt.value)}
+            aria-pressed={isActive}
+            className={`
+              text-[11px] font-bold px-2.5 py-1 border transition-all duration-200 lowercase
+              ${isActive
+                ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
+                : 'border-border text-dim hover:text-body hover:border-dim'}
+            `}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -123,8 +172,16 @@ export default function Scratchpad() {
     RANDOM_IDEAS.length === 0 &&
     LINKS.length === 0;
 
-  const [audienceFilter, setAudienceFilter] = useState<AudienceFilter>('all');
-  const matches = (audience: Audience) => audienceFilter === 'all' || audienceFilter === audience;
+  const [openLinkId, setOpenLinkId] = useState<string | null>(null);
+  const [selectedAudiences, setSelectedAudiences] = useState<Set<Audience>>(new Set());
+  const toggleAudience = (v: Audience) =>
+    setSelectedAudiences((prev) => {
+      const next = new Set(prev);
+      if (next.has(v)) next.delete(v);
+      else next.add(v);
+      return next;
+    });
+  const matches = (audience: Audience) => selectedAudiences.size === 0 || selectedAudiences.has(audience);
 
   const filteredWriteups = WRITEUPS.filter((w) => matches(w.audience));
   const filteredMildlyInteresting = MILDLY_INTERESTING_STUFF.filter((e) => matches(e.audience));
@@ -133,9 +190,10 @@ export default function Scratchpad() {
 
   return (
     <div className="pb-12">
-      <p className="text-xs opacity-75 mb-6">weird and non-weird stuff that came to my mind</p>
-
-      {!isEmpty && <AudienceFilterBar value={audienceFilter} onChange={setAudienceFilter} />}
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <p className="text-xs opacity-75">weird and non-weird stuff that came to my mind</p>
+        {!isEmpty && <AudienceFilterBar selected={selectedAudiences} onToggle={toggleAudience} />}
+      </div>
 
       {isEmpty ? (
         <>
@@ -229,26 +287,14 @@ export default function Scratchpad() {
           {filteredLinks.length > 0 && (
             <div>
               <SectionHeader color="clay" label="links" count={filteredLinks.length} latest={filteredLinks[0]?.date} />
-              <div className="max-h-[192px] overflow-y-auto pr-1">
+              <div className="pr-1">
                 {filteredLinks.map((l) => (
-                  <a
+                  <LinkRow
                     key={l.id}
-                    href={l.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block border-b border-dashed border-border/60 py-2 group"
-                  >
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-dim text-[11px] w-[78px] shrink-0">{l.date}</span>
-                      <span className="text-clay text-xs font-semibold leading-relaxed group-hover:text-heading group-hover:underline underline-offset-4">
-                        {l.title}
-                      </span>
-                      <ExternalLink size={11} className="text-dim shrink-0 translate-y-px" />
-                      <span className="flex-1" />
-                      <span className="text-dim text-[11px] shrink-0">{l.domain}</span>
-                    </div>
-                    <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[97px]">{l.commentary}</p>
-                  </a>
+                    link={l}
+                    isOpen={openLinkId === l.id}
+                    onToggleOpen={() => setOpenLinkId(openLinkId === l.id ? null : l.id)}
+                  />
                 ))}
               </div>
             </div>

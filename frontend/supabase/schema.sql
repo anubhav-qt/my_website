@@ -56,8 +56,11 @@ create policy "comments_insert_all" on comments
   for insert with check (deleted_at is null);
 
 -- ---------------------------------------------------------------------------
--- likes: one row per (target, session). The unique constraint makes a
--- repeat like from the same session a no-op via upsert-with-ignore.
+-- likes: one row per (target, session) -- a page-level like (this writeup,
+-- this scratchpad entry, this project), not a per-comment upvote. A session
+-- can insert and delete its own like freely (there's no real per-session
+-- auth here, same trust model as comments/topic suggestions) -- the delete
+-- policy is what makes the toggle-off actually work.
 -- ---------------------------------------------------------------------------
 create table if not exists likes (
   target_type text not null check (target_type in ('scratchpad', 'project')),
@@ -76,6 +79,37 @@ create policy "likes_select_all" on likes
 drop policy if exists "likes_insert_all" on likes;
 create policy "likes_insert_all" on likes
   for insert with check (true);
+
+drop policy if exists "likes_delete_all" on likes;
+create policy "likes_delete_all" on likes
+  for delete using (true);
+
+-- ---------------------------------------------------------------------------
+-- comment_likes: a separate table for per-comment (Reddit-style) upvotes,
+-- independent of the page-level `likes` above -- a visitor can like the
+-- whole page AND individual comments on it. Same session-scoped, freely
+-- insert/delete trust model.
+-- ---------------------------------------------------------------------------
+create table if not exists comment_likes (
+  comment_id uuid not null references comments (id) on delete cascade,
+  session_id uuid not null,
+  created_at timestamptz not null default now(),
+  primary key (comment_id, session_id)
+);
+
+alter table comment_likes enable row level security;
+
+drop policy if exists "comment_likes_select_all" on comment_likes;
+create policy "comment_likes_select_all" on comment_likes
+  for select using (true);
+
+drop policy if exists "comment_likes_insert_all" on comment_likes;
+create policy "comment_likes_insert_all" on comment_likes
+  for insert with check (true);
+
+drop policy if exists "comment_likes_delete_all" on comment_likes;
+create policy "comment_likes_delete_all" on comment_likes
+  for delete using (true);
 
 -- ---------------------------------------------------------------------------
 -- views: same one-row-per-session shape as likes. "Any number of clicks
