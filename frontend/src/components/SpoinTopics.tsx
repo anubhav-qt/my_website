@@ -41,7 +41,7 @@ export function SpoinTopics() {
   }
 
   return (
-    <div className="mt-3 pt-2.5 border-t border-dashed border-border/70">
+    <div className="mt-3">
       <div className="flex items-center gap-2 mb-2">
         <span className="w-1.5 h-1.5 shrink-0 bg-amber" />
         <span className="text-[10px] uppercase tracking-widest font-bold text-amber shrink-0">Live Topics</span>
