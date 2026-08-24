@@ -267,7 +267,7 @@ export function CommentThread({
   }
 
   return (
-    <div className="mt-4 pt-3 border-t border-dashed border-border">
+    <div className="mt-4">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
         <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
