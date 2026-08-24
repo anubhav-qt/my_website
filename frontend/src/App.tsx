@@ -8,6 +8,7 @@ import ScratchpadEntry from './pages/ScratchpadEntry';
 import Contact from './pages/Contact';
 import { supabase } from './lib/supabase';
 import { recordSiteVisit } from './hooks/useViewTracking';
+import { isLikelyBot } from './lib/bot';
 
 // Every page, once visited, stays mounted for the rest of the tab session instead of
 // unmounting on navigation, so scroll position, open accordions, and things like the
@@ -21,6 +22,7 @@ export default function App() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (isLikelyBot()) return;
     // Fired once per tab: keeps the Supabase project's request-activity clock
     // warm before a visitor reaches the topic-suggestion form. No-op until
     // the backend is provisioned (supabase is null, see lib/supabase.ts).

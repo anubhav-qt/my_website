@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
 import { getSessionId } from '@/lib/session';
+import { isLikelyBot } from '@/lib/bot';
 import type { TargetType } from '@/lib/backend-types';
 
 async function fetchViewCount(targetType: TargetType, targetId: string): Promise<number> {
@@ -27,7 +28,7 @@ async function fetchViewCount(targetType: TargetType, targetId: string): Promise
 // collapsed by default) should pass `record` only once the user opens it.
 export function useViewTracking(targetType: TargetType, targetId: string, record = true): number {
   useEffect(() => {
-    if (!supabase || !targetId || !record) return;
+    if (!supabase || !targetId || !record || isLikelyBot()) return;
     supabase
       .from('views')
       .upsert(
@@ -49,7 +50,7 @@ const SITE_TARGET_TYPE = 'site';
 const SITE_TARGET_ID = 'site';
 
 export function recordSiteVisit() {
-  if (!supabase) return;
+  if (!supabase || isLikelyBot()) return;
   supabase
     .from('views')
     .upsert(
