@@ -41,15 +41,38 @@ export function useViewTracking(targetType: TargetType, targetId: string, record
   return data ?? 0;
 }
 
-async function fetchTotalViews(): Promise<number> {
+// A dedicated views row, target_type='site' target_id='site', separate from
+// every per-content view count. One per session, same dedup-by-primary-key
+// behavior as useViewTracking -- this is "how many sessions have opened the
+// site", not a sum of every project/writeup view.
+const SITE_TARGET_TYPE = 'site';
+const SITE_TARGET_ID = 'site';
+
+export function recordSiteVisit() {
+  if (!supabase) return;
+  supabase
+    .from('views')
+    .upsert(
+      { target_type: SITE_TARGET_TYPE, target_id: SITE_TARGET_ID, session_id: getSessionId() },
+      { onConflict: 'target_type,target_id,session_id', ignoreDuplicates: true },
+    )
+    .then(() => {});
+}
+
+async function fetchSiteViews(): Promise<number> {
   if (!supabase) return 0;
-  const { count, error } = await supabase.from('views').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('views')
+    .select('*', { count: 'exact', head: true })
+    .eq('target_type', SITE_TARGET_TYPE)
+    .eq('target_id', SITE_TARGET_ID);
   if (error) throw error;
   return count ?? 0;
 }
 
-// Site-wide total across every target -- read-only, records nothing.
+// Read-only -- recording happens once via recordSiteVisit() on app mount
+// (see App.tsx), not from every component that displays the count.
 export function useTotalViews(): number {
-  const { data } = useSupabaseQuery(fetchTotalViews, []);
+  const { data } = useSupabaseQuery(fetchSiteViews, []);
   return data ?? 0;
 }
