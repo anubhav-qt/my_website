@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { WRITEUPS } from '@/content/scratchpad';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function ScratchpadEntry() {
   const { slug } = useParams<{ slug: string }>();
@@ -8,6 +9,12 @@ export default function ScratchpadEntry() {
   const entry = index >= 0 ? WRITEUPS[index] : undefined;
   const prev = index > 0 ? WRITEUPS[index - 1] : undefined;
   const next = index >= 0 && index < WRITEUPS.length - 1 ? WRITEUPS[index + 1] : undefined;
+
+  useSEO({
+    title: entry ? entry.title : 'Scratchpad',
+    description: entry ? entry.dek : 'Nothing here by that name.',
+    path: `/scratchpad/${slug ?? ''}`,
+  });
 
   if (!entry) {
     return (

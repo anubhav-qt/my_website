@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/prerender.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "tsx src/lib/simulator/__tests__/engine.test.ts",
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
+    "puppeteer": "^25.8.0",
     "tsx": "^4.23.12",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { PROFILE } from '@/content/site';
+import { useSEO } from '@/hooks/useSEO';
 
 const CHANNELS = [
   {
@@ -46,6 +47,12 @@ const TEXT = {
 };
 
 export default function Contact() {
+  useSEO({
+    title: 'Contact',
+    description: `Get in touch with ${PROFILE.name}, open to Backend, AI Infrastructure, and Systems Engineering roles.`,
+    path: '/contact',
+  });
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {

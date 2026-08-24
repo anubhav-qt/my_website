@@ -4,8 +4,15 @@ import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
 import { SpoinSimulator } from '../components/simulator/SpoinSimulator';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function Projects() {
+  useSEO({
+    title: 'Projects',
+    description: 'Case studies and a runnable simulator: Spoin, a CQRS pipeline and quota governor, and Continuum, a film studio continuity OS.',
+    path: '/projects',
+  });
+
   const location = useLocation();
   const [simOpen, setSimOpen] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
