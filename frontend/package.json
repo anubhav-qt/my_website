@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/fetch-metrics.mjs",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/prerender.mjs",
     "lint": "oxlint",
@@ -14,6 +15,7 @@
   },
   "dependencies": {
     "@icons-pack/react-simple-icons": "^13.15.1",
+    "@supabase/supabase-js": "^2.112.4",
     "@tailwindcss/vite": "^4.3.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",

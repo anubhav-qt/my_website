@@ -1,3 +1,5 @@
+import liveMetricsData from '@/data/live-metrics.json';
+
 export interface ProjectAudit {
   problem: string;
   constraint: string;
@@ -26,7 +28,7 @@ export interface ProjectItem {
   team?: { note: string; collaborators: Collaborator[] };
 }
 
-export const PROJECTS: ProjectItem[] = [
+const RAW_PROJECTS: ProjectItem[] = [
   {
     id: 'spoin',
     title: 'Spoin: CQRS Pipeline & Quota Governor',
@@ -255,3 +257,13 @@ export const PROJECTS: ProjectItem[] = [
     },
   },
 ];
+
+// Overrides RAW_PROJECTS's static metrics with whatever fetch-metrics.mjs
+// last pulled from Supabase at build time (see scripts/fetch-metrics.mjs).
+// A project with no live rows keeps its hand-written literals.
+const liveMetrics = liveMetricsData as Record<string, { label: string; value: string; detail?: string }[]>;
+
+export const PROJECTS: ProjectItem[] = RAW_PROJECTS.map((p) => {
+  const live = liveMetrics[p.id];
+  return live && live.length > 0 ? { ...p, metrics: live } : p;
+});

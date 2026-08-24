@@ -1,28 +1,44 @@
-# anubhav-qt (my_website_v1)
+# anubhav-qt
 
-Personal site. Live at [anubhav-qt.dev](https://anubhav-qt.dev).
-
-> **Status note**: v1. All pages (`/`, `/projects`, `/scratchpad`, `/contact`) are hand-crafted and finished. Content is static, sourced from `frontend/src/content/` and `frontend/src/data/synced-docs.json`.
+```
+──────────────────────────────────────────
+  personal site + dev log
+  live at anubhav-qt.dev
+──────────────────────────────────────────
+```
 
 ## Stack
 
-- **frontend/** — React 19 + TypeScript + Vite + Tailwind v4, deployed on Vercel
-- **backend/** — not started yet; planned for v2 (see Roadmap below)
+| | |
+|---|---|
+| **frontend/** | React 19 · TypeScript · Vite · Tailwind v4 · deployed on Vercel |
+| **backend** | Supabase (Postgres + Edge Functions), see [Backend](#backend) below |
 
-## Getting started
+## Quickstart
 
 ```bash
 cd frontend
 npm install
-npm run dev       # http://localhost:5173
+npm run dev          # http://localhost:5173
 ```
 
-Other scripts (run from `frontend/`):
+Backend features (topics, comments, likes, views) degrade quietly to "not available"
+until `.env.local` has real Supabase credentials, so the site runs fine without them.
 
 ```bash
-npm run build       # production build
-npm run test         # simulator engine unit tests (tsx, not a framework)
-npm run sync-docs    # pull ADR/architecture docs into src/data/synced-docs.json
+cp .env.example .env.local   # then fill in VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+```
+
+## Scripts
+
+Run from `frontend/`:
+
+```bash
+npm run dev            # local dev server
+npm run build           # typecheck, build, prerender routes to static HTML
+npm run lint             # oxlint
+npm run test              # simulator engine unit tests
+npm run sync-docs          # pull ADR/architecture docs into src/data/synced-docs.json
 ```
 
 ## Structure
@@ -30,31 +46,47 @@ npm run sync-docs    # pull ADR/architecture docs into src/data/synced-docs.json
 ```
 frontend/
   src/
-    components/       # Nav, sections (Now/Work/Log/Stuff), the Spoin simulator
-    content/          # site copy, project data, ADR log (from synced-docs.json)
-    lib/simulator/    # the deterministic quota-governor simulation engine
-  content/manifest.json  # points sync-docs at source ADR/architecture markdown
+    components/        # Nav, sections, SpoinTopics, CommentThread, the Spoin simulator
+    content/           # site copy, project data, scratchpad entries
+    lib/               # supabase client, session id, shared types
+    hooks/             # useSupabaseQuery, useViewTracking, useSEO
+  scripts/
+    fetch-metrics.mjs   # prebuild: pulls live metrics from Supabase
+    update_metrics.py   # CLI for pushing a new metric value (see below)
+  supabase/
+    schema.sql          # full DB schema + RLS policies
+    functions/           # wake-ping, update-metric Edge Functions
 ```
 
-## Roadmap: v2
+## Backend
 
-Right now everything in `frontend/src/content/` and `synced-docs.json` is static, checked-in
-data that I update by hand. Reordered after a review pointed out that moving content behind a
-runtime backend (the original item 1) directly undercuts an SEO pass (the original item 3):
-runtime fetching is exactly what makes content hard to crawl, and a cold start or a 500 would
-mean a recruiter sees an empty shell instead of a stale-but-present page. So SEO and static
-data generation come first; a backend only if something concrete needs one.
+One Supabase project backs three things, all degrading gracefully when unconfigured:
 
-1. **SEO pass** (shipped): per-route meta tags, Open Graph/Twitter cards, sitemap.xml,
-   robots.txt, and prerendering static routes to HTML at build time so link-preview bots and
-   non-JS crawlers see real content instead of an empty `<div id="root">`. Live and verified at
-   anubhav-qt.dev.
-2. **Cron-based GitHub sync**: extend `sync-docs` with a scheduled GitHub Action that pulls
-   fresh repo metrics (stars, commits, README changes) on a cron, writes them into
-   `synced-docs.json`, commits, and lets Vercel redeploy. Same static-output pattern already
-   used for ADRs, no new infrastructure or uptime surface.
-3. **Backend**: shelved for now. I'm the only author, so "update by hand" is a git commit
-   either way, and `content/*.ts` already gives type safety and PR diffs for free. Revisit only
-   if there's a concrete capability that needs a runtime backend (auth, writes, per-visitor
-   state), not just as a way to demonstrate backend skills, since Spoin (CQRS, two-pass quality
-   gate, 55 ADRs) already does that better than a CRUD layer over my own bio would.
+- **Live Spoin topics** — a read-only feed of in-production topics plus a
+  suggest-a-topic form, shown on `/projects`.
+- **Comments + likes** — threaded, nickname-only, no accounts, shown on Scratchpad
+  writeups and project entries.
+- **Views** — one per browser session, deduped at the database level.
+
+Schema and RLS policies live in `frontend/supabase/schema.sql` (source of truth, paste
+into the Supabase SQL editor to apply). Everything anonymous visitors touch is
+insert-only; nothing they do can read or overwrite what someone else wrote.
+
+### Updating a metric
+
+Project metrics (corpus size, throughput, etc. on `/projects`) are static at build time,
+sourced from Supabase and baked in by `scripts/fetch-metrics.mjs` during `npm run build`.
+To push a new value:
+
+```bash
+cd frontend
+python scripts/update_metrics.py
+```
+
+Or double-click `frontend/scripts/update-metrics.bat` on Windows. It walks you through
+picking a metric, shows the current value, and confirms before sending. If the value
+actually changed, it fires a Vercel Deploy Hook automatically and the new number is live
+within a minute or two. No change, no rebuild.
+
+Needs `.env.local` (Supabase URL + anon key) and `.secrets.local` (admin secret) in
+`frontend/`, both gitignored.

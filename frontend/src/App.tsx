@@ -6,6 +6,7 @@ import Projects from './pages/Projects';
 import Scratchpad from './pages/Scratchpad';
 import ScratchpadEntry from './pages/ScratchpadEntry';
 import Contact from './pages/Contact';
+import { supabase } from './lib/supabase';
 
 // Every page, once visited, stays mounted for the rest of the tab session instead of
 // unmounting on navigation, so scroll position, open accordions, and things like the
@@ -17,6 +18,13 @@ export default function App() {
   useEffect(() => {
     setVisitedPaths((prev) => (prev.includes(location.pathname) ? prev : [...prev, location.pathname]));
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Fired once per tab: keeps the Supabase project's request-activity clock
+    // warm before a visitor reaches the topic-suggestion form. No-op until
+    // the backend is provisioned (supabase is null, see lib/supabase.ts).
+    supabase?.functions.invoke('wake-ping').catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg text-body">
