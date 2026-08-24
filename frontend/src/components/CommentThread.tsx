@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Heart } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
+import { getSessionId } from '@/lib/session';
 import type { Accent } from '@/content/site';
 import type { Comment, TargetType } from '@/lib/backend-types';
 
@@ -113,6 +114,18 @@ async function fetchComments(targetType: TargetType, targetId: string): Promise<
   return data as Comment[];
 }
 
+interface CommentLikeRow {
+  comment_id: string;
+  session_id: string;
+}
+
+async function fetchCommentLikes(commentIds: string[]): Promise<CommentLikeRow[]> {
+  if (!supabase || commentIds.length === 0) return [];
+  const { data, error } = await supabase.from('comment_likes').select('comment_id, session_id').in('comment_id', commentIds);
+  if (error) throw error;
+  return data as CommentLikeRow[];
+}
+
 const POST_COOLDOWN_MS = 15_000;
 
 interface LikeState {
@@ -137,6 +150,11 @@ export function CommentThread({
     () => fetchComments(targetType, targetId),
     [targetType, targetId],
   );
+  const commentIds = useMemo(() => (comments ?? []).map((c) => c.id), [comments]);
+  const { data: commentLikes, refetch: refetchCommentLikes } = useSupabaseQuery(
+    () => fetchCommentLikes(commentIds),
+    [commentIds.join(',')],
+  );
 
   const [nickname, setNickname] = useState('');
   const [body, setBody] = useState('');
@@ -145,8 +163,27 @@ export function CommentThread({
   const [replyBody, setReplyBody] = useState('');
 
   const tree = useMemo(() => buildTree(comments ?? []), [comments]);
+  const sessionId = useMemo(() => getSessionId(), []);
 
   const onCooldown = Date.now() - lastPostedAt < POST_COOLDOWN_MS;
+
+  function commentLikeCount(commentId: string): number {
+    return (commentLikes ?? []).filter((l) => l.comment_id === commentId).length;
+  }
+
+  function commentLikedByMe(commentId: string): boolean {
+    return (commentLikes ?? []).some((l) => l.comment_id === commentId && l.session_id === sessionId);
+  }
+
+  async function toggleCommentLike(commentId: string) {
+    if (!supabase) return;
+    if (commentLikedByMe(commentId)) {
+      await supabase.from('comment_likes').delete().eq('comment_id', commentId).eq('session_id', sessionId);
+    } else {
+      await supabase.from('comment_likes').insert({ comment_id: commentId, session_id: sessionId });
+    }
+    refetchCommentLikes();
+  }
 
   async function post(parentId: string | null, nick: string, text: string, onDone: () => void) {
     if (!supabase || onCooldown || !nick.trim() || !text.trim()) return;
@@ -167,6 +204,7 @@ export function CommentThread({
   function renderNode(node: ThreadNode, depth: number) {
     const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-4' : 'ml-8';
     const borderClass = depth === 0 ? ACCENT[accent].border30 : depth === 1 ? ACCENT[accent].border18 : 'border-border';
+    const liked = commentLikedByMe(node.id);
     return (
       <div key={node.id} className={`pl-2.5 py-2 border-l-2 ${borderClass} ${indentClass}`}>
         <div className="flex items-baseline gap-2">
@@ -174,12 +212,22 @@ export function CommentThread({
           <span className="text-dim text-[10.5px]">{relativeTime(node.created_at)}</span>
         </div>
         <p className="text-body/90 text-[12.5px] leading-relaxed mt-0.5">{node.body}</p>
-        <button
-          onClick={() => setReplyingTo(replyingTo === node.id ? null : node.id)}
-          className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors mt-1`}
-        >
-          reply
-        </button>
+        <div className="flex items-center gap-3 mt-1">
+          <button
+            onClick={() => toggleCommentLike(node.id)}
+            disabled={!supabase}
+            className={`flex items-center gap-1 text-[10.5px] font-bold disabled:opacity-40 transition-colors ${liked ? ACCENT[accent].likeActive : ACCENT[accent].replyLink}`}
+          >
+            <Heart size={10} fill={liked ? 'currentColor' : 'none'} />
+            <span>{commentLikeCount(node.id)}</span>
+          </button>
+          <button
+            onClick={() => setReplyingTo(replyingTo === node.id ? null : node.id)}
+            className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors`}
+          >
+            reply
+          </button>
+        </div>
         {replyingTo === node.id && (
           <div className="mt-2 p-2 bg-surface border-l-2 border-border">
             <div className="flex gap-1.5">

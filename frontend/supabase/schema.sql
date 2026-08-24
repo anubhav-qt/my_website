@@ -85,6 +85,33 @@ create policy "likes_delete_all" on likes
   for delete using (true);
 
 -- ---------------------------------------------------------------------------
+-- comment_likes: a separate table for per-comment (Reddit-style) upvotes,
+-- independent of the page-level `likes` above -- a visitor can like the
+-- whole page AND individual comments on it. Same session-scoped, freely
+-- insert/delete trust model.
+-- ---------------------------------------------------------------------------
+create table if not exists comment_likes (
+  comment_id uuid not null references comments (id) on delete cascade,
+  session_id uuid not null,
+  created_at timestamptz not null default now(),
+  primary key (comment_id, session_id)
+);
+
+alter table comment_likes enable row level security;
+
+drop policy if exists "comment_likes_select_all" on comment_likes;
+create policy "comment_likes_select_all" on comment_likes
+  for select using (true);
+
+drop policy if exists "comment_likes_insert_all" on comment_likes;
+create policy "comment_likes_insert_all" on comment_likes
+  for insert with check (true);
+
+drop policy if exists "comment_likes_delete_all" on comment_likes;
+create policy "comment_likes_delete_all" on comment_likes
+  for delete using (true);
+
+-- ---------------------------------------------------------------------------
 -- views: same one-row-per-session shape as likes. "Any number of clicks
 -- from one session is 1 view" falls out of the primary key for free.
 -- ---------------------------------------------------------------------------
