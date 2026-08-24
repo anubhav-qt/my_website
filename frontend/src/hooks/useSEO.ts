@@ -29,15 +29,16 @@ function setLink(rel: string, href: string) {
   el.setAttribute('href', href);
 }
 
-// Sets document title, meta description, and OG/Twitter tags per page. Runs on every
-// route change since this app keeps prior routes mounted rather than unmounting them
-// (see App.tsx), so effects re-run on the page that's actually becoming active.
+// Sets meta description and OG/Twitter tags per page. Doesn't touch document.title: this
+// app keeps every visited page mounted (just hidden) instead of unmounting on navigation
+// (see App.tsx), so this effect only runs once per page, on first visit. Setting the tab
+// title here would mean whichever page you visited last "wins" and sticks even after you
+// navigate elsewhere, so the tab title is left as the static one from index.html instead.
 export function useSEO({ title, description, path }: SEOOptions) {
   useEffect(() => {
     const fullTitle = path === '/' ? title : `${title} — ${SITE_NAME}`;
     const url = `${SITE_URL}${path}`;
 
-    document.title = fullTitle;
     setMeta('name', 'description', description);
     setLink('canonical', url);
 
