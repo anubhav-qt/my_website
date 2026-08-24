@@ -114,9 +114,13 @@ create policy "comment_likes_delete_all" on comment_likes
 -- ---------------------------------------------------------------------------
 -- views: same one-row-per-session shape as likes. "Any number of clicks
 -- from one session is 1 view" falls out of the primary key for free.
+-- target_type 'site' with target_id 'site' is a special row: one per
+-- session for the whole site (recorded once on app load), distinct from
+-- the per-content view counts on individual projects/scratchpad entries --
+-- the nav's total-views badge reads only this scope, not a sum of everything.
 -- ---------------------------------------------------------------------------
 create table if not exists views (
-  target_type text not null check (target_type in ('scratchpad', 'project')),
+  target_type text not null check (target_type in ('scratchpad', 'project', 'site')),
   target_id text not null,
   session_id uuid not null,
   first_viewed_at timestamptz not null default now(),
