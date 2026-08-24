@@ -33,7 +33,7 @@ export default function Projects() {
   }, [location.hash]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div>
+    <div className="pb-12">
       <div className="mb-2.5 flex items-center gap-3">
         <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Currently Building</span>
         <span className="flex-1 border-t border-dashed border-border" />
@@ -248,7 +248,7 @@ export default function Projects() {
                           <>
                             <p className="text-[11px] text-dim leading-relaxed mt-2.5">
                               Free-tier Gemini keys cap out fast, so the win here wasn't a bigger model, it was squeezing
-                              135+ cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders and
+                              218 cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders and
                               per-cell serialization (ADR-0040), instead of blocking on one key at a time.
                             </p>
                             <div className="mt-2 -mx-1 rounded-lg overflow-hidden border border-border">
