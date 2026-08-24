@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Heart } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
-import { getSessionId } from '@/lib/session';
 import type { Accent } from '@/content/site';
 import type { Comment, TargetType } from '@/lib/backend-types';
 
@@ -73,12 +72,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
   },
 };
 
-interface LikeRow {
-  target_type: TargetType;
-  target_id: string;
-  session_id: string;
-}
-
 interface ThreadNode extends Comment {
   children: ThreadNode[];
 }
@@ -120,26 +113,28 @@ async function fetchComments(targetType: TargetType, targetId: string): Promise<
   return data as Comment[];
 }
 
-async function fetchLikes(targetType: TargetType, targetId: string): Promise<LikeRow[]> {
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from('likes')
-    .select('target_type, target_id, session_id')
-    .eq('target_type', targetType)
-    .eq('target_id', targetId);
-  if (error) throw error;
-  return data as LikeRow[];
-}
-
 const POST_COOLDOWN_MS = 15_000;
 
-export function CommentThread({ targetType, targetId, accent }: { targetType: TargetType; targetId: string; accent: Accent }) {
+interface LikeState {
+  liked: boolean;
+  count: number;
+  toggle: () => void;
+  available: boolean;
+}
+
+export function CommentThread({
+  targetType,
+  targetId,
+  accent,
+  like,
+}: {
+  targetType: TargetType;
+  targetId: string;
+  accent: Accent;
+  like: LikeState;
+}) {
   const { data: comments, refetch: refetchComments } = useSupabaseQuery(
     () => fetchComments(targetType, targetId),
-    [targetType, targetId],
-  );
-  const { data: likes, refetch: refetchLikes } = useSupabaseQuery(
-    () => fetchLikes(targetType, targetId),
     [targetType, targetId],
   );
 
@@ -150,7 +145,6 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
   const [replyBody, setReplyBody] = useState('');
 
   const tree = useMemo(() => buildTree(comments ?? []), [comments]);
-  const sessionId = useMemo(() => getSessionId(), []);
 
   const onCooldown = Date.now() - lastPostedAt < POST_COOLDOWN_MS;
 
@@ -169,23 +163,6 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
       refetchComments();
     }
   }
-
-  async function toggleLike() {
-    if (!supabase) return;
-    const alreadyLiked = (likes ?? []).length > 0 && likedByMe(likes ?? [], sessionId);
-    if (alreadyLiked) {
-      await supabase.from('likes').delete().eq('target_type', targetType).eq('target_id', targetId).eq('session_id', sessionId);
-    } else {
-      await supabase.from('likes').insert({ target_type: targetType, target_id: targetId, session_id: sessionId });
-    }
-    refetchLikes();
-  }
-
-  function likedByMe(rows: LikeRow[], sid: string): boolean {
-    return rows.some((r) => r.session_id === sid);
-  }
-
-  const liked = likedByMe(likes ?? [], sessionId);
 
   function renderNode(node: ThreadNode, depth: number) {
     const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-4' : 'ml-8';
@@ -245,15 +222,21 @@ export function CommentThread({ targetType, targetId, accent }: { targetType: Ta
     <div className="mt-4 pt-3 border-t border-dashed border-border">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
-        <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Discussion</span>
+        <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
         <span className="flex-1 border-t border-dashed border-border" />
+        <span className="text-dim text-[10px] shrink-0 mr-1">{(comments ?? []).length}</span>
         <button
-          onClick={toggleLike}
-          disabled={!supabase}
-          className={`flex items-center gap-1 text-[10.5px] disabled:opacity-40 transition-colors ${liked ? ACCENT[accent].likeActive : ACCENT[accent].replyLink}`}
+          onClick={like.toggle}
+          disabled={!like.available}
+          aria-pressed={like.liked}
+          className={`flex items-center gap-1.5 text-xs font-bold px-2 py-1 border disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${
+            like.liked
+              ? `${ACCENT[accent].border} ${ACCENT[accent].likeActive} bg-current/10`
+              : `border-border text-dim hover:${ACCENT[accent].text} hover:${ACCENT[accent].border}`
+          }`}
         >
-          <Heart size={11} fill={liked ? 'currentColor' : 'none'} />
-          <span>{(likes ?? []).length}</span>
+          <Heart size={13} fill={like.liked ? 'currentColor' : 'none'} />
+          <span>{like.count}</span>
         </button>
       </div>
 

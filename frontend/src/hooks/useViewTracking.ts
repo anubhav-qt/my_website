@@ -18,9 +18,16 @@ async function fetchViewCount(targetType: TargetType, targetId: string): Promise
 // Records at most one view per (target, browser session) -- the "views" table's
 // primary key makes a repeat insert a no-op, so any number of clicks in one
 // session collapses to a single view.
-export function useViewTracking(targetType: TargetType, targetId: string): number {
+//
+// `record` gates whether a view is actually written: the count is always
+// fetched and shown, but a new row is only inserted when the caller says the
+// visitor actually engaged with this content -- landing on a dedicated page
+// counts (that page load only happens via a click), but merely rendering a
+// list item does not, so callers on a list (e.g. a project card that's
+// collapsed by default) should pass `record` only once the user opens it.
+export function useViewTracking(targetType: TargetType, targetId: string, record = true): number {
   useEffect(() => {
-    if (!supabase || !targetId) return;
+    if (!supabase || !targetId || !record) return;
     supabase
       .from('views')
       .upsert(
@@ -28,7 +35,7 @@ export function useViewTracking(targetType: TargetType, targetId: string): numbe
         { onConflict: 'target_type,target_id,session_id', ignoreDuplicates: true },
       )
       .then(() => {});
-  }, [targetType, targetId]);
+  }, [targetType, targetId, record]);
 
   const { data } = useSupabaseQuery(() => fetchViewCount(targetType, targetId), [targetType, targetId]);
   return data ?? 0;

@@ -53,9 +53,10 @@ frontend/
   scripts/
     fetch-metrics.mjs   # prebuild: pulls live metrics from Supabase
     update_metrics.py   # CLI for pushing a new metric value (see below)
+    manage_topics.py    # CLI for adding/promoting/rejecting live topics
   supabase/
     schema.sql          # full DB schema + RLS policies
-    functions/           # wake-ping, update-metric Edge Functions
+    functions/           # wake-ping, update-metric, manage-topic Edge Functions
 ```
 
 ## Backend
@@ -90,3 +91,17 @@ within a minute or two. No change, no rebuild.
 
 Needs `.env.local` (Supabase URL + anon key) and `.secrets.local` (admin secret) in
 `frontend/`, both gitignored.
+
+### Managing live topics
+
+Visitors can only *suggest* a topic (RLS lets anyone insert, nothing else). To promote a
+suggestion to live, add one directly, reject a suggestion, or pull a topic back off the
+live list:
+
+```bash
+cd frontend
+python scripts/manage_topics.py
+```
+
+Or double-click `frontend/scripts/manage-topics.bat`. Same config as `update_metrics.py`
+above.

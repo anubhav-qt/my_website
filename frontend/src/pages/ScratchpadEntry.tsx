@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Eye } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { WRITEUPS } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
+import { useLikeTracking } from '@/hooks/useLikeTracking';
 import { CommentThread } from '@/components/CommentThread';
+import { ContentMeta } from '@/components/ContentMeta';
 
 export default function ScratchpadEntry() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,6 +14,7 @@ export default function ScratchpadEntry() {
   const prev = index > 0 ? WRITEUPS[index - 1] : undefined;
   const next = index >= 0 && index < WRITEUPS.length - 1 ? WRITEUPS[index + 1] : undefined;
   const views = useViewTracking('scratchpad', slug ?? '');
+  const like = useLikeTracking('scratchpad', slug ?? '');
 
   useSEO({
     title: entry ? entry.title : 'Scratchpad',
@@ -57,10 +60,7 @@ export default function ScratchpadEntry() {
             </span>
           ))}
           <span className="flex-1" />
-          <span className="flex items-center gap-1 text-dim text-[11px]">
-            <Eye size={11} />
-            {views}
-          </span>
+          <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
         </div>
 
         {entry.body.map((p, i) => (
@@ -69,7 +69,7 @@ export default function ScratchpadEntry() {
           </p>
         ))}
 
-        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" />
+        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" like={like} />
       </div>
 
       <div className="flex gap-3 pt-3 border-t-2 border-border">

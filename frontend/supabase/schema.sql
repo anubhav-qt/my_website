@@ -56,8 +56,11 @@ create policy "comments_insert_all" on comments
   for insert with check (deleted_at is null);
 
 -- ---------------------------------------------------------------------------
--- likes: one row per (target, session). The unique constraint makes a
--- repeat like from the same session a no-op via upsert-with-ignore.
+-- likes: one row per (target, session) -- a page-level like (this writeup,
+-- this scratchpad entry, this project), not a per-comment upvote. A session
+-- can insert and delete its own like freely (there's no real per-session
+-- auth here, same trust model as comments/topic suggestions) -- the delete
+-- policy is what makes the toggle-off actually work.
 -- ---------------------------------------------------------------------------
 create table if not exists likes (
   target_type text not null check (target_type in ('scratchpad', 'project')),
@@ -76,6 +79,10 @@ create policy "likes_select_all" on likes
 drop policy if exists "likes_insert_all" on likes;
 create policy "likes_insert_all" on likes
   for insert with check (true);
+
+drop policy if exists "likes_delete_all" on likes;
+create policy "likes_delete_all" on likes
+  for delete using (true);
 
 -- ---------------------------------------------------------------------------
 -- views: same one-row-per-session shape as likes. "Any number of clicks
