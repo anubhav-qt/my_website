@@ -7,7 +7,26 @@
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import puppeteer from 'puppeteer';
+
+// Vercel's build container is Linux with none of the shared libraries a full Chromium
+// download expects, so plain `puppeteer` fails to launch there. @sparticuz/chromium ships
+// a statically-linked build made for exactly that environment. Locally (Windows/Mac dev),
+// fall back to regular `puppeteer`, which bundles a Chromium that actually runs there.
+async function launchBrowser() {
+  if (process.platform === 'linux') {
+    const [{ default: chromium }, { default: puppeteer }] = await Promise.all([
+      import('@sparticuz/chromium'),
+      import('puppeteer-core'),
+    ]);
+    return puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+  }
+  const { default: puppeteer } = await import('puppeteer');
+  return puppeteer.launch();
+}
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
@@ -49,7 +68,7 @@ async function main() {
   try {
     await waitForServer(BASE_URL);
 
-    const browser = await puppeteer.launch();
+    const browser = await launchBrowser();
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(20000);
     // The Vercel Analytics/Speed Insights beacons keep retrying against endpoints that
