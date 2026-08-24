@@ -7,6 +7,11 @@
 ──────────────────────────────────────────
 ```
 
+> **Status**: v2. v1 was a static site (four hand-designed pages, no backend). v2 adds a
+> Supabase backend: live Spoin topics, threaded comments with both page-level and
+> per-comment likes, session-deduped view counts, and build-time metrics pulled from the
+> database, across Projects and every Scratchpad category (not just writeups).
+
 ## Stack
 
 | | |
@@ -46,10 +51,10 @@ npm run sync-docs          # pull ADR/architecture docs into src/data/synced-doc
 ```
 frontend/
   src/
-    components/        # Nav, sections, SpoinTopics, CommentThread, the Spoin simulator
+    components/        # Nav, sections, SpoinTopics, CommentThread, ContentMeta, the Spoin simulator
     content/           # site copy, project data, scratchpad entries
     lib/               # supabase client, session id, shared types
-    hooks/             # useSupabaseQuery, useViewTracking, useSEO
+    hooks/             # useSupabaseQuery, useViewTracking, useLikeTracking, useSEO
   scripts/
     fetch-metrics.mjs   # prebuild: pulls live metrics from Supabase
     update_metrics.py   # CLI for pushing a new metric value (see below)
@@ -61,17 +66,24 @@ frontend/
 
 ## Backend
 
-One Supabase project backs three things, all degrading gracefully when unconfigured:
+One Supabase project backs four things, all degrading gracefully when unconfigured:
 
 - **Live Spoin topics** — a read-only feed of in-production topics plus a
   suggest-a-topic form, shown on `/projects`.
-- **Comments + likes** — threaded, nickname-only, no accounts, shown on Scratchpad
-  writeups and project entries.
-- **Views** — one per browser session, deduped at the database level.
+- **Comments** — threaded, nickname-only, no accounts. Every Scratchpad category
+  (writeups, mildly interesting stuff, random ideas, links) and every project entry gets
+  its own thread.
+- **Likes, two scopes** — a page-level like (one heart for "this writeup"/"this project"
+  as a whole) and a separate per-comment like (Reddit-style, one per individual comment).
+  Both are session-scoped and independently toggleable.
+- **Views** — one per browser session, deduped at the database level, and only recorded
+  on actual engagement (opening a writeup, expanding a collapsed entry) rather than just
+  from a list rendering.
 
 Schema and RLS policies live in `frontend/supabase/schema.sql` (source of truth, paste
 into the Supabase SQL editor to apply). Everything anonymous visitors touch is
-insert-only; nothing they do can read or overwrite what someone else wrote.
+insert-only or delete-only-their-own; nothing they do can read or overwrite what someone
+else wrote.
 
 ### Updating a metric
 
