@@ -2,7 +2,11 @@
 
 Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tailwind v4).
 
-> **Current status**: The **Home** and **Projects** pages are refined and hand-designed. The remaining pages (`/scratchpad`, `/contact`) are temporary initial scaffolds / WIP and need to be crafted properly.
+> **Current status**: v2. All four pages (`/`, `/projects`, `/scratchpad`, `/contact`) are
+> hand-designed and finished. v2 adds a Supabase backend: live Spoin topics, threaded
+> comments with both page-level and per-comment likes, session-deduped view counts, and
+> build-time metrics pulled from the database, across every Scratchpad category, not just
+> writeups. See `README.md` for the full backend rundown and the CLI tools for managing it.
 
 Design direction: warm dev-log terminal aesthetic, dark plum/amber palette, IBM Plex Mono,
 dense list-based sections, small line icons, no big hero graphics. See
