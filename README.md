@@ -1,4 +1,4 @@
-# anubhavqt (my_website_v1)
+# anubhav-qt (my_website_v1)
 
 Personal site. Live at [anubhav-qt.dev](https://anubhav-qt.dev).
 
