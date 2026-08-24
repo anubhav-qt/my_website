@@ -45,9 +45,10 @@ runtime fetching is exactly what makes content hard to crawl, and a cold start o
 mean a recruiter sees an empty shell instead of a stale-but-present page. So SEO and static
 data generation come first; a backend only if something concrete needs one.
 
-1. **SEO pass** (in progress): per-route meta tags, Open Graph/Twitter cards, sitemap.xml,
+1. **SEO pass** (shipped): per-route meta tags, Open Graph/Twitter cards, sitemap.xml,
    robots.txt, and prerendering static routes to HTML at build time so link-preview bots and
-   non-JS crawlers see real content instead of an empty `<div id="root">`.
+   non-JS crawlers see real content instead of an empty `<div id="root">`. Live and verified at
+   anubhav-qt.dev.
 2. **Cron-based GitHub sync**: extend `sync-docs` with a scheduled GitHub Action that pulls
    fresh repo metrics (stars, commits, README changes) on a cron, writes them into
    `synced-docs.json`, commits, and lets Vercel redeploy. Same static-output pattern already
