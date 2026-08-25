@@ -18,15 +18,15 @@ export default function Home() {
       <div className="mb-2">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-heading text-2xl font-bold leading-tight whitespace-nowrap lowercase">{PROFILE.name}</h1>
-            <p className="text-amber font-semibold text-sm mt-0.5 whitespace-nowrap lowercase">{PROFILE.role}</p>
+            <h1 className="text-heading text-xl sm:text-2xl font-bold leading-tight whitespace-nowrap lowercase">{PROFILE.name}</h1>
+            <p className="text-amber font-semibold text-[13px] sm:text-sm mt-0.5 whitespace-nowrap lowercase">{PROFILE.role}</p>
           </div>
           <a
             href={PROFILE.resume}
             target="_blank"
             rel="noopener noreferrer"
             download
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0"
           >
             <FileText size={12} />
             resume
@@ -37,11 +37,23 @@ export default function Home() {
             <MapPin size={14} />
             {PROFILE.location}
           </span>
-          <div className="flex items-center gap-2">
-            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-dim hover:text-amber transition-colors">
+          <div className="flex items-center gap-0.5 sm:gap-2 -mr-1.5 sm:mr-0">
+            <a
+              href={PROFILE.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="text-dim hover:text-amber transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
+            >
               <SiGithub size={16} />
             </a>
-            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-dim hover:text-amber transition-colors">
+            <a
+              href={PROFILE.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="text-dim hover:text-amber transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
+            >
               <LinkedinIcon size={16} />
             </a>
           </div>

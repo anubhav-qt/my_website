@@ -43,7 +43,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-dim hover:text-amber transition-colors"
+              className="text-dim hover:text-amber transition-colors p-1.5 -m-1.5"
               aria-label={`${p.title} on GitHub`}
             >
               <ExternalLink size={12} />
@@ -119,21 +119,21 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
           </div>
 
           {p.audit && (
-            <div className="flex flex-col gap-1.5 mt-3 pt-2.5 border-t border-dashed border-border/70">
-              <div className="flex gap-2 text-[11.5px] leading-relaxed">
-                <span className="w-[74px] shrink-0 text-dim font-bold text-[10px] tracking-wide pt-px">problem</span>
+            <div className="flex flex-col gap-2 sm:gap-1.5 mt-3 pt-2.5 border-t border-dashed border-border/70">
+              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
+                <span className="sm:w-[74px] shrink-0 text-dim font-bold text-[10px] tracking-wide sm:pt-px">problem</span>
                 <span className="text-body/90">{p.audit.problem}</span>
               </div>
-              <div className="flex gap-2 text-[11.5px] leading-relaxed">
-                <span className="w-[74px] shrink-0 text-rose font-bold text-[10px] tracking-wide pt-px">constraint</span>
+              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
+                <span className="sm:w-[74px] shrink-0 text-rose font-bold text-[10px] tracking-wide sm:pt-px">constraint</span>
                 <span className="text-body/90">{p.audit.constraint}</span>
               </div>
-              <div className="flex gap-2 text-[11.5px] leading-relaxed">
-                <span className="w-[74px] shrink-0 text-amber font-bold text-[10px] tracking-wide pt-px">decision</span>
+              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
+                <span className="sm:w-[74px] shrink-0 text-amber font-bold text-[10px] tracking-wide sm:pt-px">decision</span>
                 <span className="text-body/90">{p.audit.decision}</span>
               </div>
-              <div className="flex gap-2 text-[11.5px] leading-relaxed">
-                <span className="w-[74px] shrink-0 text-sage font-bold text-[10px] tracking-wide pt-px">what broke</span>
+              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
+                <span className="sm:w-[74px] shrink-0 text-sage font-bold text-[10px] tracking-wide sm:pt-px">what broke</span>
                 <span className="text-body/90">{p.audit.whatBroke}</span>
               </div>
             </div>
@@ -224,12 +224,12 @@ export default function Projects() {
           })}
         </div>
       </div>
-      <div className="relative flex gap-3 items-center border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-10">
+      <div className="relative flex flex-col sm:flex-row gap-3 sm:items-center border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-10">
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.05) 0%, transparent 60%)' }}
         />
-        <div className="w-32 shrink-0 flex flex-col gap-1.5">
+        <div className="w-24 sm:w-32 shrink-0 flex flex-col gap-1.5">
           <div className="aspect-video border border-border bg-bg/40 p-1 flex gap-1 items-stretch">
             <div className="aspect-square h-full shrink-0 border border-border flex items-center justify-center">
               <div className="w-9 h-9 rounded-full border-2 border-sage" />

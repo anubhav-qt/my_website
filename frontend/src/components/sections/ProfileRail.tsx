@@ -126,8 +126,8 @@ function StackPanel() {
         {STACK_GROUPS.map((group, groupIdx) => {
           const accent = ACCENT[group.accent];
           return (
-            <div key={group.label} className="flex items-start gap-2">
-              <div className={`w-[130px] shrink-0 pt-0.5 ${accent.text}`}>
+            <div key={group.label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
+              <div className={`sm:w-[130px] shrink-0 sm:pt-0.5 ${accent.text}`}>
                 <span className="text-xs font-semibold leading-tight">{group.label.toLowerCase()}</span>
               </div>
               <div className="flex flex-wrap gap-1 flex-1 min-w-0">
@@ -248,16 +248,16 @@ export function ProfileRail() {
   const [tab, setTab] = useState<Tab>('stack');
 
   return (
-    <div className="flex gap-5 h-56">
-      <div className="w-24 h-full shrink-0 flex flex-col gap-1">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 sm:h-56">
+      <div className="flex sm:flex-col sm:w-24 sm:h-full sm:shrink-0 gap-1 border-b sm:border-b-0 border-border">
         {TABS.map((t) => {
           const isActive = tab === t.id;
           return (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 ${
-                isActive ? 'text-amber underline' : 'text-dim hover:text-body'
+              className={`flex-1 sm:flex-initial text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${
+                isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
               }`}
             >
               {t.label}
@@ -266,7 +266,7 @@ export function ProfileRail() {
         })}
       </div>
 
-      <div className="flex-1 h-full min-w-0 border-l border-border pl-5 pr-1 overflow-y-auto">
+      <div className="flex-1 sm:h-full min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 sm:overflow-y-auto">
         {tab === 'stack' && <StackPanel />}
         {tab === 'career' && <CareerPanel />}
         {tab === 'education' && <EducationPanel />}

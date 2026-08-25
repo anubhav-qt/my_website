@@ -202,7 +202,7 @@ export function CommentThread({
   }
 
   function renderNode(node: ThreadNode, depth: number) {
-    const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-4' : 'ml-8';
+    const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-2.5 sm:ml-4' : 'ml-5 sm:ml-8';
     const borderClass = depth === 0 ? ACCENT[accent].border30 : depth === 1 ? ACCENT[accent].border18 : 'border-border';
     const liked = commentLikedByMe(node.id);
     return (
@@ -230,19 +230,19 @@ export function CommentThread({
         </div>
         {replyingTo === node.id && (
           <div className="mt-2 p-2 bg-surface border-l-2 border-border">
-            <div className="flex gap-1.5">
+            <div className="flex flex-col sm:flex-row gap-1.5">
               <input
                 type="text"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="nickname"
-                className="w-24 shrink-0 bg-bg border border-border text-heading text-[11.5px] px-1.5 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
+                className="w-full sm:w-24 shrink-0 bg-bg border border-border text-heading text-[11.5px] px-1.5 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
               />
               <textarea
                 value={replyBody}
                 onChange={(e) => setReplyBody(e.target.value)}
                 placeholder="reply..."
-                className="flex-1 min-w-0 bg-bg border border-border text-heading text-xs px-2 py-1.5 h-[28px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
+                className="flex-1 min-w-0 bg-bg border border-border text-heading text-xs px-2 py-1.5 h-[34px] sm:h-[28px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
               />
             </div>
             <div className="flex justify-end mt-1.5">
@@ -289,13 +289,13 @@ export function CommentThread({
       </div>
 
       <div className={`p-2.5 bg-surface border-l-2 ${ACCENT[accent].border}`}>
-        <div className="flex gap-1.5">
+        <div className="flex flex-col sm:flex-row gap-1.5">
           <input
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="nickname"
-            className="w-28 shrink-0 bg-bg border border-border text-heading text-[11.5px] px-1.5 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
+            className="w-full sm:w-28 shrink-0 bg-bg border border-border text-heading text-[11.5px] px-1.5 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
           />
           <textarea
             value={body}

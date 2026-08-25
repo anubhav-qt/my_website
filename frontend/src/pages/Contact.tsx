@@ -71,27 +71,29 @@ export default function Contact() {
 
         <div className="flex flex-col gap-2">
           {CHANNELS.map((c) => (
-            <div key={c.label} className="flex items-baseline gap-3">
-              <span className="text-dim text-xs w-[70px] shrink-0">{c.label}</span>
-              <a
-                href={c.href}
-                target={c.href.startsWith('mailto:') ? undefined : '_blank'}
-                rel={c.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                className="inline-flex items-center gap-1 text-amber hover:text-heading text-sm font-bold transition-colors"
-              >
-                {c.value}
-                <ArrowUpRight size={11} />
-              </a>
-              {c.copyable && (
-                <button
-                  onClick={handleCopy}
-                  className="inline-flex items-center gap-1 text-[10px] font-bold text-dim hover:text-amber border border-border/70 bg-bg/40 px-1.5 py-0.5 transition-colors"
+            <div key={c.label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+              <span className="text-dim text-xs sm:w-[70px] shrink-0">{c.label}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <a
+                  href={c.href}
+                  target={c.href.startsWith('mailto:') ? undefined : '_blank'}
+                  rel={c.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                  className="inline-flex items-center gap-1 text-amber hover:text-heading text-sm font-bold transition-colors break-all"
                 >
-                  {copied ? <Check size={10} /> : <Copy size={10} />}
-                  {copied ? 'copied' : 'copy'}
-                </button>
-              )}
-              <span className="flex-1" />
+                  {c.value}
+                  <ArrowUpRight size={11} className="shrink-0" />
+                </a>
+                {c.copyable && (
+                  <button
+                    onClick={handleCopy}
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-dim hover:text-amber border border-border/70 bg-bg/40 px-1.5 py-1 sm:py-0.5 transition-colors shrink-0"
+                  >
+                    {copied ? <Check size={10} /> : <Copy size={10} />}
+                    {copied ? 'copied' : 'copy'}
+                  </button>
+                )}
+              </div>
+              <span className="flex-1 hidden sm:block" />
               <span className="text-dim text-[11px] shrink-0">{c.frequency}</span>
             </div>
           ))}
@@ -99,11 +101,13 @@ export default function Contact() {
 
         <div className="border-t border-dashed border-border/60 mt-3.5 pt-3 flex flex-col gap-2">
           {CONTEXT.map((c) => (
-            <div key={c.label} className="flex items-baseline gap-3">
-              <span className={`w-1.5 h-1.5 shrink-0 -translate-y-0.5 ${DOT[c.accent]}`} />
-              <span className={`text-xs font-bold w-[88px] shrink-0 ${TEXT[c.accent]}`}>{c.label}</span>
-              <span className="flex-1 border-t border-dashed border-border/60" />
-              <span className="text-body text-xs shrink-0">{c.value}</span>
+            <div key={c.label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+              <div className="flex items-baseline gap-2">
+                <span className={`w-1.5 h-1.5 shrink-0 -translate-y-0.5 ${DOT[c.accent]}`} />
+                <span className={`text-xs font-bold sm:w-[88px] shrink-0 ${TEXT[c.accent]}`}>{c.label}</span>
+              </div>
+              <span className="flex-1 border-t border-dashed border-border/60 hidden sm:block" />
+              <span className="text-body text-xs shrink-0 pl-3.5 sm:pl-0">{c.value}</span>
             </div>
           ))}
         </div>
