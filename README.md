@@ -1,6 +1,11 @@
 # my_website_v3.1
 
-Personal site + dev log. Live at **[anubhav-qt.dev](https://www.anubhav-qt.dev)**.
+```
+──────────────────────────────────────────
+  personal site + dev log
+──────────────────────────────────────────
+```
+live at **[anubhav-qt.dev](https://www.anubhav-qt.dev)**
 
 <table>
 <tr>
