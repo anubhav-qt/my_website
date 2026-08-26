@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
 @theme {
+  /* Tailwind's smallest default breakpoint is sm at 640px, which lumps a
+     430px iPhone in with a 344px Galaxy Fold cover screen and a 320px SE.
+     They do not want the same padding or type size, so there is a tier below
+     it. 380px sits just under the narrowest phone anyone would call normal,
+     so everything from there down gets the tighter treatment, and the layout
+     is built to hold together to about 280px (the narrowest screen shipping
+     on a real device). */
+  --breakpoint-xs: 23.75rem;
+
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --color-bg: #1b1e24;
@@ -44,6 +53,32 @@
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+  }
+
+  /* The whole site is authored a notch smaller than it actually reads well
+     at. The content column caps out at max-w-2xl, so past a certain width it
+     stops growing and the page just gains empty margin: at the browser's
+     default 100% zoom a tablet held upright or a desktop monitor both leave
+     the column narrow and the type cramped. 125% is the size it was really
+     designed for. Rather than rescale 160-odd hardcoded px values by hand,
+     scale the page itself once there is width to spare, so everyone gets
+     that rendering without touching their own zoom setting.
+
+     880px is the threshold because that is where the column stops filling
+     its viewport: up to about an iPad Air upright (820px) the 756px column
+     already covers ~90% of the width and should stay at 1x, while a Surface
+     Pro (912px) or iPad Pro (1024px) upright drops to 83% and 74%. This is
+     keyed to width rather than orientation because width is what actually
+     runs out, and a phone in landscape is wide only in name.
+
+     Zoom does not affect how media queries evaluate, so the effective layout
+     width is always the viewport divided by 1.25, i.e. 704px at the low end
+     here. That stays clear of the 640px breakpoint, so the wide layout never
+     ends up squeezed into a space built for the narrow one. */
+  @media (min-width: 880px) {
+    body {
+      zoom: 1.25;
     }
   }
 }

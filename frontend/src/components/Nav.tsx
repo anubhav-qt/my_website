@@ -14,8 +14,8 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur">
-      <div className="max-w-2xl mx-auto px-5 pt-3">
-        <nav className="flex items-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-5 text-[13px] sm:text-sm font-bold border-b-2 border-border pb-[7px]">
+      <div className="max-w-2xl mx-auto px-4 xs:px-5 pt-3">
+        <nav className="flex items-center flex-wrap gap-x-2 gap-y-1 xs:gap-x-3 sm:gap-x-5 text-[12px] xs:text-[13px] sm:text-sm font-bold border-b-2 border-border pb-[7px]">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
@@ -30,8 +30,11 @@ export function Nav() {
               {l.label}
             </NavLink>
           ))}
-          <span className="flex-1" />
-          <span className="flex items-center gap-1 text-dim text-[10px] sm:text-[11px] font-normal border border-border px-1.5 py-0.5 shrink-0">
+          {/* ml-auto instead of a spacer element: on one line it does the same
+              job, but once the links stop leaving room for it (around 330px)
+              the badge wraps onto a line of its own, and auto margin keeps it
+              pinned right there too rather than stranding it on the left. */}
+          <span className="flex items-center gap-1 ml-auto text-dim text-[10px] sm:text-[11px] font-normal border border-border px-1.5 py-0.5 shrink-0">
             <Eye size={11} />
             {totalViews}
           </span>
