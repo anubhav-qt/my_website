@@ -242,7 +242,7 @@ export function SpoinSimulator() {
       <div className="px-3 py-2 border-b border-border bg-bg/40 flex flex-wrap items-center gap-2 text-[11px] font-mono">
         <button
           onClick={toggleRun}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded font-bold text-bg transition-colors ${
+          className={`flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded font-bold text-bg transition-colors ${
             state.isRunning ? 'bg-amber hover:bg-amber/80' : 'bg-sage hover:bg-sage/80'
           }`}
           aria-label={state.isRunning ? 'Pause simulation' : 'Start simulation'}
@@ -253,14 +253,14 @@ export function SpoinSimulator() {
         <button
           onClick={handleStep}
           disabled={state.isRunning || state.status === 'completed'}
-          className="flex items-center gap-1 px-2 py-1 rounded border border-border text-body hover:text-heading hover:border-dim disabled:opacity-40 transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded border border-border text-body hover:text-heading hover:border-dim disabled:opacity-40 transition-colors"
           title="Advance one tick"
         >
           <StepForward className="w-3 h-3" /> Step
         </button>
         <button
           onClick={handleReset}
-          className="flex items-center gap-1 px-2 py-1 rounded border border-border text-body hover:text-heading hover:border-dim transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded border border-border text-body hover:text-heading hover:border-dim transition-colors"
           title="Reset simulation"
         >
           <RotateCcw className="w-3 h-3" /> Reset
@@ -275,7 +275,7 @@ export function SpoinSimulator() {
               ? 'ADR-0040 serialization ON: same (key, model) cell calls are locked sequentially, zero phantom 429s'
               : 'ADR-0040 serialization OFF: concurrent calls can burst a cell past its RPM ceiling'
           }
-          className={`flex items-center gap-1 px-2 py-1 rounded font-bold transition-colors ${
+          className={`flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded font-bold transition-colors ${
             state.config.serializeSameCellCalls
               ? 'bg-amber/15 border border-amber/50 text-amber'
               : 'bg-rose/15 border border-rose/50 text-rose'
@@ -288,14 +288,14 @@ export function SpoinSimulator() {
         <button
           onClick={handleRunFailureCase}
           title="Preset: shared-project keys, serialization off — triggers the ADR-0040 race"
-          className="flex items-center gap-1 px-2 py-1 rounded bg-rose/10 border border-rose/30 text-rose hover:bg-rose/20 transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded bg-rose/10 border border-rose/30 text-rose hover:bg-rose/20 transition-colors"
         >
           <Flame className="w-3 h-3" /> Failure Case
         </button>
         <button
           onClick={handleRunOptimalCase}
           title="Preset: independent-project keys, serialization on — the fixed path"
-          className="flex items-center gap-1 px-2 py-1 rounded bg-sage/10 border border-sage/30 text-sage hover:bg-sage/20 transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded bg-sage/10 border border-sage/30 text-sage hover:bg-sage/20 transition-colors"
         >
           <ShieldCheck className="w-3 h-3" /> Fixed
         </button>
@@ -431,14 +431,14 @@ export function SpoinSimulator() {
                 return (
                   <div
                     key={topic.id}
-                    className={`flex items-stretch gap-1.5 p-1.5 rounded-lg border transition-colors ${
+                    className={`flex flex-col sm:flex-row items-stretch gap-1.5 p-1.5 rounded-lg border transition-colors ${
                       isTopicPlanning || topic.status === 'generating' ? 'border-border bg-bg/20' : 'border-border/60 bg-transparent'
                     }`}
                   >
                     <div
                       ref={registerTopicRef(topic.id)}
                       title={`resolve_and_plan_topic (thinking pool): ${topic.name}. Generates curriculum, groups subtopics by subtopic_group_id.`}
-                      className={`shrink-0 w-[118px] flex flex-col justify-center px-2 py-1 rounded border text-[9px] font-mono transition-colors ${
+                      className={`shrink-0 w-full sm:w-[118px] flex flex-col justify-center px-2 py-1 rounded border text-[9px] font-mono transition-colors ${
                         isTopicPlanning ? 'border-amber bg-amber/15 text-amber' : 'border-border text-body'
                       }`}
                     >
@@ -566,41 +566,46 @@ export function SpoinSimulator() {
                       {pool}
                     </span>
                   </div>
-                  <div className="grid gap-1" style={{ gridTemplateColumns: `82px repeat(${state.config.keys.length}, 1fr)` }}>
-                    <div />
-                    {state.config.keys.map((k: KeyConfig) => (
-                      <div key={k.keyIndex} className="text-center text-[8px] font-mono text-dim truncate" title={k.label}>
-                        K{k.keyIndex}
-                      </div>
-                    ))}
-                    {models.map((model: ModelLadderEntry) => (
-                      <Fragment key={model.modelId}>
-                        <div
-                          className="text-[9px] font-mono text-body truncate pr-1 self-center"
-                          title={`${model.name} — RPD ${model.rpdLimit}, RPM ${model.rpmLimit}`}
-                        >
-                          {model.name.replace('Gemini ', '')}
+                  <div className="overflow-x-auto -mx-1 px-1">
+                    <div
+                      className="grid gap-1 w-max min-w-full"
+                      style={{ gridTemplateColumns: `82px repeat(${state.config.keys.length}, minmax(44px, 1fr))` }}
+                    >
+                      <div className="sticky left-0 bg-bg z-10" />
+                      {state.config.keys.map((k: KeyConfig) => (
+                        <div key={k.keyIndex} className="text-center text-[8px] font-mono text-dim truncate" title={k.label}>
+                          K{k.keyIndex}
                         </div>
-                        {state.config.keys.map((key: KeyConfig) => {
-                          const cellKey = `${key.keyIndex}:${model.modelId}`;
-                          const cell = state.cells[cellKey];
-                          if (!cell) return <div key={cellKey} />;
-                          return (
-                            <div
-                              key={cellKey}
-                              ref={registerCellRef(cellKey)}
-                              onClick={() => setSelectedCellKey(cellKey)}
-                              title={`Key ${cell.keyIndex} · ${model.name}: ${cell.rpdSpent}/${cell.rpdLimit} RPD, ${cell.rpmWindowCalls.length}/${cell.rpmLimit} RPM`}
-                              className={`h-6 rounded border cursor-pointer transition-colors flex items-center justify-center text-[8px] font-mono font-bold ${cellColor(
-                                cell
-                              )} ${selectedCellKey === cellKey ? 'ring-2 ring-amber' : ''}`}
-                            >
-                              {cell.isPoisoned429 ? <XCircle className="w-2.5 h-2.5" /> : ''}
-                            </div>
-                          );
-                        })}
-                      </Fragment>
-                    ))}
+                      ))}
+                      {models.map((model: ModelLadderEntry) => (
+                        <Fragment key={model.modelId}>
+                          <div
+                            className="sticky left-0 bg-bg z-10 text-[9px] font-mono text-body truncate pr-1 self-center"
+                            title={`${model.name} — RPD ${model.rpdLimit}, RPM ${model.rpmLimit}`}
+                          >
+                            {model.name.replace('Gemini ', '')}
+                          </div>
+                          {state.config.keys.map((key: KeyConfig) => {
+                            const cellKey = `${key.keyIndex}:${model.modelId}`;
+                            const cell = state.cells[cellKey];
+                            if (!cell) return <div key={cellKey} />;
+                            return (
+                              <div
+                                key={cellKey}
+                                ref={registerCellRef(cellKey)}
+                                onClick={() => setSelectedCellKey(cellKey)}
+                                title={`Key ${cell.keyIndex} · ${model.name}: ${cell.rpdSpent}/${cell.rpdLimit} RPD, ${cell.rpmWindowCalls.length}/${cell.rpmLimit} RPM`}
+                                className={`h-6 rounded border cursor-pointer transition-colors flex items-center justify-center text-[8px] font-mono font-bold ${cellColor(
+                                  cell
+                                )} ${selectedCellKey === cellKey ? 'ring-2 ring-amber' : ''}`}
+                              >
+                                {cell.isPoisoned429 ? <XCircle className="w-2.5 h-2.5" /> : ''}
+                              </div>
+                            );
+                          })}
+                        </Fragment>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );

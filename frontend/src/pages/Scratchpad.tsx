@@ -44,8 +44,8 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
 
   return (
     <div className="border-b border-dashed border-border/60 py-1.5">
-      <div className="flex items-baseline gap-2 cursor-pointer" onClick={onToggleOpen}>
-        <span className="text-dim text-[11px] w-[78px] shrink-0">{entry.date}</span>
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 cursor-pointer" onClick={onToggleOpen}>
+        <span className="text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{entry.date}</span>
         {isOpen ? (
           <ChevronDown size={10} className={`${TEXT[accent]} shrink-0 translate-y-px`} />
         ) : (
@@ -56,7 +56,7 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
         <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
       </div>
       {isOpen && (
-        <div className="pl-[97px] pr-1">
+        <div className="pl-3 sm:pl-[97px] pr-1">
           <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1">{entry.body}</p>
           <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} like={like} />
         </div>
@@ -89,8 +89,8 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
 
   return (
     <div className="border-b border-dashed border-border/60 py-2">
-      <div className="flex items-baseline gap-2 cursor-pointer group" onClick={onToggleOpen}>
-        <span className="text-dim text-[11px] w-[78px] shrink-0">{link.date}</span>
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 cursor-pointer group" onClick={onToggleOpen}>
+        <span className="text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{link.date}</span>
         {isOpen ? (
           <ChevronDown size={10} className="text-clay shrink-0 translate-y-px" />
         ) : (
@@ -112,16 +112,16 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="text-dim hover:text-clay transition-colors shrink-0"
+          className="text-dim hover:text-clay transition-colors shrink-0 p-1.5 -m-1.5"
           aria-label={`open ${link.title}`}
         >
           <ExternalLink size={11} className="translate-y-px" />
         </a>
         <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
       </div>
-      <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-[97px]">{link.commentary}</p>
+      <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-3 sm:pl-[97px]">{link.commentary}</p>
       {isOpen && (
-        <div className="pl-[97px] pr-1">
+        <div className="pl-3 sm:pl-[97px] pr-1">
           <CommentThread targetType="scratchpad" targetId={link.id} accent="clay" like={like} />
         </div>
       )}
@@ -154,7 +154,7 @@ function AudienceFilterBar({ selected, onToggle }: { selected: Set<Audience>; on
             onClick={() => onToggle(opt.value)}
             aria-pressed={isActive}
             className={`
-              text-[11px] font-bold px-2.5 py-1 border transition-all duration-200 lowercase
+              text-[11px] font-bold px-2.5 py-1.5 sm:py-1 border transition-all duration-200 lowercase
               ${isActive
                 ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
                 : 'border-border text-dim hover:text-body hover:border-dim'}
