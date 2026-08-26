@@ -67,6 +67,13 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    id: 'getting-into-homelabbing',
+    date: '26/08/2026',
+    title: 'getting into homelabbing',
+    body: "I've been thinking about getting into homelabbing, mostly by turning my ThinkPad into a little server and splitting it into several virtual machines for different tasks. I want to run different services separately, mess around with networking and deployments, and basically see how much of my own infrastructure I can run on one machine. No real end goal yet, I just think it would be pretty fun to set up.",
+    audience: 'technical',
+  },
+  {
     id: 'non-procrastinator-final-boss',
     date: '24/08/2026',
     title: 'non-procrastinator final boss',
@@ -76,6 +83,13 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
 ];
 
 export const RANDOM_IDEAS: CollapsibleEntry[] = [
+  {
+    id: 'context-filling-without-tokens',
+    date: '26/08/2026',
+    title: 'filling context in AI coding IDEs without consuming tokens',
+    body: 'AI harness coding IDEs on every new chat use tokens to fetch all the required context. Can we make it such that that context is filled every time without consuming any tokens except for the first time?',
+    audience: 'technical',
+  },
   {
     id: 'trippy-secondary-screen-visualizer',
     date: '24/08/2026',
@@ -108,6 +122,15 @@ export const RANDOM_IDEAS: CollapsibleEntry[] = [
 
 export const LINKS: LinkEntry[] = [
   {
+    id: 'anilist',
+    date: '26/08/2026',
+    title: 'Anilist',
+    url: 'https://anilist.co/user/Ero/',
+    domain: 'anilist.co',
+    commentary: 'I have been watching anime and reading manga and light novels for a long time.',
+    audience: 'non-technical',
+  },
+  {
     id: 'big-lez-show',
     date: '24/08/2026',
     title: 'The Big Lez Show',
@@ -117,3 +140,4 @@ export const LINKS: LinkEntry[] = [
     audience: 'non-technical',
   },
 ];
+
