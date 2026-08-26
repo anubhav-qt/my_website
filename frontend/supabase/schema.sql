@@ -162,11 +162,11 @@ create policy "metrics_select_all" on metrics
 -- Seed with today's published values (content/projects.ts) so the first
 -- build-time fetch matches what's already on the site.
 insert into metrics (project_id, label, value, detail) values
-  ('spoin', 'Corpus Size', '8,935 Cards', '8,706 Questions in Postgres'),
-  ('spoin', 'Read Latency', '< 50ms', 'Zero LLMs on read path'),
-  ('spoin', 'Throughput', '218 cards/min peak', E'≈ 3.6 cards/sec'),
-  ('spoin', 'Architecture', '57 ADRs', 'Sole system architect'),
-  ('spoin', 'Unique Topics', '14', null)
+  ('spoin', 'Peak Throughput', '499 items/min', E'≈8.3 items/sec'),
+  ('spoin', 'Corpus Size', '11,242 Cards', '10,994 Questions in Postgres'),
+  ('spoin', 'Architecture', '61 ADRs', 'Sole system architect'),
+  ('spoin', 'Unique Topics', '17', null),
+  ('spoin', 'Read Latency', '< 50ms', 'Zero LLMs on read path')
 on conflict (project_id, label) do nothing;
 
 -- ---------------------------------------------------------------------------
