@@ -39,11 +39,11 @@ const RAW_PROJECTS: ProjectItem[] = [
       "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. 11,242 cards are live so far. The hard part is generation: an async pipeline keeps expensive LLM calls off the read path entirely, so what you actually swipe through comes straight from Postgres, pre-computed and deduplicated, in under 50ms. Generation itself runs behind a 2D quota grid across 33 verified free-tier API keys, with a fallback ladder per model and per-cell serialization (ADR-0040) so a burst of calls does not trip rate limits.",
     caseStudyHref: '/work/spoin',
     metrics: [
+      { label: 'Peak Throughput', value: '499 items/min', detail: '≈8.3 items/sec' },
       { label: 'Corpus Size', value: '11,242 Cards', detail: '10,994 Questions in Postgres' },
-      { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
-      { label: 'Throughput', value: '499 items/min peak', detail: '≈8.3 items/sec' },
       { label: 'Architecture', value: '61 ADRs', detail: 'Sole system architect' },
       { label: 'Unique Topics', value: '17' },
+      { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
     ],
     tech: ['Python', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker'],
     team: { note: 'currently building with', collaborators: [{ label: '@mayanks0ni', url: 'https://github.com/mayanks0ni' }] },
