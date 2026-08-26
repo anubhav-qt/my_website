@@ -149,6 +149,11 @@ create table if not exists metrics (
   label text not null,
   value text not null,
   detail text,
+  -- Display order within a project (ascending). The first row (lowest
+  -- sort_order) is the "hero" metric shown large on the projects list --
+  -- see FeaturedProjects.tsx and Projects.tsx, which both take metrics[0].
+  -- fetch-metrics.mjs orders by this column so build output matches.
+  sort_order integer not null default 0,
   updated_at timestamptz not null default now(),
   unique (project_id, label)
 );
@@ -161,12 +166,12 @@ create policy "metrics_select_all" on metrics
 
 -- Seed with today's published values (content/projects.ts) so the first
 -- build-time fetch matches what's already on the site.
-insert into metrics (project_id, label, value, detail) values
-  ('spoin', 'Peak Throughput', '499 items/min', E'≈8.3 items/sec'),
-  ('spoin', 'Corpus Size', '11,242 Cards', '10,994 Questions in Postgres'),
-  ('spoin', 'Architecture', '61 ADRs', 'Sole system architect'),
-  ('spoin', 'Unique Topics', '17', null),
-  ('spoin', 'Read Latency', '< 50ms', 'Zero LLMs on read path')
+insert into metrics (project_id, label, value, detail, sort_order) values
+  ('spoin', 'Peak Throughput', '499 items/min', E'≈8.3 items/sec', 0),
+  ('spoin', 'Corpus Size', '11,242 Cards', '10,994 Questions in Postgres', 1),
+  ('spoin', 'Architecture', '61 ADRs', 'Sole system architect', 2),
+  ('spoin', 'Unique Topics', '17', null, 3),
+  ('spoin', 'Read Latency', '< 50ms', 'Zero LLMs on read path', 4)
 on conflict (project_id, label) do nothing;
 
 -- ---------------------------------------------------------------------------

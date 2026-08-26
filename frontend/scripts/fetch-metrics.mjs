@@ -40,9 +40,10 @@ async function main() {
     return;
   }
 
-  const res = await fetch(`${url}/rest/v1/metrics?select=project_id,label,value,detail`, {
-    headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-  });
+  const res = await fetch(
+    `${url}/rest/v1/metrics?select=project_id,label,value,detail&order=sort_order.asc`,
+    { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } },
+  );
 
   if (!res.ok) {
     console.warn(`[fetch-metrics] fetch failed (${res.status}), keeping existing live-metrics.json if any`);
