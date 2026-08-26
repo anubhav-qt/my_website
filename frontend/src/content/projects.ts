@@ -46,7 +46,7 @@ const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
     ],
     tech: ['Python', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker'],
-    team: { note: 'currently building with', collaborators: [{ label: '@mayanks0ni', url: 'https://github.com/mayanks0ni' }] },
+    team: { note: 'currently building', collaborators: [] },
     audit: {
       problem:
         'I wanted a feed with real depth, but free-tier LLM quotas do not stretch far, and nobody wants to wait 3 to 10 seconds for a card while they are mid-swipe.',
