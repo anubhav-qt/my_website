@@ -168,3 +168,25 @@ insert into metrics (project_id, label, value, detail) values
   ('spoin', 'Architecture', '57 ADRs', 'Sole system architect'),
   ('spoin', 'Unique Topics', '14', null)
 on conflict (project_id, label) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- content_log: append-only history of the site's hand-written content
+-- (career, education, scratchpad entries, project copy). Not read by the
+-- frontend and not a source of truth -- git already is. This is a personal
+-- archive of every version a content entry has ever had, one row per actual
+-- change, written only by the log-content Edge Function (service role) at
+-- build time. No anon policies at all: nothing but the service role can
+-- read or write this table.
+-- ---------------------------------------------------------------------------
+create table if not exists content_log (
+  id uuid primary key default gen_random_uuid(),
+  content_type text not null,
+  content_id text not null,
+  data jsonb not null,
+  change_type text not null check (change_type in ('added', 'updated')),
+  logged_at timestamptz not null default now()
+);
+
+create index if not exists content_log_lookup_idx on content_log (content_type, content_id, logged_at desc);
+
+alter table content_log enable row level security;
