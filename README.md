@@ -50,14 +50,3 @@ python scripts/manage_topics.py  # promote/reject/remove live Spoin topics
 
 The last two also run as `frontend/scripts/*.bat` on Windows. Both need `.env.local` and
 `.secrets.local` (admin secret) in `frontend/`, gitignored.
-
-## Notes for later
-
-- **Backend**: one Supabase project, RLS-gated (anonymous visitors can only insert or
-  delete their own rows). Schema in `frontend/supabase/schema.sql`. Two separate view
-  scopes (per-content, site-wide) and two separate like scopes (per-page, per-comment) —
-  see `frontend/src/hooks/` for how they're deduped by session.
-- **Responsive system**: `sm` (640px) splits the narrow layout from the wide one, a custom
-  `xs` tier (380px) tightens small phones and folds further, and `body { zoom: 1.25 }`
-  above 880px scales the whole page up since the column caps at `max-w-2xl` and stops
-  growing. Full rationale in `frontend/src/index.css` and `AGENTS.md`.
