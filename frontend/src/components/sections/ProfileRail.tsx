@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Waypoints, Bot, Cpu, Database, Workflow } from 'lucide-react';
+import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, ChevronDown } from 'lucide-react';
 import {
   SiPython,
   SiTypescript,
@@ -19,8 +19,12 @@ import {
   SiExpo,
   SiCockroachlabs,
 } from '@icons-pack/react-simple-icons';
-import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent } from '@/content/site';
+import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
+import { CommentThread } from '@/components/CommentThread';
+import { ContentMeta } from '@/components/ContentMeta';
+import { useViewTracking } from '@/hooks/useViewTracking';
+import { useLikeTracking } from '@/hooks/useLikeTracking';
 
 type Tab = 'stack' | 'career' | 'education';
 
@@ -184,55 +188,96 @@ function StackPanel() {
   );
 }
 
+function CareerItem({
+  entry,
+  isOpen,
+  onToggle,
+}: {
+  entry: ExperienceEntry;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const targetId = `career-${entry.id}`;
+  const views = useViewTracking('project', targetId, isOpen);
+  const like = useLikeTracking('project', targetId);
+
+  return (
+    <div
+      id={targetId}
+      className={`border transition-colors ${
+        isOpen ? 'border-amber/70 bg-surface/50' : 'border-border hover:border-dim'
+      }`}
+    >
+      <button
+        onClick={onToggle}
+        className="w-full text-left px-2.5 py-2 transition-colors cursor-pointer"
+      >
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-amber text-xs font-bold">{entry.company}</span>
+          <span className="text-heading text-xs lowercase">{entry.role}</span>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-dim text-[11px] shrink-0">{entry.period}</span>
+            <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+            <ChevronDown
+              size={12}
+              className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
+            />
+          </div>
+        </div>
+        <p className="text-dim text-[12px] leading-snug mt-1">{entry.headline}</p>
+      </button>
+
+      {isOpen && (
+        <div className="px-2.5 pb-3 pt-2 border-t border-dashed border-border/70">
+          <div className="space-y-2 mt-1">
+            {entry.bullets.map((b, i) => (
+              <p
+                key={i}
+                className="text-[12px] text-body/90 leading-relaxed pl-3 relative before:content-['-'] before:absolute before:left-0 before:text-amber"
+              >
+                {b}
+              </p>
+            ))}
+          </div>
+          <CommentThread targetType="project" targetId={targetId} accent="amber" like={like} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CareerPanel() {
   const [selected, setSelected] = useState<string | null>(null);
-  const entry = EXPERIENCE.find((e) => e.id === selected);
 
   return (
     <div className="flex flex-col gap-2">
-      {EXPERIENCE.map((e) => {
-        const isSelected = selected === e.id;
-        return (
-          <div key={e.id}>
-            <button
-              onClick={() => setSelected(isSelected ? null : e.id)}
-              className={`w-full text-left border px-2 py-1.5 transition-colors ${
-                isSelected ? 'border-amber bg-amber/10' : 'border-border hover:border-dim'
-              }`}
-            >
-              <div className="flex items-center gap-1.5">
-                <span className="text-amber text-xs font-bold">{e.company}</span>
-                <span className="text-heading text-xs lowercase">{e.role}</span>
-                <span className="ml-auto text-dim text-[11px] shrink-0">{e.period}</span>
-              </div>
-              <p className="text-dim text-[12px] leading-snug mt-1">{e.headline}</p>
-            </button>
-
-            {isSelected && (
-              <ul className="mt-1.5 pl-1 space-y-1">
-                {entry?.bullets.map((b, i) => (
-                  <li
-                    key={i}
-                    className="text-[12px] leading-relaxed pl-3 relative before:content-['-'] before:absolute before:left-0 before:text-dim"
-                  >
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        );
-      })}
+      {EXPERIENCE.map((e) => (
+        <CareerItem
+          key={e.id}
+          entry={e}
+          isOpen={selected === e.id}
+          onToggle={() => setSelected(selected === e.id ? null : e.id)}
+        />
+      ))}
     </div>
   );
 }
 
 function EducationPanel() {
+  const targetId = 'education';
+  const views = useViewTracking('project', targetId, true);
+  const like = useLikeTracking('project', targetId);
+
   return (
-    <div>
-      <span className="text-heading text-xs font-bold lowercase">{EDUCATION.degree}</span>
-      <p className="text-body text-xs mt-1">{EDUCATION.school}</p>
-      <p className="text-dim text-[12px] mt-0.5">{EDUCATION.period}</p>
+    <div className="border border-border/70 bg-surface/30 p-3">
+      <div className="flex items-start justify-between gap-2 flex-wrap">
+        <div>
+          <span className="text-heading text-xs font-bold">{EDUCATION.degree}</span>
+          <p className="text-body text-xs mt-1">{EDUCATION.school}</p>
+          <p className="text-dim text-[12px] mt-0.5">{EDUCATION.period}</p>
+        </div>
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+      </div>
 
       <div className="flex flex-wrap items-center gap-3 mt-2.5 pt-2.5 border-t border-dashed border-border">
         <span className="text-sage text-xs font-bold">CGPA {EDUCATION.cgpa}</span>
@@ -240,6 +285,8 @@ function EducationPanel() {
       </div>
 
       <p className="text-dim text-[12px] leading-relaxed mt-2">{EDUCATION.note}</p>
+
+      <CommentThread targetType="project" targetId={targetId} accent="amber" like={like} />
     </div>
   );
 }
@@ -248,8 +295,8 @@ export function ProfileRail() {
   const [tab, setTab] = useState<Tab>('stack');
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 sm:h-56">
-      <div className="flex sm:flex-col sm:w-24 sm:h-full sm:shrink-0 gap-1 border-b sm:border-b-0 border-border">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 sm:min-h-56">
+      <div className="flex sm:flex-col sm:w-24 sm:shrink-0 gap-1 border-b sm:border-b-0 border-border">
         {TABS.map((t) => {
           const isActive = tab === t.id;
           return (
@@ -266,7 +313,7 @@ export function ProfileRail() {
         })}
       </div>
 
-      <div className="flex-1 sm:h-full min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 sm:overflow-y-auto">
+      <div className="flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1">
         {tab === 'stack' && <StackPanel />}
         {tab === 'career' && <CareerPanel />}
         {tab === 'education' && <EducationPanel />}
