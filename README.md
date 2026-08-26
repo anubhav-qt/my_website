@@ -7,10 +7,13 @@
 ──────────────────────────────────────────
 ```
 
-> **Status**: v2. v1 was a static site (four hand-designed pages, no backend). v2 adds a
+> **Status**: v3. v1 was a static site (four hand-designed pages, no backend). v2 added a
 > Supabase backend: live Spoin topics, threaded comments with both page-level and
 > per-comment likes, session-deduped view counts, and build-time metrics pulled from the
-> database, across Projects and every Scratchpad category (not just writeups).
+> database, across Projects and every Scratchpad category (not just writeups). v3 made it
+> work on every screen: the PC-only layout got a narrow one underneath it, a tier below
+> that for small phones and folds, and it now scales itself up on wide viewports so a
+> browser's default zoom shows the size it was designed at. See [Layout](#layout).
 
 ## Stack
 
@@ -63,6 +66,34 @@ frontend/
     schema.sql          # full DB schema + RLS policies
     functions/           # wake-ping, update-metric, manage-topic Edge Functions
 ```
+
+## Layout
+
+One column, capped at `max-w-2xl` and centered. Three pieces make that work everywhere.
+
+**Breakpoints.** Tailwind's `sm` (640px) splits narrow from wide. Below it the fixed label
+columns the wide layout leans on (stack groups, project audit rows, scratchpad dates,
+contact channels) stack label-over-value instead of sitting side by side, ProfileRail's
+sidebar turns into a row of tabs, the Spoin simulator's quota grid scrolls horizontally
+behind a sticky label column, and tap targets grow. A custom `xs` tier at 380px (defined in
+`@theme`, see `frontend/src/index.css`) covers small phones and folds, where a 430px
+iPhone's padding and type are too generous. The layout holds down to 280px, the narrowest
+screen shipping on a real device.
+
+**Page zoom.** `body { zoom: 1.25 }` above 880px. The column stops growing at `max-w-2xl`,
+so past that width the page only gains empty margin and the type reads small, which is why
+125% looked right on a desktop monitor and 100% did not. Scaling the page is what a visitor
+would otherwise do by hand, and doing it in CSS meant the 160-odd hardcoded pixel values in
+the components (arbitrary Tailwind sizes plus icon `size` props, none of which follow the
+root font size) did not have to be rewritten. Media queries are not affected by zoom, so
+the effective layout width is always the viewport over 1.25 and never drops below 704px,
+staying clear of the 640px breakpoint.
+
+**Two things that fight the zoom**, both already handled, both worth knowing before adding
+more: `100vh` still means the unzoomed viewport, so there is no `min-h-screen` on the app
+wrapper and `body` paints the background instead. And `getBoundingClientRect` returns
+zoomed pixels, so the simulator's SVG connector overlay carries a `viewBox` matched to its
+measured size rather than assuming one unit is one pixel.
 
 ## Backend
 

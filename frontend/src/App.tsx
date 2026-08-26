@@ -30,10 +30,14 @@ export default function App() {
     recordSiteVisit();
   }, []);
 
+  // No min-h-screen on the wrapper: body already paints the background across
+  // the whole canvas, and a 100vh floor would fight the wide-viewport zoom in
+  // index.css (100vh stays the unscaled viewport, so it would render 25%
+  // taller than the window and leave every short page needlessly scrollable).
   return (
-    <div className="min-h-screen bg-bg text-body">
+    <div className="bg-bg text-body">
       <Nav />
-      <main className="max-w-2xl mx-auto px-5 pt-[6px]">
+      <main className="max-w-2xl mx-auto px-4 xs:px-5 pt-[6px]">
         {visitedPaths.map((path) => {
           const isActive = path === location.pathname;
           const slotLocation: Partial<Location> = isActive ? location : { pathname: path };

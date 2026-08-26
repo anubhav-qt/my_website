@@ -44,7 +44,11 @@ export function SpoinSimulator() {
   const [selectedCellKey, setSelectedCellKey] = useState<string | null>(null);
   const [showStaticFallback, setShowStaticFallback] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [lines, setLines] = useState<Line[]>([]);
+  // Connector geometry comes from getBoundingClientRect, which reports zoomed
+  // pixels (see the wide-viewport zoom in index.css). Keeping the container's
+  // measured size next to the lines lets the SVG carry a matching viewBox, so
+  // one user unit is always one measured pixel at any zoom level.
+  const [overlay, setOverlay] = useState<{ lines: Line[]; w: number; h: number }>({ lines: [], w: 0, h: 0 });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const liveRegionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -199,7 +203,7 @@ export function SpoinSimulator() {
           poisoned: Boolean(task.burstTriggered429),
         });
       }
-      setLines(next);
+      setOverlay({ lines: next, w: containerRect.width, h: containerRect.height });
     };
 
     const raf = requestAnimationFrame(recompute);
@@ -392,19 +396,26 @@ export function SpoinSimulator() {
         </div>
       ) : (
         <div ref={containerRef} className="relative">
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
-            {lines.map((line) => {
-              const path = `M${line.x1} ${line.y1} L${line.x2} ${line.y2}`;
-              return (
-                <g key={line.id}>
-                  <path d={path} stroke={line.color} strokeWidth={1.25} strokeDasharray="3 3" fill="none" opacity={0.5} />
-                  <circle r={2.5} fill={line.color}>
-                    <animateMotion dur="0.9s" repeatCount="indefinite" path={path} />
-                  </circle>
-                </g>
-              );
-            })}
-          </svg>
+          {overlay.lines.length > 0 && (
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox={`0 0 ${overlay.w} ${overlay.h}`}
+              preserveAspectRatio="none"
+              style={{ zIndex: 5 }}
+            >
+              {overlay.lines.map((line) => {
+                const path = `M${line.x1} ${line.y1} L${line.x2} ${line.y2}`;
+                return (
+                  <g key={line.id}>
+                    <path d={path} stroke={line.color} strokeWidth={1.25} strokeDasharray="3 3" fill="none" opacity={0.5} />
+                    <circle r={2.5} fill={line.color}>
+                      <animateMotion dur="0.9s" repeatCount="indefinite" path={path} />
+                    </circle>
+                  </g>
+                );
+              })}
+            </svg>
+          )}
 
           {/* Pipeline: one swimlane per topic, drawn horizontally, all running in parallel */}
           <div className="p-4 border-b border-border">
