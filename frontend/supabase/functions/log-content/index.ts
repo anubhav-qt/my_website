@@ -17,6 +17,22 @@ interface LogEntry {
   data: unknown;
 }
 
+// Postgres jsonb does not preserve object key order, so a plain
+// JSON.stringify comparison between a freshly-fetched row and the original
+// JS object spuriously reports "changed" on every build. Canonicalize both
+// sides (recursively sort object keys) before comparing.
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => [k, canonicalize(v)]),
+    );
+  }
+  return value;
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
@@ -61,7 +77,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     const changeType = existing ? 'updated' : 'added';
-    if (existing && JSON.stringify(existing.data) === JSON.stringify(data)) {
+    if (existing && JSON.stringify(canonicalize(existing.data)) === JSON.stringify(canonicalize(data))) {
       skipped.push(key);
       continue;
     }
