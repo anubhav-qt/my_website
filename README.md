@@ -7,7 +7,7 @@
 ──────────────────────────────────────────
 ```
 
-> **Status**: v3. v1 was a static site (four hand-designed pages, no backend). v2 added a
+> **Status**: v3.1. v1 was a static site (four hand-designed pages, no backend). v2 added a
 > Supabase backend: live Spoin topics, threaded comments with both page-level and
 > per-comment likes, session-deduped view counts, and build-time metrics pulled from the
 > database, across Projects and every Scratchpad category (not just writeups). v3 made it
@@ -77,8 +77,15 @@ contact channels) stack label-over-value instead of sitting side by side, Profil
 sidebar turns into a row of tabs, the Spoin simulator's quota grid scrolls horizontally
 behind a sticky label column, and tap targets grow. A custom `xs` tier at 380px (defined in
 `@theme`, see `frontend/src/index.css`) covers small phones and folds, where a 430px
-iPhone's padding and type are too generous. The layout holds down to 280px, the narrowest
-screen shipping on a real device.
+iPhone's padding and type are too generous. The layout holds to roughly 240px, narrower
+than anything shipping (a Galaxy Fold cover screen is 344px, a first-gen iPhone SE 320px).
+
+**Reflow before shrinking.** Once the type is this small, scaling it down further to win
+back width costs more than it buys. So when a row stops fitting, it wraps: the nav's view
+badge and the resume button on `/` both drop to a line of their own, still pinned right by
+`ml-auto`, rather than squeezing everything on the line. Restructuring is the third option
+when wrapping alone is not enough, which is what ProfileRail's sidebar does when it turns
+into a row of tabs below `sm`.
 
 **Page zoom.** `body { zoom: 1.25 }` above 880px. The column stops growing at `max-w-2xl`,
 so past that width the page only gains empty margin and the type reads small, which is why
