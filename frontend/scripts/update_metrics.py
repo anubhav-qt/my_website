@@ -67,7 +67,10 @@ def load_config() -> dict[str, str]:
 
 
 def fetch_current_metrics(config: dict[str, str], project_id: str) -> list[dict]:
-    url = f"{config['url']}/rest/v1/metrics?project_id=eq.{project_id}&select=label,value,detail&order=label"
+    url = (
+        f"{config['url']}/rest/v1/metrics"
+        f"?project_id=eq.{project_id}&select=label,value,detail,sort_order&order=sort_order"
+    )
     req = urllib.request.Request(
         url,
         headers={"apikey": config["anon_key"], "Authorization": f"Bearer {config['anon_key']}"},
@@ -76,9 +79,19 @@ def fetch_current_metrics(config: dict[str, str], project_id: str) -> list[dict]
         return json.loads(resp.read())
 
 
-def call_update_metric(config: dict[str, str], project_id: str, label: str, value: str, detail: str | None) -> None:
+def call_update_metric(
+    config: dict[str, str],
+    project_id: str,
+    label: str,
+    value: str,
+    detail: str | None,
+    sort_order: int | None,
+) -> None:
     url = f"{config['url']}/functions/v1/update-metric"
-    body = json.dumps({"projectId": project_id, "label": label, "value": value, "detail": detail}).encode()
+    payload = {"projectId": project_id, "label": label, "value": value, "detail": detail}
+    if sort_order is not None:
+        payload["sortOrder"] = sort_order
+    body = json.dumps(payload).encode()
     req = urllib.request.Request(
         url,
         data=body,
@@ -115,7 +128,7 @@ def main() -> None:
         print(f"Could not reach Supabase: {e}")
         sys.exit(1)
 
-    print(f"\nCurrent metrics for '{project_id}':")
+    print(f"\nCurrent metrics for '{project_id}' (in on-site order, #1 is the hero metric):")
     for i, m in enumerate(current, 1):
         detail_part = f" ({m['detail']})" if m.get("detail") else ""
         print(f"  {i}. {m['label']}: {m['value']}{detail_part}")
@@ -134,21 +147,32 @@ def main() -> None:
         new_value = prompt("New value", existing["value"])
         new_detail = prompt("New detail (blank to keep, '-' to clear)", existing.get("detail") or "")
         detail = None if new_detail == "-" else (new_detail or None)
+        order_input = prompt(
+            "New position (1 = hero/first, blank to keep)", str(idx + 1)
+        )
+        new_position = int(order_input)
+        sort_order = new_position - 1 if new_position != idx + 1 else None
     elif idx == len(current):
         label = prompt("New metric label (e.g. 'Corpus Size')")
         new_value = prompt("Value")
         detail_input = prompt("Detail (optional)")
         detail = detail_input or None
+        order_input = prompt("Position (1 = hero/first, blank = last)", str(len(current) + 1))
+        sort_order = int(order_input) - 1
     else:
         print("Out of range.")
         sys.exit(1)
 
-    print(f"\nAbout to set [{project_id}] {label} = {new_value}" + (f" ({detail})" if detail else ""))
+    print(
+        f"\nAbout to set [{project_id}] {label} = {new_value}"
+        + (f" ({detail})" if detail else "")
+        + (f", position {sort_order + 1}" if sort_order is not None else "")
+    )
     if prompt("Confirm? (y/n)", "y").lower() != "y":
         print("Cancelled.")
         return
 
-    call_update_metric(config, project_id, label, new_value, detail)
+    call_update_metric(config, project_id, label, new_value, detail, sort_order)
 
 
 if __name__ == "__main__":

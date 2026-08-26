@@ -16,6 +16,7 @@ interface UpdateMetricPayload {
   label: string;
   value: string;
   detail?: string | null;
+  sortOrder?: number;
 }
 
 Deno.serve(async (req) => {
@@ -35,7 +36,7 @@ Deno.serve(async (req) => {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  const { projectId, label, value, detail } = payload;
+  const { projectId, label, value, detail, sortOrder } = payload;
   if (!projectId || !label || !value) {
     return new Response('projectId, label, and value are required', { status: 400 });
   }
@@ -47,19 +48,29 @@ Deno.serve(async (req) => {
 
   const { data: existing } = await supabase
     .from('metrics')
-    .select('value, detail')
+    .select('value, detail, sort_order')
     .eq('project_id', projectId)
     .eq('label', label)
     .maybeSingle();
 
-  const unchanged = existing && existing.value === value && (existing.detail ?? null) === (detail ?? null);
+  const unchanged =
+    existing &&
+    existing.value === value &&
+    (existing.detail ?? null) === (detail ?? null) &&
+    (sortOrder === undefined || existing.sort_order === sortOrder);
+
+  const row: Record<string, unknown> = {
+    project_id: projectId,
+    label,
+    value,
+    detail: detail ?? null,
+    updated_at: new Date().toISOString(),
+  };
+  if (sortOrder !== undefined) row.sort_order = sortOrder;
 
   const { error } = await supabase
     .from('metrics')
-    .upsert(
-      { project_id: projectId, label, value, detail: detail ?? null, updated_at: new Date().toISOString() },
-      { onConflict: 'project_id,label' },
-    );
+    .upsert(row, { onConflict: 'project_id,label' });
 
   if (error) {
     return new Response(`Write failed: ${error.message}`, { status: 500 });
