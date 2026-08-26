@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/fetch-metrics.mjs",
+    "prebuild": "node scripts/fetch-metrics.mjs && tsx scripts/log-content.ts",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/prerender.mjs",
     "lint": "oxlint",
