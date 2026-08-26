@@ -16,7 +16,12 @@ export default function Home() {
   return (
     <div>
       <div className="mb-2">
-        <div className="flex items-center justify-between gap-3">
+        {/* Wraps rather than shrinks: below about 320px the name and the resume
+            button stop fitting on one line, and since the name cannot break
+            (whitespace-nowrap, it is a name) it would otherwise run underneath
+            the button. Letting the button drop to a line of its own, still
+            pinned right, keeps both readable at full size. */}
+        <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-1.5">
           <div className="min-w-0">
             <h1 className="text-heading text-xl sm:text-2xl font-bold leading-tight whitespace-nowrap lowercase">{PROFILE.name}</h1>
             <p className="text-amber font-semibold text-[13px] sm:text-sm mt-0.5 whitespace-nowrap lowercase">{PROFILE.role}</p>
@@ -26,7 +31,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
             download
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0 ml-auto"
           >
             <FileText size={12} />
             resume
