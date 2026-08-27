@@ -9,7 +9,7 @@ export const PROFILE = {
   resume: '/resume.pdf',
 };
 
-export const FEATURED_IDS = ['spoin', 'to-know-thyself'] as const;
+export const FEATURED_IDS = ['spoin', 'to_know_thyself'] as const;
 
 export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
   title: string;
@@ -29,14 +29,14 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
       { label: 'case study', href: '/projects#spoin' },
     ],
   },
-  'to-know-thyself': {
+  to_know_thyself: {
     title: 'to_know_thyself: Personal Memory Archive',
     progress: 5,
     description: 'Nothing built yet. Settling ',
     highlight: 'the storage and provenance layer',
     descriptionEnd: ' first, because the graph on top can always be recomputed and the archive underneath cannot.',
     tags: [
-      { label: 'case study', href: '/projects#to-know-thyself' },
+      { label: 'case study', href: '/projects#to_know_thyself' },
     ],
   },
 };

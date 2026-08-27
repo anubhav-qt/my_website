@@ -65,7 +65,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'to-know-thyself',
+    id: 'to_know_thyself',
     title: 'to_know_thyself: Personal Memory Archive',
     category: 'Architecture Spec',
     skimDescription:
