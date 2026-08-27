@@ -27,6 +27,28 @@ Real content only. Project facts, ADR dates, and experience come from
 `npm run sync-docs`, sourced from local ADR/architecture markdown outside this repo, see
 `frontend/content/manifest.json`).
 
+## Content archive
+
+Every build appends changed content to Supabase's `content_log` via `scripts/log-content.ts`:
+profile, career, education, stack, currently-making, every scratchpad entry, and project copy
+in two forms (`project-source` is the authored text, `project` is the same thing with live
+metrics merged in, so every number on the page is dated). The table is append-only. An entry
+that disappears from the source gets a `removed` tombstone carrying its last known data, so
+"abandoned this in 2027" stays distinguishable from "still current", and nothing is ever
+updated or deleted. Comments work the same way: stored raw and uncensored in Postgres, with
+censoring applied only at render time, and no anon UPDATE or DELETE policy at all.
+
+Two rules that follow from this:
+
+- Adding a new content module, or a new exported list in an existing one, means adding it to
+  `scripts/log-content.ts` in the same change. Anything not listed there has no history at
+  all, and missing history cannot be backfilled later.
+- Every so often when pushing new content, actually verify the archive caught it. Read back
+  the newest `content_log` rows and confirm the entry is present, that `data` holds the whole
+  object rather than a fragment, and that `source`, `git_sha`, and `git_message` are
+  populated. This layer fails silently by design, since it soft-fails rather than breaking
+  the build, so nobody finds out it stopped working except by looking.
+
 ## Writing style for site copy
 
 This is a personal website, not a resume. All copy (project descriptions, bios, log entries,

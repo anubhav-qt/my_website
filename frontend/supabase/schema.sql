@@ -180,18 +180,38 @@ on conflict (project_id, label) do nothing;
 -- frontend and not a source of truth -- git already is. This is a personal
 -- archive of every version a content entry has ever had, one row per actual
 -- change, written only by the log-content Edge Function (service role) at
--- build time. No anon policies at all: nothing but the service role can
--- read or write this table.
+-- build time. Nothing is ever updated or deleted: an entry that disappears
+-- from the source gets a 'removed' tombstone carrying its last known data,
+-- so the archive can tell "abandoned this" apart from "still current".
+-- No anon policies at all: nothing but the service role can read or write
+-- this table.
 -- ---------------------------------------------------------------------------
 create table if not exists content_log (
   id uuid primary key default gen_random_uuid(),
   content_type text not null,
   content_id text not null,
   data jsonb not null,
-  change_type text not null check (change_type in ('added', 'updated')),
-  logged_at timestamptz not null default now()
+  change_type text not null check (change_type in ('added', 'updated', 'removed')),
+  logged_at timestamptz not null default now(),
+  -- Provenance: which commit produced this version, and which module the
+  -- entry was read from. Nullable because a build without git (or an older
+  -- row written before these columns existed) still logs fine.
+  source text,
+  git_sha text,
+  git_message text,
+  git_committed_at timestamptz
 );
 
 create index if not exists content_log_lookup_idx on content_log (content_type, content_id, logged_at desc);
+
+-- Migrations for databases created before the provenance columns and the
+-- 'removed' tombstone existed. All idempotent, safe to re-run.
+alter table content_log add column if not exists source text;
+alter table content_log add column if not exists git_sha text;
+alter table content_log add column if not exists git_message text;
+alter table content_log add column if not exists git_committed_at timestamptz;
+alter table content_log drop constraint if exists content_log_change_type_check;
+alter table content_log add constraint content_log_change_type_check
+  check (change_type in ('added', 'updated', 'removed'));
 
 alter table content_log enable row level security;

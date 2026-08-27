@@ -1,4 +1,6 @@
-import liveMetricsData from '@/data/live-metrics.json';
+// Relative, not the @/ alias: scripts/log-content.ts imports this module
+// directly under tsx during prebuild, where the Vite alias does not exist.
+import liveMetricsData from '../data/live-metrics.json';
 
 export interface ProjectAudit {
   problem: string;
@@ -28,7 +30,11 @@ export interface ProjectItem {
   team?: { note: string; collaborators: Collaborator[] };
 }
 
-const RAW_PROJECTS: ProjectItem[] = [
+// Exported for scripts/log-content.ts, which archives the hand-written copy
+// separately from the live-metric-merged PROJECTS below. Keeping both means a
+// metric refresh never churns the authored-copy history, and the merged rows
+// still record what each number actually read at that build.
+export const RAW_PROJECTS: ProjectItem[] = [
   {
     id: 'spoin',
     title: 'Spoin: CQRS Pipeline & Quota Governor',
