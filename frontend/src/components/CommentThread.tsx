@@ -74,7 +74,7 @@ const ACCENT: Record<Accent, AccentClasses> = {
   },
 };
 
-const MAX_NICKNAME_LENGTH = 40;
+const MAX_NICKNAME_LENGTH = 50;
 const MAX_BODY_LENGTH = 2000;
 const DEEP_REPLIES_COLLAPSE_THRESHOLD = 3;
 
@@ -312,53 +312,47 @@ export function CommentThread({
         </div>
 
         {replyingTo === node.id && (
-          <div className="mt-2 p-2.5 bg-surface border-l-2 border-border max-w-xl">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="w-full sm:w-32 shrink-0">
+          <div className="mt-2 p-2 bg-surface border-l-2 border-border max-w-xl">
+            <div className="flex flex-col sm:flex-row gap-1.5">
+              <div className="relative w-full sm:w-28 shrink-0">
                 <input
                   type="text"
                   maxLength={MAX_NICKNAME_LENGTH}
                   value={activeReplyNick}
                   onChange={(e) => setReplyNickname(e.target.value)}
                   placeholder="nickname"
-                  className="w-full bg-bg border border-border text-heading text-[11.5px] px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
+                  className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
                 />
+                <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
+                  {activeReplyNick.length}/{MAX_NICKNAME_LENGTH}
+                </span>
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="relative flex-1 min-w-0">
                 <textarea
                   maxLength={MAX_BODY_LENGTH}
                   value={replyBody}
                   onChange={(e) => setReplyBody(e.target.value)}
                   placeholder="reply..."
-                  rows={2}
-                  className="w-full bg-bg border border-border text-heading text-xs px-2.5 py-1.5 min-h-[40px] sm:min-h-[34px] resize-y placeholder:text-dim focus:outline-none focus:border-current leading-relaxed"
+                  className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
                 />
+                <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
+                  {replyBody.length}/{MAX_BODY_LENGTH}
+                </span>
               </div>
             </div>
-            <div className="flex justify-between items-center mt-1.5">
-              <span className="text-[10px] text-dim/70 font-mono">
-                {replyBody.length > 0 ? `${replyBody.length}/${MAX_BODY_LENGTH}` : ''}
-              </span>
-              <div className="flex gap-2 items-center">
-                <button
-                  onClick={() => setReplyingTo(null)}
-                  className="text-[10.5px] text-dim hover:text-heading transition-colors cursor-pointer"
-                >
-                  cancel
-                </button>
-                <button
-                  onClick={() =>
-                    post(node.id, activeReplyNick, replyBody, () => {
-                      setReplyBody('');
-                      setReplyingTo(null);
-                    })
-                  }
-                  disabled={onCooldown || !activeReplyNick.trim() || !replyBody.trim()}
-                  className={`text-[10.5px] font-bold px-2.5 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer`}
-                >
-                  reply
-                </button>
-              </div>
+            <div className="flex justify-end gap-2 items-center mt-1.5">
+              <button
+                onClick={() =>
+                  post(node.id, activeReplyNick, replyBody, () => {
+                    setReplyBody('');
+                    setReplyingTo(null);
+                  })
+                }
+                disabled={onCooldown || !activeReplyNick.trim() || !replyBody.trim()}
+                className={`text-[10.5px] font-bold px-2.5 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors`}
+              >
+                reply
+              </button>
             </div>
           </div>
         )}
@@ -427,38 +421,43 @@ export function CommentThread({
         </button>
       </div>
 
-      {/* Main post input box */}
-      <div className={`p-3 bg-surface border-l-2 ${ACCENT[accent].border}`}>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="w-full sm:w-36 shrink-0">
+      {/* Main post input box with max character limits & indicators */}
+      <div className={`p-2.5 bg-surface border-l-2 ${ACCENT[accent].border}`}>
+        <div className="flex flex-col sm:flex-row gap-1.5">
+          <div className="relative w-full sm:w-28 shrink-0">
             <input
               type="text"
               maxLength={MAX_NICKNAME_LENGTH}
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="nickname"
-              className="w-full bg-bg border border-border text-heading text-[12px] px-2.5 py-1.5 placeholder:text-dim focus:outline-none focus:border-current"
+              className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
             />
+            <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
+              {nickname.length}/{MAX_NICKNAME_LENGTH}
+            </span>
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="relative flex-1 min-w-0">
             <textarea
               maxLength={MAX_BODY_LENGTH}
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="say something about this one..."
-              rows={2}
-              className="w-full bg-bg border border-border text-heading text-xs px-2.5 py-1.5 min-h-[44px] sm:min-h-[38px] resize-y placeholder:text-dim focus:outline-none focus:border-current leading-relaxed"
+              className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
             />
+            <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
+              {body.length}/{MAX_BODY_LENGTH}
+            </span>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-2">
-          <span className="text-[10px] text-dim/70 font-mono">
-            {body.length > 0 ? `${body.length}/${MAX_BODY_LENGTH}` : ''}
+        <div className="flex justify-between items-center mt-1.5">
+          <span className="text-[10px] text-dim/70">
+            {MAX_BODY_LENGTH - body.length} characters left
           </span>
           <button
             onClick={() => post(null, nickname, body, () => setBody(''))}
             disabled={!supabase || onCooldown || !nickname.trim() || !body.trim()}
-            className={`text-[11px] font-bold px-3.5 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer`}
+            className={`text-[11px] font-bold px-3 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors`}
           >
             post
           </button>
