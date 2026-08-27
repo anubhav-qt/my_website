@@ -4,6 +4,7 @@ import { WRITEUPS } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { useLikeTracking } from '@/hooks/useLikeTracking';
+import { useCommentTracking } from '@/hooks/useCommentTracking';
 import { CommentThread } from '@/components/CommentThread';
 import { ContentMeta } from '@/components/ContentMeta';
 
@@ -15,6 +16,7 @@ export default function ScratchpadEntry() {
   const next = index >= 0 && index < WRITEUPS.length - 1 ? WRITEUPS[index + 1] : undefined;
   const views = useViewTracking('scratchpad', slug ?? '');
   const like = useLikeTracking('scratchpad', slug ?? '');
+  const commentCount = useCommentTracking('scratchpad', slug ?? '');
 
   useSEO({
     title: entry ? entry.title : 'Scratchpad',
@@ -44,7 +46,7 @@ export default function ScratchpadEntry() {
       <div>
         <h1 className="text-heading text-xl font-bold leading-snug mb-2 lowercase">{entry.title}</h1>
 
-        <div className="flex items-center gap-3 pb-3 border-b-2 border-border mb-5">
+        <div className="flex items-center gap-3 pb-3 border-b-2 border-border mb-5 flex-wrap">
           <span className="text-dim text-[11px]">{entry.date}</span>
           <span className="text-dim text-[11px]">{entry.readTime}</span>
           {entry.tags.map((t) => (
@@ -53,7 +55,7 @@ export default function ScratchpadEntry() {
             </span>
           ))}
           <span className="flex-1" />
-          <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+          <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
         </div>
 
         {entry.body.map((p, i) => (
