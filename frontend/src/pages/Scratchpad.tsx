@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
-import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type CollapsibleEntry, type LinkEntry, type Audience } from '@/content/scratchpad';
+import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type WriteupEntry, type CollapsibleEntry, type LinkEntry, type Audience } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { useLikeTracking } from '@/hooks/useLikeTracking';
+import { useCommentTracking } from '@/hooks/useCommentTracking';
 import { ContentMeta } from '@/components/ContentMeta';
 import { CommentThread } from '@/components/CommentThread';
 
@@ -24,6 +25,15 @@ const TEXT: Record<Accent, string> = {
   clay: 'text-clay',
 };
 
+function parseDateDMY(dateStr: string): number {
+  const parts = dateStr.split(/[/.-]/).map(Number);
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    return new Date(year, month - 1, day).getTime();
+  }
+  return new Date(dateStr).getTime() || 0;
+}
+
 function SectionHeader({ color, label, count, latest }: { color: Accent; label: string; count: number; latest?: string }) {
   return (
     <div className="flex items-center gap-2.5 mb-2.5">
@@ -38,9 +48,40 @@ function SectionHeader({ color, label, count, latest }: { color: Accent; label: 
   );
 }
 
+function WriteupCard({ w }: { w: WriteupEntry }) {
+  const views = useViewTracking('scratchpad', w.slug, false);
+  const like = useLikeTracking('scratchpad', w.slug);
+  const commentCount = useCommentTracking('scratchpad', w.slug);
+
+  return (
+    <Link
+      to={`/scratchpad/${w.slug}`}
+      className="w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 hover:border-amber/70 hover:bg-surface/60 transition-colors"
+    >
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-heading text-sm font-bold leading-snug lowercase">{w.title}</span>
+        <span className="text-dim text-[11px] shrink-0">{w.date}</span>
+      </div>
+      <p className="text-xs text-dim leading-relaxed mt-1.5">{w.dek}</p>
+      <span className="flex-1 min-h-[13.5px]" />
+      <div className="flex items-center gap-2 pt-1.5 mt-2 border-t border-border/40 flex-wrap">
+        {w.tags.map((t) => (
+          <span key={t} className="text-[10px] text-body/80 border border-border/70 bg-bg/40 px-1.5 py-0.5">
+            {t}
+          </span>
+        ))}
+        <span className="flex-1 min-w-[8px]" />
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
+        <span className="text-amber text-xs font-bold ml-1">read &#8594;</span>
+      </div>
+    </Link>
+  );
+}
+
 function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: CollapsibleEntry; accent: Accent; isOpen: boolean; onToggleOpen: () => void }) {
   const views = useViewTracking('scratchpad', entry.id, isOpen);
   const like = useLikeTracking('scratchpad', entry.id);
+  const commentCount = useCommentTracking('scratchpad', entry.id);
 
   return (
     <div className="border-b border-dashed border-border/60 py-1.5">
@@ -53,7 +94,7 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
         )}
         <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
         <span className="flex-1" />
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1">
@@ -86,6 +127,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
 function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: boolean; onToggleOpen: () => void }) {
   const views = useViewTracking('scratchpad', link.id, isOpen);
   const like = useLikeTracking('scratchpad', link.id);
+  const commentCount = useCommentTracking('scratchpad', link.id);
 
   return (
     <div className="border-b border-dashed border-border/60 py-2">
@@ -117,7 +159,7 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
         >
           <ExternalLink size={11} className="translate-y-px" />
         </a>
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
       <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-3 sm:pl-[97px]">{link.commentary}</p>
       {isOpen && (
@@ -192,7 +234,11 @@ export default function Scratchpad() {
     });
   const matches = (audience: Audience) => selectedAudiences.size === 0 || selectedAudiences.has(audience);
 
-  const filteredWriteups = WRITEUPS.filter((w) => matches(w.audience));
+  // Always sort writeups recent-first
+  const filteredWriteups = WRITEUPS
+    .filter((w) => matches(w.audience))
+    .sort((a, b) => parseDateDMY(b.date) - parseDateDMY(a.date));
+
   const filteredMildlyInteresting = MILDLY_INTERESTING_STUFF.filter((e) => matches(e.audience));
   const filteredRandomIdeas = RANDOM_IDEAS.filter((e) => matches(e.audience));
   const filteredLinks = LINKS.filter((l) => matches(l.audience));
@@ -247,28 +293,7 @@ export default function Scratchpad() {
               <SectionHeader color="amber" label="writeups" count={filteredWriteups.length} latest={filteredWriteups[0]?.date} />
               <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1">
                 {filteredWriteups.map((w) => (
-                  <Link
-                    key={w.id}
-                    to={`/scratchpad/${w.slug}`}
-                    className="w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 hover:border-amber/70 hover:bg-surface/60 transition-colors"
-                  >
-                    <div className="flex items-baseline justify-between gap-2">
-                      <span className="text-heading text-sm font-bold leading-snug lowercase">{w.title}</span>
-                      <span className="text-dim text-[11px] shrink-0">{w.date}</span>
-                    </div>
-                    <p className="text-xs text-dim leading-relaxed mt-1.5">{w.dek}</p>
-                    <span className="flex-1 min-h-[13.5px]" />
-                    <div className="flex items-center gap-2 pt-1.5 mt-2 border-t border-border/40">
-                      {w.tags.map((t) => (
-                        <span key={t} className="text-[10px] text-body/80 border border-border/70 bg-bg/40 px-1.5 py-0.5">
-                          {t}
-                        </span>
-                      ))}
-                      <span className="flex-1" />
-                      <span className="text-dim text-[11px]">{w.readTime}</span>
-                      <span className="text-amber text-xs font-bold">read &#8594;</span>
-                    </div>
-                  </Link>
+                  <WriteupCard key={w.id} w={w} />
                 ))}
               </div>
             </div>

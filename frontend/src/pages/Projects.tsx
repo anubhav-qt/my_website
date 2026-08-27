@@ -10,12 +10,14 @@ import { ContentMeta } from '@/components/ContentMeta';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { useLikeTracking } from '@/hooks/useLikeTracking';
+import { useCommentTracking } from '@/hooks/useCommentTracking';
 
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
   const [simOpen, setSimOpen] = useState(false);
   const [heroMetric, ...restMetrics] = p.metrics ?? [];
   const views = useViewTracking('project', p.id, isOpen);
   const like = useLikeTracking('project', p.id);
+  const commentCount = useCommentTracking('project', p.id);
 
   return (
     <li
@@ -49,7 +51,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               <ExternalLink size={12} />
             </a>
           )}
-          <ContentMeta views={views} liked={like.liked} likeCount={like.count} />
+          <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
           <ChevronDown
             size={13}
             className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
