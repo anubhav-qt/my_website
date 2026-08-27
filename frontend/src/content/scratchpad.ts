@@ -32,6 +32,7 @@ export interface LinkEntry {
 
 export const WRITEUPS: WriteupEntry[] = [
   {
+<<<<<<< HEAD
     "id": "spoin-throughput-tuning",
     "slug": "squeezing-218-cards-a-minute-out-of-free-tier-gemini",
     "title": "squeezing 499 items/min out of free-tier gemini",
@@ -44,6 +45,16 @@ export const WRITEUPS: WriteupEntry[] = [
     ],
     "readTime": "5 min",
     "body": [
+=======
+    id: 'spoin-throughput-tuning',
+    slug: 'squeezing-218-cards-a-minute-out-of-free-tier-gemini',
+    title: 'squeezing 499 items/min out of free-tier gemini',
+    dek: 'how the spoin generation pipeline went from 16 cards/min to a 499/min peak (cards and questions combined) without paying for a single API key.',
+    date: '25/08/2026',
+    tags: ['spoin', 'llm', 'systems'],
+    readTime: '5 min',
+    body: [
+>>>>>>> origin/production
       "Spoin generates knowledge cards with an LLM, but the read path can never touch one, cards have to come out of Postgres in under 50ms. So all the actual work happens in an async generation pipeline running behind a pile of free-tier Gemini keys, and free-tier keys are stingy: low requests-per-minute, low requests-per-day, per-model. The first version just round-robinned across keys and blocked on whichever one was free. That capped out around 16 cards/min, and a lot of that time was one call sitting idle waiting on rate limits while fifteen other keys sat unused.",
       "The fix in ADR-0028 was to stop thinking about it as a queue of calls and start thinking about it as a 2D grid: one axis is API keys, the other is models. Every (key, model) cell has its own quota state, and a fallback ladder lets a generation task walk sideways to a different model on the same key, or down to a different key entirely, the moment one cell looks close to its limit instead of waiting for a 429 to prove it. That alone was most of the jump to 130+ cards/min in the second benchmark run: the bottleneck stopped being 'wait for a key' and became 'find any open cell in the grid.'",
       "Opening up the grid exposed a second bug, though. Nothing stopped two calls from hitting the same cell at once, so a burst of concurrent requests against one (key, model) pair could poison it with cascading 429s, exactly the thing the grid was supposed to prevent. ADR-0040 fixed that with per-cell serialization, a lock around each cell so only one in-flight call touches a given (key, model) pair at a time, everything else in that cell queues instead of racing it. Combined with a cleaned-up 16-key pool and running five topics simultaneously instead of one, that's what pushed the corpus past 10,000 cards at 135+ cards/min in the third benchmark run.",
