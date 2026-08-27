@@ -3,7 +3,7 @@ import { Heart } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
 import { getSessionId } from '@/lib/session';
-import { censorText } from '@/lib/censor';
+import { censorText, censorNickname } from '@/lib/censor';
 import type { Accent } from '@/content/site';
 import type { Comment, TargetType } from '@/lib/backend-types';
 
@@ -266,7 +266,7 @@ export function CommentThread({
     return (
       <div key={node.id} className={`pl-2.5 py-2 border-l-2 ${borderClass} ${indentClass} min-w-[260px] sm:min-w-[320px]`}>
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-heading text-xs font-bold">{censorText(node.nickname)}</span>
+          <span className="text-heading text-xs font-bold">{censorNickname(node.nickname)}</span>
           <span className="text-dim text-[10.5px]">{relativeTime(node.created_at)}</span>
           {node.children.length > 0 && (
             <button
