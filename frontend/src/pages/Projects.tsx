@@ -112,13 +112,15 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
             </div>
           )}
 
-          <div className="flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
-            {p.tech.map((t) => (
-              <span key={t} className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40">
-                {t}
-              </span>
-            ))}
-          </div>
+          {p.tech.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
+              {p.tech.map((t) => (
+                <span key={t} className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
 
           {p.audit && (
             <div className="flex flex-col gap-2 sm:gap-1.5 mt-3 pt-2.5 border-t border-dashed border-border/70">

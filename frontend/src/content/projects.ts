@@ -65,10 +65,20 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
+    id: 'to-know-thyself',
+    title: 'to_know_thyself: Personal Memory Archive',
+    category: 'Architecture Spec',
+    skimDescription:
+      'A self-hostable archive that keeps everything you publish and everything you say to AI models, and links the two together over time.',
+    deepDescription:
+      "Point it at your own personal site and hand it your ChatGPT, Claude, and Gemini exports, and it keeps both halves: the writing you chose to publish, and the conversations behind it. Nothing is ever edited or deleted, so asking what you thought about something years ago returns what you actually wrote, not a summary of it. Storage comes first, because you cannot infer a connection from a conversation you failed to capture. Every conversation lands as a node with its timestamp, its source, and its privacy tier recorded, stored losslessly so a better model years from now can re-read the originals rather than somebody's notes on them. The graph sits on top and stays deliberately disposable: typed edges (this caused that, this contradicted that, you changed your mind here) get recomputed whenever the models improve, and every inferred edge stays marked as inferred, so the system can never quietly promote a guess into a memory. anubhav-qt.dev is the reference deployment and the public half of my own copy.",
+    tech: [],
+    team: { note: 'currently building', collaborators: [] },
+  },
+  {
     id: 'continuum',
     title: 'Continuum: Film Studio Continuity OS',
     category: 'Architecture Spec',
-    featured: true,
     skimDescription: 'Software that would let a film production track its whole state as one connected graph.',
     deepDescription:
       "A system design for software that treats an entire film production, the script, the cast, the sets, the schedule, as one connected graph instead of scattered documents. Move a scene from a sunny park to a night warehouse, and everyone downstream, wardrobe, continuity, budget, gets flagged automatically instead of finding out on set. Under the hood it's an immutable event ledger and a directed multigraph in ClickHouse, with bi-directional cascade invalidation so an upstream edit flags every downstream inconsistency without forcing a blind regeneration of the whole script.",

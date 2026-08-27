@@ -113,16 +113,18 @@ export function FeaturedProjects() {
         )}
 
         {/* Tech tags */}
-        <div className="relative flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
-          {project.tech.map((t) => (
-            <span
-              key={t}
-              className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
+        {project.tech.length > 0 && (
+          <div className="relative flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
+            {project.tech.map((t) => (
+              <span
+                key={t}
+                className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
