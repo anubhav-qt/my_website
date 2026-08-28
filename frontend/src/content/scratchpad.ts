@@ -74,6 +74,13 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "date": "28/08/2026",
+    "title": "my first tattoo",
+    "body": "I got my first tattoo on 12th August, 2026. I always wanted to have a tattoo and had been searching for the design for months now. Then I randomly saw the \"Ensō\" symbol, which is a circle drawn in one single brush stroke. It has many meanings but for me it reminds me to stay focused, calm and complete on my own.",
+    "audience": "non-technical",
+    "id": "my-first-tattoo"
+  },
+  {
     "date": "27/08/2026",
     "title": "air pistol shooting",
     "body": "My little sister has been going to air rifle shooting range for about 3 years now, and even I was interested in trying it out, so I started going to air pistol shooting in the same shooting range since 1st august. My morning routine used to be non-existent before this, waking up at 10-11 am daily lol. But my life is getting back on track again.",
