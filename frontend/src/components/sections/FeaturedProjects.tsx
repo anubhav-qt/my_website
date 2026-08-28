@@ -14,10 +14,10 @@ export function FeaturedProjects() {
   return (
     <div className="relative">
       {/* Section label ------------- Spoin Continuum */}
-      <div className="flex items-center gap-3 mb-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2.5">
         <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Featured</span>
-        <span className="flex-1 border-t border-dashed border-border" />
-        <div className="flex gap-1.5 shrink-0">
+        <span className="hidden sm:block flex-1 border-t border-dashed border-border min-w-[20px]" />
+        <div className="flex flex-wrap gap-1.5 shrink-0">
           {FEATURED_PROJECTS.map((p, i) => {
             const isActive = active === i;
             return (

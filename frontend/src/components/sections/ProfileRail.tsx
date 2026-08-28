@@ -18,6 +18,8 @@ import {
   SiRender,
   SiExpo,
   SiCockroachlabs,
+  SiLangchain,
+  SiKubernetes,
 } from '@icons-pack/react-simple-icons';
 import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
@@ -41,6 +43,7 @@ const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: strin
   'SQL (PostgreSQL / ClickHouse)': Database,
   FastAPI: SiFastapi,
   PyTorch: SiPytorch,
+  LangChain: SiLangchain,
   'Google ADK': Bot,
   'Google Agent Builder': Bot,
   LangGraph: Waypoints,
@@ -52,9 +55,12 @@ const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: strin
   'Neon Serverless': SiNeon,
   CockroachDB: SiCockroachlabs,
   Redis: SiRedis,
+  pgvector: Database,
+  Pinecone: Database,
   'pgvector / Pinecone': Database,
   'Google Cloud': SiGooglecloud,
   AWS: Cloud,
+  Kubernetes: SiKubernetes,
   Docker: SiDocker,
   Vercel: SiVercel,
   Render: SiRender,
@@ -82,6 +88,10 @@ function projectsUsing(item: string) {
       if (needle.includes('clickhouse') && tLower.includes('clickhouse')) return true;
       if (needle.includes('postgresql') && (tLower.includes('postgresql') || tLower.includes('postgres'))) return true;
       if (needle.includes('pgvector') && tLower.includes('pgvector')) return true;
+      if (needle.includes('pinecone') && tLower.includes('pinecone')) return true;
+      if (needle.includes('langchain') && tLower.includes('langchain')) return true;
+      if (needle.includes('kubernetes') && tLower.includes('kubernetes')) return true;
+      if (needle === 'aws' && (tLower.includes('aws') || tLower.includes('amazon'))) return true;
       if (needle.includes('agent builder') && tLower.includes('agent builder')) return true;
       if (needle.includes('mcp') && tLower.includes('mcp')) return true;
       if (needle.includes('next.js') && tLower.includes('next.js')) return true;

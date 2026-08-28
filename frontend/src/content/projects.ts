@@ -51,7 +51,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Unique Topics', value: '17' },
       { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
     ],
-    tech: ['Python', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker'],
+    tech: ['Python', 'LangChain', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker', 'Kubernetes', 'AWS'],
     team: { note: 'currently building', collaborators: [] },
     audit: {
       problem:
@@ -114,7 +114,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Identity', value: 'DID + VCs', detail: 'Know-Your-Agent credentials, kill switch' },
       { label: 'Integration', value: '3 lines', detail: 'LangChain callback handler' },
     ],
-    tech: ['Python', 'FastAPI', 'PostgreSQL', 'pgvector', 'Redis', 'DeepSeek', 'Gemini', 'TypeScript', 'Go'],
+    tech: ['Python', 'FastAPI', 'LangChain', 'PostgreSQL', 'pgvector', 'Pinecone', 'Redis', 'DeepSeek', 'Gemini', 'TypeScript', 'Go'],
     team: {
       note: 'Built by a 5-person founding team at Anchorate, our first startup.',
       collaborators: [],
@@ -166,7 +166,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Backend', value: '28 Modules', detail: 'Vendors, bookings, promos, search, wallet' },
       { label: 'Payments', value: 'Razorpay', detail: 'GST/HSN invoicing built in' },
     ],
-    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'Neon', 'TypeORM', 'Next.js 14', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Vercel', 'Render'],
+    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'Neon', 'TypeORM', 'Next.js 14', 'Razorpay', 'TanStack Query', 'Socket.IO', 'AWS', 'Vercel', 'Render'],
     team: { note: 'built with', collaborators: [{ label: '@ajaniljoshi', url: 'https://github.com/ajaniljoshi' }] },
     audit: {
       problem: 'Supporting independent vendor storefronts, theming, KYC, location, catalog, on one shared marketplace without the checkout paths colliding.',

@@ -58,22 +58,22 @@ export const STACK_GROUPS: StackGroup[] = [
     items: ['Python', 'TypeScript'],
   },
   {
-    label: 'AI & Frameworks',
+    label: 'AI/ML',
     icon: 'brain',
     accent: 'rose',
-    items: ['FastAPI', 'PyTorch', 'Google ADK', 'LangGraph', 'MCP'],
+    items: ['FastAPI', 'LangChain', 'LangGraph', 'Google ADK', 'PyTorch'],
   },
   {
-    label: 'Data & Persistence',
+    label: 'Databases',
     icon: 'server',
     accent: 'sage',
-    items: ['PostgreSQL', 'Neon', 'Redis', 'pgvector / Pinecone', 'CockroachDB'],
+    items: ['PostgreSQL', 'pgvector', 'Pinecone', 'CockroachDB', 'Redis'],
   },
   {
     label: 'Cloud & DevOps',
     icon: 'cloud',
     accent: 'gold',
-    items: ['Google Cloud', 'Docker', 'Vercel', 'Render'],
+    items: ['Docker', 'Kubernetes', 'AWS', 'Google Cloud', 'Vercel', 'Render'],
   },
   {
     label: 'UI/UX',
