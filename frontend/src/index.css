@@ -60,7 +60,7 @@
      at. The content column caps out at max-w-2xl, so past a certain width it
      stops growing and the page just gains empty margin: at the browser's
      default 100% zoom a tablet held upright or a desktop monitor both leave
-     the column narrow and the type cramped. 125% is the size it was really
+     the column narrow and the type cramped. 120% is the size it was really
      designed for. Rather than rescale 160-odd hardcoded px values by hand,
      scale the page itself once there is width to spare, so everyone gets
      that rendering without touching their own zoom setting.
@@ -73,12 +73,12 @@
      runs out, and a phone in landscape is wide only in name.
 
      Zoom does not affect how media queries evaluate, so the effective layout
-     width is always the viewport divided by 1.25, i.e. 704px at the low end
+     width is always the viewport divided by 1.2, i.e. 733px at the low end
      here. That stays clear of the 640px breakpoint, so the wide layout never
      ends up squeezed into a space built for the narrow one. */
   @media (min-width: 880px) {
     body {
-      zoom: 1.25;
+      zoom: 1.2;
     }
   }
 }
