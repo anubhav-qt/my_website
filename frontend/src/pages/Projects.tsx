@@ -202,10 +202,10 @@ export default function Projects() {
 
   return (
     <div className="pb-12">
-      <div className="mb-2.5 flex items-center gap-3">
+      <div className="mb-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Currently Building</span>
-        <span className="flex-1 border-t border-dashed border-border" />
-        <div className="flex gap-1.5 shrink-0">
+        <span className="hidden sm:block flex-1 border-t border-dashed border-border min-w-[20px]" />
+        <div className="flex flex-wrap gap-1.5 shrink-0">
           {FEATURED_IDS.map((id, i) => {
             const isActive = buildingIdx === i;
             const p = PROJECTS.find((proj) => proj.id === id);
