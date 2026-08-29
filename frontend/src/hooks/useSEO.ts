@@ -36,7 +36,7 @@ function setLink(rel: string, href: string) {
 // navigate elsewhere, so the tab title is left as the static one from index.html instead.
 export function useSEO({ title, description, path }: SEOOptions) {
   useEffect(() => {
-    const fullTitle = path === '/' ? title : `${title} — ${SITE_NAME}`;
+    const fullTitle = path === '/' ? title : `${title}, ${SITE_NAME}`;
     const url = `${SITE_URL}${path}`;
 
     setMeta('name', 'description', description);
