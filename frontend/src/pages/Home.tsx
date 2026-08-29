@@ -8,7 +8,7 @@ import { useSEO } from '@/hooks/useSEO';
 
 export default function Home() {
   useSEO({
-    title: `${PROFILE.name} — ${PROFILE.role}`,
+    title: `${PROFILE.name}, ${PROFILE.role}`,
     description: PROFILE.status,
     path: '/',
   });
