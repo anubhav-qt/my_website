@@ -9,7 +9,7 @@ import { useSEO } from '@/hooks/useSEO';
 export default function Home() {
   useSEO({
     title: `${PROFILE.name} — ${PROFILE.role}`,
-    description: 'Backend engineer working on AI infrastructure. Spoin, Continuum, and the systems in between.',
+    description: PROFILE.status,
     path: '/',
   });
 
@@ -30,7 +30,6 @@ export default function Home() {
             href={PROFILE.resume}
             target="_blank"
             rel="noopener noreferrer"
-            download
             className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0 ml-auto"
           >
             <FileText size={12} />

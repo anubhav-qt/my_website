@@ -22,7 +22,7 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
   spoin: {
     title: 'Spoin: CQRS Pipeline & Quota Governor',
     progress: 90,
-    description: '11,242 cards live, 61 ADRs deep, pipeline is done. What is left is UI polish, ',
+    description: '13,926 items live, 69 ADRs deep, pipeline is done. What is left is UI polish, ',
     highlight: 'manually quality-checking cards',
     descriptionEnd: ' in the frontend, and filling out the last topics.',
     tags: [
@@ -32,9 +32,9 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
   to_know_thyself: {
     title: 'to_know_thyself: Personal Memory Archive',
     progress: 5,
-    description: 'Nothing built yet. Settling ',
+    description: 'Still design only. Settling ',
     highlight: 'the storage and provenance layer',
-    descriptionEnd: ' first, because the graph on top can always be recomputed and the archive underneath cannot.',
+    descriptionEnd: ' first: a missing edge is a bug you fix on the next run, a missing conversation is gone.',
     tags: [
       { label: 'case study', href: '/projects#to_know_thyself' },
     ],
