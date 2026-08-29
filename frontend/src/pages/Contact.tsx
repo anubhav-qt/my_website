@@ -8,26 +8,22 @@ const CHANNELS = [
     label: 'github',
     value: 'anubhav-qt',
     href: PROFILE.github,
-    frequency: 'here daily',
   },
   {
     label: 'email',
     value: PROFILE.email,
     href: `mailto:${PROFILE.email}`,
-    frequency: 'in batches',
     copyable: true,
   },
   {
     label: 'linkedin',
     value: 'anubhav-qt',
     href: PROFILE.linkedin,
-    frequency: 'now and then',
   },
   {
     label: 'resume',
-    value: 'download PDF',
+    value: 'resume',
     href: PROFILE.resume,
-    frequency: 'always current',
   },
 ];
 
@@ -73,7 +69,7 @@ export default function Contact() {
           {CHANNELS.map((c) => (
             <div key={c.label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
               <span className="text-dim text-xs sm:w-[70px] shrink-0">{c.label}</span>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
                 <a
                   href={c.href}
                   target={c.href.startsWith('mailto:') ? undefined : '_blank'}
@@ -93,8 +89,6 @@ export default function Contact() {
                   </button>
                 )}
               </div>
-              <span className="flex-1 hidden sm:block" />
-              <span className="text-dim text-[11px] shrink-0">{c.frequency}</span>
             </div>
           ))}
         </div>
