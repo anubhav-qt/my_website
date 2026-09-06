@@ -23,8 +23,8 @@ export default function Home() {
             pinned right, keeps both readable at full size. */}
         <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-1.5">
           <div className="min-w-0">
-            <h1 className="text-heading text-xl sm:text-2xl font-bold leading-tight whitespace-nowrap lowercase">{PROFILE.name}</h1>
-            <p className="text-amber font-semibold text-[13px] sm:text-sm mt-0.5 whitespace-nowrap lowercase">{PROFILE.role}</p>
+            <h1 className="text-heading text-xl sm:text-2xl font-bold leading-tight whitespace-nowrap">{PROFILE.name}</h1>
+            <p className="text-amber font-semibold text-[13px] sm:text-sm mt-0.5 whitespace-nowrap">{PROFILE.role}</p>
           </div>
           <a
             href={PROFILE.resume}
@@ -33,11 +33,11 @@ export default function Home() {
             className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0 ml-auto"
           >
             <FileText size={12} />
-            resume
+            Resume
           </a>
         </div>
         <div className="flex items-center justify-between gap-3 mt-0.5 w-full">
-          <span className="inline-flex items-center gap-1.5 text-dim text-xs whitespace-nowrap lowercase">
+          <span className="inline-flex items-center gap-1.5 text-dim text-xs whitespace-nowrap">
             <MapPin size={14} />
             {PROFILE.location}
           </span>

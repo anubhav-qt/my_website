@@ -32,10 +32,42 @@ export interface LinkEntry {
 
 export const WRITEUPS: WriteupEntry[] = [
   {
+    "id": "professional-journey",
+    "slug": "my-professional-journey-till-now",
+    "title": "My Professional Journey till Now",
+    "dek": "How I went from my first internship in an open office in Jaipur to cofounding a startup, and what each one taught me.",
+    "date": "07/09/2026",
+    "tags": [
+      "career",
+      "startups",
+      "learning"
+    ],
+    "readTime": "7 min",
+    "body": [
+      "Two jobs so far, about a year apart. Here is the whole thing, in order.",
+      "Blinkadz, SDE Intern, Feb 2025 to Apr 2025",
+      "This was my first ever internship and exposure to how professional software is built and shipped. I did this at the start of my 3rd year in college. I actually felt really proud to be working and earning money while still in 3rd year haha.",
+      "It was a proper experience. First I was a SDE intern for a month. I shipped various features, integrated APIs of LinkedIn and its marketing-related things (ads, campaigns, etc.). I remember I used to make so many stupid mistakes at that time, especially when the CEO/senior dev was right next to me lol. I used to work right beside him in an open office in Jaipur only, where my college was also there.",
+      "The other two months, I got into research first and then implementation of that research to create a full end-to-end video ad creation pipeline using Google Agent Development Kit (which was very recently released at that time, so I had to figure everything out with trial and error lol). I was really proud that I was able to create the entire pipeline and was able to get somewhat good outputs right from the first few improvement iterations.",
+      "All the people there were really nice and helpful and I really enjoyed my time there!",
+      "The main thing I learned from there were managing my time (I used to attend college lectures in the morning and then afternoon-evening was for my internship) and building production-grade software, while working with others.",
+      "Anchorate, Co-Founder and CTO, Jan 2026 to August 2026",
+      "About eight months after Blinkadz ended, the next thing was not an internship at all.",
+      "My friend Vasu (from my university) offered me to be a cofounder and then we started working on his idea \"anchor8\". It is a security and governance layer that sat between AI agents and their tools, which constantly monitors, logs, and secures all the autonomous AI agents in a system with as little to no human intervention as possible.",
+      "It is still a PyPI SDK package on pip (pip install anchor8) and importing it in your agentic workflows is pretty easy: just 3 lines of code of importing and adding the decorator on top of the agent you wanna secure. It can be used for both LangChain and standalone agents, with more frameworks to be added later if this project was continued.",
+      "The main problem we reached from this project after months of building was that it sold security and governance for high-risk, fully automated AI systems (like fully autonomous algorithmic trading with AI, AI banking systems, AI healthcare systems, AI law-based systems, etc.) and there were no such products in the market at that time, and even right now, so we decided to hold off/pause the project and work on some other ideas for now.",
+      "Anchor8 was the core of the company, without that we were all blank slates with nothing to build, however we still got to another idea \"Cargonto\" for fully automatic workflows for freight exporters and Customs House Agents (CHAs) about their entire documentation process. However, learning from our previous lack of market research mistake, we were able to verify it within 2 weeks that this won't work, especially in India, mainly because most of the bank-related documents are all required as physical copies and for digitization, RBI (Reserve Bank of India) itself has provided designated softwares. So, although we started building it and shipped a few features and frontend locally, we never completed it or deployed it and scrapped it off.",
+      "The main learnings and experience I got from this startup was how to operate and manage a team of people (we were a team of 7 while building anchor8), and designing and building on a system-level scale, and not just feature-level.",
+      "My past interviews in my 3rd year for Google, Dell, Watchguard, and Namekart were all cleared by me at the technical stages. However, I always lacked the teamwork experience at that time since all my projects were solo, and even the internship I worked in at that time was a very small team of 5 people, so there was not too much in terms of collaboration by my side. That costed me all those interviews (although I do admit I was really arrogant about it at that time and said that I work better alone and prefer to work solo) and Anchorate helped me grow in that area of my life.",
+      "I can confidently say now that I have matured as an engineer and working in teams is really worthwhile too haha."
+    ],
+    "audience": "non-technical"
+  },
+  {
     "id": "spoin-throughput-tuning",
     "slug": "squeezing-218-cards-a-minute-out-of-free-tier-gemini",
-    "title": "squeezing 499 items/min out of free-tier gemini",
-    "dek": "how the spoin generation pipeline went from 16 cards/min to a 499/min peak (cards and questions combined) without paying for a single API key.",
+    "title": "Squeezing 499 Items/Min Out of Free-Tier Gemini",
+    "dek": "How the Spoin generation pipeline went from 16 cards/min to a 499/min peak (cards and questions combined) without paying for a single API key.",
     "date": "25/08/2026",
     "tags": [
       "spoin",
@@ -47,15 +79,16 @@ export const WRITEUPS: WriteupEntry[] = [
       "Spoin generates knowledge cards with an LLM, but the read path can never touch one, cards have to come out of Postgres in under 50ms. So all the actual work happens in an async generation pipeline running behind a pile of free-tier Gemini keys, and free-tier keys are stingy: low requests-per-minute, low requests-per-day, per-model. The first version just round-robinned across keys and blocked on whichever one was free. That capped out around 16 cards/min, and a lot of that time was one call sitting idle waiting on rate limits while fifteen other keys sat unused.",
       "The fix in ADR-0028 was to stop thinking about it as a queue of calls and start thinking about it as a 2D grid: one axis is API keys, the other is models. Every (key, model) cell has its own quota state, and a fallback ladder lets a generation task walk sideways to a different model on the same key, or down to a different key entirely, the moment one cell looks close to its limit instead of waiting for a 429 to prove it. That alone was most of the jump to 130+ cards/min in the second benchmark run: the bottleneck stopped being 'wait for a key' and became 'find any open cell in the grid.'",
       "Opening up the grid exposed a second bug, though. Nothing stopped two calls from hitting the same cell at once, so a burst of concurrent requests against one (key, model) pair could poison it with cascading 429s, exactly the thing the grid was supposed to prevent. ADR-0040 fixed that with per-cell serialization, a lock around each cell so only one in-flight call touches a given (key, model) pair at a time, everything else in that cell queues instead of racing it. Combined with a cleaned-up 16-key pool and running five topics simultaneously instead of one, that's what pushed the corpus past 10,000 cards at 135+ cards/min in the third benchmark run.",
-      "The next jump, 218 cards/min, came once the old global semaphore from the original implementation got ripped out entirely in ADR-0047, it was serializing generation across the whole pipeline instead of per-cell, which meant every cell was still fighting over one lock even after the quota grid existed. The peak since then is 499 items/min combined (315 cards, 184 questions, same minute), after fixing a quota governor bug that had been misreading per-minute throttles as full daily exhaustion and quietly discarding capacity the grid actually had. None of this needed a bigger model or a paid tier. It needed the rate limiter to know exactly where the free capacity actually was at any given moment, instead of finding out the hard way from a 429."
+      "The next jump, 218 cards/min, came once the old global semaphore from the original implementation got ripped out entirely in ADR-0047, it was serializing generation across the whole pipeline instead of per-cell, which meant every cell was still fighting over one lock even after the quota grid existed. The peak since then is 499 items/min combined (315 cards, 184 questions, same minute), after fixing a quota governor bug that had been misreading per-minute throttles as full daily exhaustion and quietly discarding capacity the grid actually had. None of this needed a bigger model or a paid tier. It needed the rate limiter to know exactly where the free capacity actually was at any given moment, instead of finding out the hard way from a 429.",
+      "Update: since writing this, generation moved off free-tier Gemini entirely and onto Mistral, and the corpus it fills got dropped and rebuilt from scratch. None of the above stopped being true, it just stopped being the current problem."
     ],
     "audience": "technical"
   },
   {
     "id": "furthest-behind",
     "slug": "weird-but-cool-idea-for-a-story-i-will-write-someday",
-    "title": "weird but cool idea for a story i will write someday",
-    "dek": "a cool idea about how a boy discovers that humans are actually the furthest behind because of their own intelligence.",
+    "title": "Weird but Cool Idea for a Story I Will Write Someday",
+    "dek": "A cool idea about how a boy discovers that humans are actually the furthest behind because of their own intelligence.",
     "date": "24/08/2026",
     "tags": [
       "fiction",
@@ -75,14 +108,14 @@ export const WRITEUPS: WriteupEntry[] = [
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
     "date": "28/08/2026",
-    "title": "my first tattoo",
+    "title": "My First Tattoo",
     "body": "I got my first tattoo on 12th August, 2026. I always wanted to have a tattoo and had been searching for the design for months now. Then I randomly saw the \"Ensō\" symbol, which is a circle drawn in one single brush stroke. It has many meanings but for me it reminds me to stay focused, calm and complete on my own.",
     "audience": "non-technical",
     "id": "my-first-tattoo"
   },
   {
     "date": "27/08/2026",
-    "title": "air pistol shooting",
+    "title": "Air Pistol Shooting",
     "body": "My little sister has been going to air rifle shooting range for about 3 years now, and even I was interested in trying it out, so I started going to air pistol shooting in the same shooting range since 1st august. My morning routine used to be non-existent before this, waking up at 10-11 am daily lol. But my life is getting back on track again.",
     "audience": "technical",
     "id": "air-pistol-shooting"
@@ -90,14 +123,14 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
     "id": "getting-into-homelabbing",
     "date": "26/08/2026",
-    "title": "getting into homelabbing",
+    "title": "Getting Into Homelabbing",
     "body": "I've been thinking about getting into homelabbing, mostly by turning my ThinkPad into a little server and splitting it into several virtual machines for different tasks. I want to run different services separately, mess around with networking and deployments, and basically see how much of my own infrastructure I can run on one machine. No real end goal yet, I just think it would be pretty fun to set up.",
     "audience": "technical"
   },
   {
     "id": "non-procrastinator-final-boss",
     "date": "24/08/2026",
-    "title": "non-procrastinator final boss",
+    "title": "Non-Procrastinator Final Boss",
     "body": "Somewhere around 15th August, a fuse inside me tripped off, and I have been programming for over 12 hours every single day from that day. Surprisingly the most commits I ever did in Github in a single day was achieved on my birthday (18th August) this year. And today (24/08/2026) a friend gave me a silly title \"non-procrastinator final boss\". Weird but very cool.",
     "audience": "non-technical"
   }
@@ -107,35 +140,35 @@ export const RANDOM_IDEAS: CollapsibleEntry[] = [
   {
     "id": "context-filling-without-tokens",
     "date": "26/08/2026",
-    "title": "filling context in AI coding IDEs without consuming tokens",
+    "title": "Filling Context in AI Coding IDEs Without Consuming Tokens",
     "body": "AI harness coding IDEs on every new chat use tokens to fetch all the required context. Can we make it such that that context is filled every time without consuming any tokens except for the first time?",
     "audience": "technical"
   },
   {
     "id": "trippy-secondary-screen-visualizer",
     "date": "24/08/2026",
-    "title": "trippy visualizer for the secondary screen",
-    "body": "A trippy visualizer for the secondary screen, which turns into shapes, patterns, abstract art, different colors, all by analyzing the current focused screen's content and audio. The challenge would be to not have each frame have totally discrete visuals, but smoothly turning from one to another in a few seconds or more.",
+    "title": "Trippy Visualizer for the Secondary Screen",
+    "body": "A trippy visualizer for the secondary screen, which turns into shapes, patterns, abstract art, different colors, all by analyzing the current focused screen's content and audio. The challenge would be to not have each frame have totally discrete visuals, but smoothly turning from one to another in a few seconds or more. Built it, v1 is live as Trippinator, and there is still a lot more to add on.",
     "audience": "technical"
   },
   {
     "id": "small-model-big-model-behavior",
     "date": "24/08/2026",
-    "title": "a small language model that behaves like a large one",
+    "title": "A Small Language Model That Behaves Like a Large One",
     "body": "Thinking of a way to create a small language model good enough as a large language model by changing the way it is trained or something else. Can even write a paper about it.",
     "audience": "technical"
   },
   {
     "id": "trotter-paper-trading-rl",
     "date": "24/08/2026",
-    "title": "paper trading + RL agent in Trotter",
+    "title": "Paper Trading + RL Agent in Trotter",
     "body": "In trotter, have a paper trading system which works on real-time stock data. Further, design a reinforcement learning agent to do the paper trading.",
     "audience": "technical"
   },
   {
     "id": "open-source-python-library",
     "date": "24/08/2026",
-    "title": "open source a python library someday",
+    "title": "Open Source a Python Library Someday",
     "body": "Create an open source python library someday.",
     "audience": "technical"
   }

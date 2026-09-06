@@ -20,7 +20,9 @@ export interface ProjectItem {
   category: 'Flagship' | 'Architecture Spec' | 'Production & Systems' | 'Open Source' | 'AI & Machine Learning';
   skimDescription: string; // one plain sentence: what the thing IS, for someone who's never heard of it
   deepDescription: string; // opens with what it does for a user, then how it's built
-  metrics?: { label: string; value: string; detail?: string }[];
+  // detail is required: a number with nothing next to it saying what it means
+  // was the single thing readers said they could not parse. See Projects.tsx.
+  metrics?: { label: string; value: string; detail: string }[];
   tech: string[];
   repoUrl?: string;
   secondaryRepoUrl?: { label: string; url: string };
@@ -37,68 +39,31 @@ export interface ProjectItem {
 export const RAW_PROJECTS: ProjectItem[] = [
   {
     id: 'spoin',
-    title: 'Spoin: CQRS Pipeline & Quota Governor',
+    title: 'Spoin: For the Curious',
     category: 'Flagship',
     featured: true,
     skimDescription: 'A scrollable feed of bite-sized knowledge cards, pick a topic and learn at your own level.',
     deepDescription:
-      "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. 11,242 cards are live so far. The hard part is generation: an async pipeline keeps expensive LLM calls off the read path entirely, so what you actually swipe through comes straight from Postgres, pre-computed and deduplicated, in under 50ms. Generation itself runs behind a 2D quota grid across 33 verified free-tier API keys, with a fallback ladder per model and per-cell serialization (ADR-0040) so a burst of calls does not trip rate limits.",
+      "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. The rule the whole system is built around is that the feed never calls an LLM: a swipe is 50ms and an LLM call is 2 to 10 seconds, so cards are generated ahead of time by an async pipeline and served straight out of Postgres. The generation side is where the work is. Cards used to be drafted from whatever the model happened to remember, with a quality gate checking the facts after the fact. Now every card is grounded first: frog, a sibling package that owns the embedder, retrieves from the_spoin_universe, a separate hand-curated corpus database, and both the drafter and the verifier read the same passages. Each card records the chunk IDs that grounded it, so any claim on the feed can be traced back to the source it came from. Drafting runs on ministral-8b with ministral-14b doing the thinking passes, which is what let the whole free-tier key juggling act go away.",
     caseStudyHref: '/work/spoin',
     metrics: [
-      { label: 'Peak Throughput', value: '499 items/min', detail: '≈8.3 items/sec' },
-      { label: 'Corpus Size', value: '11,242 Cards', detail: '10,994 Questions in Postgres' },
-      { label: 'Architecture', value: '61 ADRs', detail: 'Sole system architect' },
-      { label: 'Unique Topics', value: '17' },
-      { label: 'Read Latency', value: '< 50ms', detail: 'Zero LLMs on read path' },
+      { label: 'Grounded Throughput', value: '24.85 cards/min', detail: '523 cards in 21m 03s, 2.2x the ungrounded run' },
+      { label: 'Architecture', value: '103 ADRs', detail: 'Sole system architect' },
+      { label: 'Rate-Limit Shedding', value: '0 HTTP 429s', detail: 'Down from 917 on the free-tier Gemini ladder' },
+      { label: 'Read Latency', value: '< 50ms', detail: 'No LLM on the read path' },
+      { label: 'Grounding Per Card', value: 'Top 2 chunks', detail: 'Chunk IDs recorded on the card' },
     ],
-    tech: ['Python', 'LangChain', 'LangGraph', 'PostgreSQL', 'CockroachDB', 'pgvector', 'FastAPI', 'Next.js', 'React Native', 'Docker', 'Kubernetes', 'AWS'],
+    tech: ['Python', 'FastAPI', 'LangChain', 'LangGraph', 'PostgreSQL', 'pgvector', 'SQLAlchemy', 'Mistral API', 'Qwen3 Embeddings', 'Next.js', 'React Native', 'Docker'],
     team: { note: 'currently building', collaborators: [] },
     audit: {
       problem:
-        'I wanted a feed with real depth, but free-tier LLM quotas do not stretch far, and nobody wants to wait 3 to 10 seconds for a card while they are mid-swipe.',
+        "Spoin's whole claim is quiz-gated mastery of true things, but the drafter was writing from whatever the model remembered and the quality gate checked it afterwards against its own memory. Two models disagreeing is a coin flip, not a check.",
       constraint:
-        'The read path can never call an LLM (50ms budget), and generation has to survive per-key, per-model rate limits without losing an in-flight topic graph.',
+        "The read path can never call an LLM, so grounding has to happen entirely upstream of the feed. And a 3B model's recall is not something a truth guarantee can rest on, so the facts have to come from a corpus rather than from the weights.",
       decision:
-        'Split generation from serving with CQRS. Built a 2D quota governor (key × model) with fallback ladders, serialized per cell, and persisted cards as soon as a subtopic group finished instead of waiting on the whole batch.',
+        'Split retrieval into frog, its own importable package that owns the embedder, with the corpus in the_spoin_universe, a separate database with its own alembic environment so a corpus migration structurally cannot land on the production database. The drafter and the verifier both retrieve from it, and every card stores the chunk IDs that grounded it.',
       whatBroke:
-        'Bursts of calls on the same key kept poisoning cells with cascading 429s, fixed with per-cell locking in ADR-0040 and by ripping out the old global semaphore in ADR-0047. Separately, a card that got shown but never read never actually left the feed, so it could stall forever, until ADR-0050 made an impression consume the card and turn the difficulty cycle over.',
-    },
-  },
-  {
-    id: 'to_know_thyself',
-    title: 'to_know_thyself: Personal Memory Archive',
-    category: 'Architecture Spec',
-    skimDescription:
-      'A self-hostable archive that keeps everything you publish and everything you say to AI models, and links the two together over time.',
-    deepDescription:
-      "Point it at your own personal site and hand it your ChatGPT, Claude, and Gemini exports, and it keeps both halves: the writing you chose to publish, and the conversations behind it. Nothing is ever edited or deleted, so asking what you thought about something years ago returns what you actually wrote, not a summary of it. The archive is the permanent part and everything derived from it is disposable: the raw exports and the normalized messages sit at the bottom untouched, while segmentation, embeddings, and a graph of typed edges (this caused that, this contradicted that, you changed your mind here) all get recomputed whenever the models improve. Every inferred edge stays marked as inferred, so the system can never quietly promote a guess into a memory. The interface it is built toward is an introspection room: your memories on an infinite canvas instead of a list, where you can drag them into a sequence your life did not actually take and ask what follows, with the answer left showing its uncertainty and never fed back in as evidence. anubhav-qt.dev is the reference deployment and the public half of my own copy.",
-    tech: [],
-    team: { note: 'currently building', collaborators: [] },
-  },
-  {
-    id: 'continuum',
-    title: 'Continuum: Film Studio Continuity OS',
-    category: 'Architecture Spec',
-    skimDescription: 'Software that would let a film production track its whole state as one connected graph.',
-    deepDescription:
-      "A system design for software that treats an entire film production, the script, the cast, the sets, the schedule, as one connected graph instead of scattered documents. Move a scene from a sunny park to a night warehouse, and everyone downstream, wardrobe, continuity, budget, gets flagged automatically instead of finding out on set. Under the hood it's an immutable event ledger and a directed multigraph in ClickHouse, with bi-directional cascade invalidation so an upstream edit flags every downstream inconsistency without forcing a blind regeneration of the whole script.",
-    caseStudyHref: '/work/continuum',
-    metrics: [
-      { label: 'Storage Engine', value: 'ClickHouse MCP', detail: 'Event-sourced ledger' },
-      { label: 'Orchestration', value: 'Vertex AI + Gemini Enterprise', detail: 'Agent Builder workflows' },
-      { label: 'Invalidation', value: 'Bi-directional', detail: 'Graph cascade detection' },
-    ],
-    tech: ['ClickHouse MCP', 'Vertex AI Agent Builder', 'Gemini Enterprise', 'Event Sourcing', 'Python', 'TypeScript'],
-    team: { note: 'currently building with', collaborators: [{ label: '@mayanks0ni', url: 'https://github.com/mayanks0ni' }] },
-    audit: {
-      problem:
-        'Continuity errors compound fast on a film production: thousands of script revisions and asset handoffs, spread across departments that barely talk to each other.',
-      constraint:
-        "You can't just regenerate a 120-page screenplay every time something small changes. Models drift, and the director's intent gets lost.",
-      decision:
-        'An event-sourced multigraph where every entity, character, prop, scene, has strict temporal validity. A revision triggers a targeted cascade of invalidation events instead of a mass regeneration.',
-      whatBroke:
-        'Circular dependencies between wardrobe revisions and scene timelines locked up graph updates. Fixed by forcing a strict topological sort on the dependency chain before evaluating any cascade.',
+        'The embedder environment variable never reached the api, worker, and seed containers, so every vector in the database was hash-stand-in output rather than real embeddings, and nothing raised. Similarity search had been running on noise. Rather than build a resumable backfill, the database was dropped and rebuilt from the migration chain, and one embedder at one dimension is now used everywhere so the two halves cannot drift apart again.',
     },
   },
   {
@@ -250,6 +215,32 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
+    id: 'trippinator',
+    title: 'Trippinator: Real-Time Audio Visualizer',
+    category: 'Open Source',
+    featured: false,
+    skimDescription: 'A visualizer for the second monitor that listens to whatever is playing and draws it.',
+    deepDescription:
+      'It captures whatever your system is playing and renders a feedback-loop organism on a portrait secondary monitor at around 178fps. Nothing in the image is drawn as geometry: every frame samples the previous frame through a warp, decays it, and adds new audio-driven light on top, so what you see is the accumulated history of the music rather than a picture of the current moment. A kaleidoscoped mandala says what is playing, and the background says how it feels, with a second tier that stays genuinely absent until a passage earns it. Every track is classified continuously across three archetypes from slow features, and everything downstream is a linear blend of the three parameter sets, so a song that changes character mid-way crosses over during a phrase instead of snapping. Written in Rust on wgpu and cpal, and the values that were found by ear rather than derived are marked as such in the code, with the range they were swept over.',
+    repoUrl: 'https://github.com/anubhav-qt/trippinator',
+    metrics: [
+      { label: 'Frame Rate', value: '~178 fps', detail: 'Every frame reads the last one back through a warp' },
+      { label: 'Song Profiles', value: '3 archetypes', detail: 'pulse, drift, swarm, blended, never switched' },
+      { label: 'Warp Motion', value: '6 components', detail: 'Radial, rotation, spiral, shear, turbulence, kick' },
+    ],
+    tech: ['Rust', 'wgpu', 'WGSL', 'cpal', 'WASAPI Loopback'],
+    audit: {
+      problem:
+        'I wanted something on the portrait second monitor that reacts to music properly, not a spectrum bar chart that looks identical no matter what is playing.',
+      constraint:
+        "One tuning cannot serve every kind of music. Drums and a held chord need different envelopes, and a quiet master has to reach the same visual range as a loud one, so every level decision keys off loudness relative to the track's own recent ceiling rather than raw RMS.",
+      decision:
+        'Classify the track continuously across three archetypes from slow features with time constants in the tens of seconds, and blend the three parameter sets linearly, so a track that is half riff and half held chord gets a configuration halfway between.',
+      whatBroke:
+        'Every motion constant was applied per frame, which quietly made the speed of everything in the image a function of how fast the GPU happened to be running. They are all rates per second times dt now. Separately the warp was one fixed inward spiral for every track, so only the amplitude ever changed; it is now six independent components whose signs come from the archetype and wander inside a bounded range, seeded per run.',
+    },
+  },
+  {
     id: 'secondary-screen',
     title: 'Secondary Screen: A Second-Monitor Dashboard',
     category: 'Open Source',
@@ -280,6 +271,21 @@ export const RAW_PROJECTS: ProjectItem[] = [
 const liveMetrics = liveMetricsData as Record<string, { label: string; value: string; detail?: string }[]>;
 
 export const PROJECTS: ProjectItem[] = RAW_PROJECTS.map((p) => {
+  // A live row refreshes a metric that already exists here, matched by label.
+  // It cannot introduce one. Two reasons: the metrics table is upsert-only (the
+  // update-metric Edge Function has no delete, see supabase/schema.sql), so a
+  // metric renamed or dropped in this file leaves a row behind in Supabase
+  // forever and would otherwise keep rendering; and a row pushed without a
+  // detail would walk straight past the rule that every number arrives with the
+  // sentence saying what it means. Adding a metric means adding it here first.
   const live = liveMetrics[p.id];
-  return live && live.length > 0 ? { ...p, metrics: live } : p;
+  if (!live || !p.metrics) return p;
+
+  return {
+    ...p,
+    metrics: p.metrics.map((m) => {
+      const fresh = live.find((l) => l.label === m.label);
+      return fresh?.detail ? { label: m.label, value: fresh.value, detail: fresh.detail } : m;
+    }),
+  };
 });
