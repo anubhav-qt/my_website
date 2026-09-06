@@ -272,9 +272,9 @@ export function CommentThread({
             <button
               onClick={() => toggleNodeExpansion(node.id, defaultCollapsed)}
               className="text-[10px] text-dim hover:text-heading transition-colors ml-auto cursor-pointer"
-              title={isExpanded ? 'collapse thread' : 'expand thread'}
+              title={isExpanded ? 'Collapse thread' : 'Expand thread'}
             >
-              {isExpanded ? '[-] hide' : `[+] ${totalRepliesCount} ${totalRepliesCount === 1 ? 'reply' : 'replies'}`}
+              {isExpanded ? '[-] Hide' : `[+] ${totalRepliesCount} ${totalRepliesCount === 1 ? 'reply' : 'replies'}`}
             </button>
           )}
         </div>
@@ -307,7 +307,7 @@ export function CommentThread({
             }}
             className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors cursor-pointer`}
           >
-            {replyingTo === node.id ? 'cancel' : 'reply'}
+            {replyingTo === node.id ? 'Cancel' : 'Reply'}
           </button>
         </div>
 
@@ -320,7 +320,7 @@ export function CommentThread({
                   maxLength={MAX_NICKNAME_LENGTH}
                   value={activeReplyNick}
                   onChange={(e) => setReplyNickname(e.target.value)}
-                  placeholder="nickname"
+                  placeholder="Nickname"
                   className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
                 />
                 <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
@@ -332,7 +332,7 @@ export function CommentThread({
                   maxLength={MAX_BODY_LENGTH}
                   value={replyBody}
                   onChange={(e) => setReplyBody(e.target.value)}
-                  placeholder="reply..."
+                  placeholder="Reply..."
                   className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
                 />
                 <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
@@ -381,7 +381,7 @@ export function CommentThread({
                     className="my-1 text-[10.5px] font-bold text-dim hover:text-amber transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <span>[-]</span>
-                    <span>collapse {totalRepliesCount} {totalRepliesCount === 1 ? 'reply' : 'replies'}</span>
+                    <span>Collapse {totalRepliesCount} {totalRepliesCount === 1 ? 'reply' : 'replies'}</span>
                   </button>
                 )}
                 <div className="space-y-0.5">
@@ -430,7 +430,7 @@ export function CommentThread({
               maxLength={MAX_NICKNAME_LENGTH}
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              placeholder="nickname"
+              placeholder="Nickname"
               className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
             />
             <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
@@ -442,7 +442,7 @@ export function CommentThread({
               maxLength={MAX_BODY_LENGTH}
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="say something about this one..."
+              placeholder="Say something about this one..."
               className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
             />
             <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">

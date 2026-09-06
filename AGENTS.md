@@ -2,14 +2,16 @@
 
 Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tailwind v4).
 
-> **Current status**: v3.1. All four pages (`/`, `/projects`, `/scratchpad`, `/contact`) are
+> **Current status**: v3.2. All four pages (`/`, `/projects`, `/scratchpad`, `/contact`) are
 > hand-designed and finished. v2 added a Supabase backend: live Spoin topics, threaded
 > comments with both page-level and per-comment likes, session-deduped view counts, and
 > build-time metrics pulled from the database, across every Scratchpad category, not just
 > writeups. v3 made the layout work on every screen, from a 280px folding phone up to a
-> desktop monitor, where before it was built for a PC only. See `README.md` for the full
-> backend rundown, the CLI tools for managing it, and how the responsive system fits
-> together.
+> desktop monitor, where before it was built for a PC only. v3.2 acted on outside feedback:
+> the home page stopped holding paragraphs, numbers stopped appearing without the sentence
+> that explains them, the site-wide lowercase came off everything except the nav, and the
+> project list narrowed to one flagship. See `README.md` for the full backend rundown, the
+> CLI tools for managing it, and how the responsive system fits together.
 
 Design direction: warm dev-log terminal aesthetic, dark plum/amber palette, IBM Plex Mono,
 dense list-based sections, small line icons, no big hero graphics. See
@@ -63,5 +65,15 @@ UI text) should sound like the person talking, not like resume bullet points.
 - Ground every fact in something real (repo READMEs, code, ADRs, commit history). Do not
   invent metrics, thresholds, or "what broke" stories that cannot be traced to an actual
   source. When unsure, say less rather than fabricate a specific-sounding detail.
+- Home page copy is capped at one line per row. Nothing on `/` gets a paragraph block:
+  people said the long first-person bullets there were unreadable, and they were right.
+  Anything that wants paragraphs becomes a scratchpad writeup, and the home page links to
+  it. `EXPERIENCE[].bullets` in `site.ts` is the shape to copy.
+- Every metric ships with the sentence that says what it means. `detail` is required on
+  `ProjectItem['metrics']`, metrics render only on `/projects` next to the deep
+  description, and a live Supabase row without a detail gets dropped at build rather than
+  rendered as a bare number.
+- Only the nav links are lowercase. Names, titles, headings, tabs, and filters render in
+  their own casing, title case for headings and anything that is a name.
 - Contractions and a direct, first-person-adjacent tone are fine. Write it the way you'd
   explain it to another engineer, not the way you'd summarize it for a recruiter.

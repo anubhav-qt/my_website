@@ -5,31 +5,31 @@ import { useSEO } from '@/hooks/useSEO';
 
 const CHANNELS = [
   {
-    label: 'github',
+    label: 'GitHub',
     value: 'anubhav-qt',
     href: PROFILE.github,
   },
   {
-    label: 'email',
+    label: 'Email',
     value: PROFILE.email,
     href: `mailto:${PROFILE.email}`,
     copyable: true,
   },
   {
-    label: 'linkedin',
+    label: 'LinkedIn',
     value: 'anubhav-qt',
     href: PROFILE.linkedin,
   },
   {
-    label: 'resume',
+    label: 'Resume',
     value: 'resume',
     href: PROFILE.resume,
   },
 ];
 
 const CONTEXT = [
-  { label: 'timezone', value: 'IST, UTC+5:30', accent: 'amber' as const },
-  { label: 'open to', value: 'Backend, AI Infrastructure, and Systems Engineering', accent: 'sage' as const },
+  { label: 'Timezone', value: 'IST, UTC+5:30', accent: 'amber' as const },
+  { label: 'Open to', value: 'Backend, AI Infrastructure, and Systems Engineering', accent: 'sage' as const },
 ];
 
 const DOT = {
@@ -62,7 +62,7 @@ export default function Contact() {
       <div className="border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 mt-3">
         <div className="flex items-baseline gap-2 mb-3.5">
           <span className="text-dim text-xs">&gt;</span>
-          <span className="text-heading text-sm font-bold">reach me</span>
+          <span className="text-heading text-sm font-bold">Reach me</span>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -85,7 +85,7 @@ export default function Contact() {
                     className="inline-flex items-center gap-1 text-[10px] font-bold text-dim hover:text-amber border border-border/70 bg-bg/40 px-1.5 py-1 sm:py-0.5 transition-colors shrink-0"
                   >
                     {copied ? <Check size={10} /> : <Copy size={10} />}
-                    {copied ? 'copied' : 'copy'}
+                    {copied ? 'Copied' : 'Copy'}
                   </button>
                 )}
               </div>

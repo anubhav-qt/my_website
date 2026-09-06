@@ -61,7 +61,7 @@ export function SpoinTopics() {
       )}
 
       {!loading && (!topics || topics.length === 0) && (
-        <p className="text-[11.5px] text-dim italic py-1">no topics yet, be the first to suggest one</p>
+        <p className="text-[11.5px] text-dim italic py-1">No topics yet, be the first to suggest one</p>
       )}
 
       {!loading && topics && topics.length > 0 && (
@@ -82,7 +82,7 @@ export function SpoinTopics() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="topic title"
+            placeholder="Topic title"
             maxLength={80}
             className="flex-1 min-w-0 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-amber transition-colors"
           />
@@ -91,19 +91,19 @@ export function SpoinTopics() {
             disabled={!canSubmit}
             className="shrink-0 bg-amber/8 border border-amber/50 text-amber text-[11px] font-bold px-3 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:border-amber hover:enabled:bg-amber/16 transition-colors"
           >
-            suggest
+            Suggest
           </button>
         </div>
         <input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="optional note (why this one?)"
+          placeholder="Optional note (why this one?)"
           maxLength={160}
           className="w-full mt-1.5 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-amber transition-colors"
         />
-        {justSubmitted && <p className="text-[10.5px] text-sage mt-1.5">thanks, it's in the queue</p>}
-        {!supabase && <p className="text-[10.5px] text-dim mt-1.5">topic suggestions open once the backend is live</p>}
+        {justSubmitted && <p className="text-[10.5px] text-sage mt-1.5">Thanks, it's in the queue</p>}
+        {!supabase && <p className="text-[10.5px] text-dim mt-1.5">Topic suggestions open once the backend is live</p>}
       </div>
     </div>
   );

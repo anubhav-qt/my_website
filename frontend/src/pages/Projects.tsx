@@ -35,7 +35,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
       />
       <div className="relative flex items-start justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-heading font-bold text-sm lowercase">{p.title.split(':')[0]}</span>
+          <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
           <span className="text-dim text-[10px] uppercase tracking-wide font-bold">{p.category}</span>
         </div>
         <div className="flex items-center gap-2.5">
@@ -99,12 +99,16 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               </div>
               {heroMetric.detail && <p className="text-dim text-[11px] mt-0.5 pl-0.5">{heroMetric.detail}</p>}
 
+              {/* Every metric carries its detail line here. A bare number was the
+                  thing readers said they could not parse, and this page is the
+                  only place a number appears at all now. */}
               {restMetrics.length > 0 && (
-                <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2 pt-1.5 border-t border-border/40">
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-5 gap-y-2 mt-2.5 pt-2 border-t border-border/40">
                   {restMetrics.map((m) => (
-                    <div key={m.label} className="flex flex-col">
+                    <div key={m.label} className="flex flex-col min-w-0">
                       <span className="text-[10px] text-dim uppercase tracking-wide leading-tight">{m.label}</span>
                       <span className="text-body text-[12px] font-semibold leading-tight mt-0.5">{m.value}</span>
+                      <span className="text-dim text-[11px] leading-snug mt-0.5">{m.detail}</span>
                     </div>
                   ))}
                 </div>
@@ -150,14 +154,16 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
                 className="inline-flex items-center gap-1 text-xs font-bold text-amber hover:text-heading transition-colors"
               >
                 {simOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                <span>{simOpen ? 'hide the live generation pipeline simulator' : 'open the live generation pipeline simulator'}</span>
+                <span>{simOpen ? 'Hide the live generation pipeline simulator' : 'Open the live generation pipeline simulator'}</span>
               </button>
               {simOpen && (
                 <>
                   <p className="text-[11px] text-dim leading-relaxed mt-2.5">
-                    Free-tier Gemini keys cap out fast, so the win here wasn't a bigger model, it was squeezing
-                    218 cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders and
-                    per-cell serialization (ADR-0040), instead of blocking on one key at a time.
+                    This is the quota governor as it ran during the free-tier Gemini era, when the constraint
+                    was 33 stingy API keys rather than a corpus. The win then wasn't a bigger model, it was
+                    squeezing 218 cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders
+                    and per-cell serialization (ADR-0040), instead of blocking on one key at a time. Generation
+                    has since moved to Mistral, so read this as history.
                   </p>
                   <div className="mt-2 -mx-1 rounded-lg overflow-hidden border border-border">
                     <SpoinSimulator />
@@ -178,17 +184,15 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: 'Case studies and a runnable simulator: Spoin, a CQRS pipeline and quota governor, and Continuum, a film studio continuity OS.',
+    description: 'Case studies and a runnable simulator, from Spoin, a retrieval-grounded card factory, down to smaller things I have shipped.',
     path: '/projects',
   });
 
   const location = useLocation();
   const [openId, setOpenId] = useState<string | null>(null);
-  const [buildingIdx, setBuildingIdx] = useState(0);
 
   const projects = PROJECTS.filter((p) => p.id !== 'secondary-screen');
-  const buildingId = FEATURED_IDS[buildingIdx];
-  const building = CURRENTLY_MAKING[buildingId];
+  const building = CURRENTLY_MAKING[FEATURED_IDS[0]];
 
   useEffect(() => {
     const id = location.hash.replace('#', '');
@@ -202,31 +206,9 @@ export default function Projects() {
 
   return (
     <div className="pb-12">
-      <div className="mb-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+      <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Currently Building</span>
         <span className="hidden sm:block flex-1 border-t border-dashed border-border min-w-[20px]" />
-        <div className="flex flex-wrap gap-1.5 shrink-0">
-          {FEATURED_IDS.map((id, i) => {
-            const isActive = buildingIdx === i;
-            const p = PROJECTS.find((proj) => proj.id === id);
-            return (
-              <button
-                key={id}
-                onClick={() => setBuildingIdx(i)}
-                aria-label={p?.title}
-                aria-pressed={isActive}
-                className={`
-                  text-xs font-bold px-2.5 py-1 border transition-all duration-200 lowercase
-                  ${isActive
-                    ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
-                    : 'border-border text-dim hover:text-body hover:border-dim'}
-                `}
-              >
-                {p?.title.split(':')[0]}
-              </button>
-            );
-          })}
-        </div>
       </div>
       <div className="relative flex flex-col sm:flex-row gap-3 sm:items-center border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-10">
         <div
@@ -251,7 +233,7 @@ export default function Projects() {
           </div>
         </div>
         <div className="relative min-w-0">
-          <p className="text-sm font-bold text-heading leading-snug lowercase">{building.title}</p>
+          <p className="text-sm font-bold text-heading leading-snug">{building.title}</p>
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
             {building.tags.map((t) => (
               <Link

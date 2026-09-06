@@ -17,9 +17,6 @@ interface Manifest {
     architecture: ManifestDoc[];
     adrs: ManifestDoc[];
   };
-  continuum: {
-    docs: ManifestDoc[];
-  };
 }
 
 function sanitizeContent(raw: string): string {
@@ -53,13 +50,9 @@ async function sync() {
       architecture: Array<ManifestDoc & { content: string }>;
       adrs: Array<ManifestDoc & { content: string }>;
     };
-    continuum: {
-      docs: Array<ManifestDoc & { content: string }>;
-    };
     syncedAt: string;
   } = {
     spoin: { architecture: [], adrs: [] },
-    continuum: { docs: [] },
     syncedAt: new Date().toISOString(),
   };
 
@@ -87,21 +80,9 @@ async function sync() {
     }
   }
 
-  console.log('🔄 Syncing Continuum Docs...');
-  for (const doc of manifest.continuum.docs) {
-    if (fs.existsSync(doc.sourcePath)) {
-      const raw = fs.readFileSync(doc.sourcePath, 'utf8');
-      const clean = sanitizeContent(raw);
-      processedData.continuum.docs.push({ ...doc, content: clean });
-      console.log(`  ✓ Synced ${doc.id} (${raw.length} bytes)`);
-    } else {
-      console.warn(`  ⚠️ Source not found: ${doc.sourcePath}`);
-    }
-  }
-
   const targetJson = path.join(outputDir, 'synced-docs.json');
   fs.writeFileSync(targetJson, JSON.stringify(processedData, null, 2), 'utf8');
-  console.log(`✨ Successfully generated ${targetJson} with ${processedData.spoin.architecture.length + processedData.spoin.adrs.length + processedData.continuum.docs.length} curated docs.`);
+  console.log(`✨ Successfully generated ${targetJson} with ${processedData.spoin.architecture.length + processedData.spoin.adrs.length} curated docs.`);
 }
 
 sync().catch(console.error);

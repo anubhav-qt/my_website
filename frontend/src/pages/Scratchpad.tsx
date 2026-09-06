@@ -59,7 +59,7 @@ function WriteupCard({ w }: { w: WriteupEntry }) {
       className="w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 hover:border-amber/70 hover:bg-surface/60 transition-colors"
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-heading text-sm font-bold leading-snug lowercase">{w.title}</span>
+        <span className="text-heading text-sm font-bold leading-snug">{w.title}</span>
         <span className="text-dim text-[11px] shrink-0">{w.date}</span>
       </div>
       <p className="text-xs text-dim leading-relaxed mt-1.5">{w.dek}</p>
@@ -92,7 +92,7 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
         ) : (
           <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
         )}
-        <span className={`text-xs font-semibold leading-relaxed lowercase ${TEXT[accent]}`}>{entry.title}</span>
+        <span className={`text-xs font-semibold leading-relaxed ${TEXT[accent]}`}>{entry.title}</span>
         <span className="flex-1" />
         <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
@@ -172,15 +172,15 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
 }
 
 const SECTIONS: { key: string; color: Accent; label: string }[] = [
-  { key: 'writeups', color: 'amber', label: 'writeups' },
-  { key: 'mildly-interesting', color: 'gold', label: 'mildly interesting stuff' },
-  { key: 'random-ideas', color: 'sage', label: 'random ideas' },
-  { key: 'links', color: 'clay', label: 'links' },
+  { key: 'writeups', color: 'amber', label: 'Writeups' },
+  { key: 'mildly-interesting', color: 'gold', label: 'Mildly Interesting Stuff' },
+  { key: 'random-ideas', color: 'sage', label: 'Random Ideas' },
+  { key: 'links', color: 'clay', label: 'Links' },
 ];
 
 const FILTER_OPTIONS: { value: Audience; label: string }[] = [
-  { value: 'technical', label: 'technical' },
-  { value: 'non-technical', label: 'non-technical' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'non-technical', label: 'Non-Technical' },
 ];
 
 // No "all" pill: none selected (or both selected) both mean "show
@@ -196,7 +196,7 @@ function AudienceFilterBar({ selected, onToggle }: { selected: Set<Audience>; on
             onClick={() => onToggle(opt.value)}
             aria-pressed={isActive}
             className={`
-              text-[11px] font-bold px-2.5 py-1.5 sm:py-1 border transition-all duration-200 lowercase
+              text-[11px] font-bold px-2.5 py-1.5 sm:py-1 border transition-all duration-200
               ${isActive
                 ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
                 : 'border-border text-dim hover:text-body hover:border-dim'}

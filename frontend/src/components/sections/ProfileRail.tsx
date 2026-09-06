@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, ChevronDown } from 'lucide-react';
+import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   SiPython,
   SiTypescript,
@@ -32,9 +32,9 @@ import { useCommentTracking } from '@/hooks/useCommentTracking';
 type Tab = 'stack' | 'career' | 'education';
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'stack', label: 'stack' },
-  { id: 'career', label: 'career' },
-  { id: 'education', label: 'education' },
+  { id: 'stack', label: 'Stack' },
+  { id: 'career', label: 'Career' },
+  { id: 'education', label: 'Education' },
 ];
 
 const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: string }>> = {
@@ -143,7 +143,7 @@ function StackPanel() {
           return (
             <div key={group.label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
               <div className={`sm:w-[130px] shrink-0 sm:pt-0.5 ${accent.text}`}>
-                <span className="text-xs font-semibold leading-tight">{group.label.toLowerCase()}</span>
+                <span className="text-xs font-semibold leading-tight">{group.label}</span>
               </div>
               <div className="flex flex-wrap gap-1 flex-1 min-w-0">
                 {group.items.map((s) => {
@@ -185,7 +185,7 @@ function StackPanel() {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
               {matches.map((p) => (
-                <Link key={p.id} to={`/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors lowercase">
+                <Link key={p.id} to={`/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors">
                   → {p.title.split(':')[0]}
                 </Link>
               ))}
@@ -226,7 +226,7 @@ function CareerItem({
       >
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-amber text-xs font-bold">{entry.company}</span>
-          <span className="text-heading text-xs lowercase">{entry.role}</span>
+          <span className="text-heading text-xs">{entry.role}</span>
           <div className="ml-auto flex items-center gap-2">
             <span className="text-dim text-[11px] shrink-0">{entry.period}</span>
             <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
@@ -251,6 +251,16 @@ function CareerItem({
               </p>
             ))}
           </div>
+          {/* The long first-person account of both jobs lives in one scratchpad
+              writeup. The home page keeps the brief and links out to it. */}
+          <Link
+            to="/scratchpad/my-professional-journey-till-now"
+            className="inline-flex items-center gap-1 text-amber text-[11px] font-bold hover:text-heading transition-colors mt-2"
+          >
+            Read the full story
+            <ChevronRight size={11} />
+          </Link>
+
           <CommentThread targetType="project" targetId={targetId} accent="amber" like={like} />
         </div>
       )}
