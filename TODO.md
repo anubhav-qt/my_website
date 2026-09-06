@@ -6,7 +6,10 @@
   read back the latest rows and check the entry is there, `data` is the full object, and the
   git provenance columns are filled. It soft-fails on purpose, so a broken archive looks
   exactly like a working one from the build output.
-- Spoin metrics: the live Supabase rows still read 13,926 items / 69 ADRs / 450 items/min
-  from before the corpus rebuild. Run `python scripts/update_metrics.py` to replace them
-  with the grounded-run numbers in `projects.ts`, and delete the orphaned `continuum` rows
-  while you are in there. Until then the stale rows win at build time.
+- Delete the dead `metrics` rows in the Supabase SQL editor. The update-metric Edge
+  Function only upserts, so the pre-rebuild Spoin rows (`Peak Throughput`, `AVG
+  THROUGHPUT`, `Corpus Size`, `Unique Topics`) and every `continuum` row are still in the
+  table. Nothing renders them any more, since live rows are matched to authored metrics by
+  label, but they are clutter that the label matching is currently hiding:
+  `delete from metrics where project_id = 'continuum';`
+  `delete from metrics where project_id = 'spoin' and label in ('Peak Throughput', 'AVG THROUGHPUT', 'Corpus Size', 'Unique Topics');`
