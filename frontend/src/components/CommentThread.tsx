@@ -397,13 +397,10 @@ export function CommentThread({
 
   return (
     <div className="mt-4">
-      {/* Header with Comments title, "my site, my rules" label, count, and like button */}
+      {/* Header with Comments title, count, and like button */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
         <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
-        <span className="text-[9.5px] uppercase tracking-wider text-dim/75 border border-border/80 bg-surface/50 px-1.5 py-0.5 shrink-0" title="my site, my rules: endless reply chains with no page redirects">
-          my site, my rules
-        </span>
         <span className="flex-1 border-t border-dashed border-border min-w-[20px]" />
         <span className="text-dim text-[10px] shrink-0 mr-1">{(comments ?? []).length}</span>
         <button
