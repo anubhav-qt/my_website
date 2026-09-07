@@ -333,7 +333,7 @@ export function ProfileRail() {
         })}
       </div>
 
-      <div className="flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 h-[302px] overflow-y-auto">
+      <div className="flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 h-[347px] overflow-y-auto">
         {tab === 'stack' && <StackPanel />}
         {tab === 'career' && <CareerPanel />}
         {tab === 'education' && <EducationPanel />}
