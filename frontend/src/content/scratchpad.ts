@@ -117,7 +117,7 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
     "date": "27/08/2026",
     "title": "Air Pistol Shooting",
     "body": "My little sister has been going to air rifle shooting range for about 3 years now, and even I was interested in trying it out, so I started going to air pistol shooting in the same shooting range since 1st august. My morning routine used to be non-existent before this, waking up at 10-11 am daily lol. But my life is getting back on track again.",
-    "audience": "technical",
+    "audience": "non-technical",
     "id": "air-pistol-shooting"
   },
   {
