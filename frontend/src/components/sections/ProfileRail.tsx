@@ -32,9 +32,9 @@ import { useCommentTracking } from '@/hooks/useCommentTracking';
 type Tab = 'stack' | 'career' | 'education';
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'stack', label: 'Stack' },
-  { id: 'career', label: 'Career' },
-  { id: 'education', label: 'Education' },
+  { id: 'stack', label: 'stack' },
+  { id: 'career', label: 'career' },
+  { id: 'education', label: 'education' },
 ];
 
 const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: string }>> = {
@@ -155,13 +155,12 @@ function StackPanel() {
                       key={s}
                       onClick={() => selectItem(s, isSelected)}
                       disabled={!hasMatches}
-                      className={`inline-flex items-center gap-1 text-[12px] px-1.5 py-0.5 border transition-colors ${
-                        isSelected
+                      className={`inline-flex items-center gap-1 text-[12px] px-1.5 py-0.5 border transition-colors ${isSelected
                           ? `${accent.border} ${accent.text} ${accent.bg}`
                           : hasMatches
                             ? 'border-border text-body hover:border-dim'
                             : 'border-border/60 text-dim/70 cursor-default'
-                      }`}
+                        }`}
                     >
                       {Icon && <Icon size={12} />}
                       {s}
@@ -216,9 +215,8 @@ function CareerItem({
   return (
     <div
       id={targetId}
-      className={`border transition-colors ${
-        isOpen ? 'border-amber/70 bg-surface/50' : 'border-border hover:border-dim'
-      }`}
+      className={`border transition-colors ${isOpen ? 'border-amber/70 bg-surface/50' : 'border-border hover:border-dim'
+        }`}
     >
       <button
         onClick={onToggle}
@@ -326,9 +324,8 @@ export function ProfileRail() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex-1 sm:flex-initial text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${
-                isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
-              }`}
+              className={`flex-1 sm:flex-initial text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
+                }`}
             >
               {t.label}
             </button>
