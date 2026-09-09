@@ -181,7 +181,7 @@ function StackPanel() {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
               {matches.map((p) => (
-                <Link key={p.id} to={`/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors">
+                <Link key={p.id} to={p.id === 'spoin' ? '/projects/spoin' : `/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors">
                   → {p.title.split(':')[0]}
                 </Link>
               ))}
