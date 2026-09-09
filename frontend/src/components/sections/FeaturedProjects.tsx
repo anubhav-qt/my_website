@@ -57,6 +57,11 @@ export function FeaturedProjects() {
         <p className="relative text-xs text-dim leading-relaxed mt-1 line-clamp-2">
           Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn.
         </p>
+
+        <ul className="relative flex flex-col gap-0.5 mt-1.5 text-xs text-dim leading-relaxed list-disc pl-4">
+          <li>Built a custom fast RAG implementation "frog".</li>
+          <li>All the cards are grounded with a manually curated corpus for each topic inside "the_spoin_universe".</li>
+        </ul>
       </div>
     </div>
   );
