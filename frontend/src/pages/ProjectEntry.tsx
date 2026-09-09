@@ -5,6 +5,7 @@ import { PROJECTS } from '@/content/projects';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { CommentThread } from '@/components/CommentThread';
 import { SpoinSimulator } from '@/components/simulator/SpoinSimulator';
+import { SpoinGallery } from '@/components/SpoinGallery';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 
@@ -86,14 +87,7 @@ export default function ProjectEntry() {
           </p>
         )}
 
-        {p.id === 'spoin' && (
-          <img
-            src="/projects/spoin/feed.jpg"
-            alt="Spoin's feed, a grounded card with its image source credited underneath"
-            className="w-full border border-border/70 mb-3"
-            loading="lazy"
-          />
-        )}
+        {p.id === 'spoin' && <SpoinGallery />}
 
         <ProjectDetailBody p={p} />
 
