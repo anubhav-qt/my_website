@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Six real Spoin screenshots, tiled into a 6x6 bento grid that fills the
 // column's full width at a 16:9 shape (one big tile, two wide banners, two
@@ -47,6 +47,7 @@ const SLIDES: { src: string; slot: string; alt: string; caption: string }[] = [
 const PREVIEW_SIZE = 300;
 
 export function SpoinGallery() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
@@ -70,12 +71,21 @@ export function SpoinGallery() {
     return () => window.removeEventListener('keydown', onKey);
   }, [modalIndex]);
 
+  // Position (and clamp) relative to the gallery's own box, not the window:
+  // the site zooms the page 1.2x above 880px (see index.css), and under CSS
+  // zoom clientX/clientY and getBoundingClientRect both land in the zoomed
+  // coordinate space while window.innerWidth/innerHeight stay unzoomed --
+  // mixing the two is what put the preview in the wrong place. Reading both
+  // from the same zoomed subtree keeps them consistent.
+  const containerRect = containerRef.current?.getBoundingClientRect();
+  const maxLeft = containerRect ? Math.max(0, containerRect.width - PREVIEW_SIZE) : 0;
+  const maxTop = containerRect ? Math.max(0, containerRect.height - PREVIEW_SIZE) : 0;
   const previewVisible = canHover && hovered !== null && modalIndex === null;
-  const previewLeft = Math.min(Math.max(mouse.x + 22, 8), window.innerWidth - PREVIEW_SIZE - 8);
-  const previewTop = Math.min(Math.max(mouse.y + 22, 8), window.innerHeight - PREVIEW_SIZE - 8);
+  const previewLeft = Math.min(Math.max(mouse.x + 22, 0), maxLeft);
+  const previewTop = Math.min(Math.max(mouse.y + 22, 0), maxTop);
 
   return (
-    <div className="relative mb-3">
+    <div ref={containerRef} className="relative mb-3">
       <div className="grid grid-cols-6 grid-rows-6 gap-[3px] aspect-[16/9] w-full">
         {SLIDES.map((s, i) => (
           <button
@@ -89,7 +99,9 @@ export function SpoinGallery() {
             onMouseEnter={() => setHovered(i)}
             onMouseMove={(e) => {
               setHovered(i);
-              setMouse({ x: e.clientX, y: e.clientY });
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              setMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top });
             }}
             onMouseLeave={() => setHovered(null)}
             aria-label={`Open ${s.alt}`}
@@ -101,7 +113,7 @@ export function SpoinGallery() {
 
       {previewVisible && hovered !== null && (
         <div
-          className="fixed z-50 border border-amber overflow-hidden pointer-events-none bg-surface shadow-2xl"
+          className="absolute z-50 border border-amber overflow-hidden pointer-events-none bg-surface shadow-2xl"
           style={{ left: previewLeft, top: previewTop, width: PREVIEW_SIZE, height: PREVIEW_SIZE }}
         >
           <img src={SLIDES[hovered].src} alt="" className="w-full h-full object-cover block" />
