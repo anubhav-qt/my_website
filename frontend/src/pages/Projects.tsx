@@ -10,9 +10,8 @@ import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 
-// Every featured project's full inline accordion. Spoin is the only one slated
-// to get its own dedicated page (coming separately, with real photos/video) --
-// until then, every featured project expands in place here.
+// Spoin only, now: the one project that keeps its full inline accordion on
+// /projects itself instead of getting its own page.
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
   const [simOpen, setSimOpen] = useState(false);
   useViewTracking('project', p.id, isOpen); // still records the view; no longer displayed
