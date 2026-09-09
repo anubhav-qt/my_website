@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-// Six real Spoin screenshots, tiled into a 6x6 bento grid that fills a square
-// exactly (one big tile, two wide banners, two small squares, one narrow
-// sliver -- no gaps, no leftover space, no scroll). Hover shows a bigger
-// cursor-following preview (desktop/fine-pointer only, a hover box makes no
-// sense on a touchscreen); click opens the image in a modal.
+// Six real Spoin screenshots, tiled into a 6x6 bento grid that fills the
+// column's full width at a 16:9 shape (one big tile, two wide banners, two
+// small squares, one narrow sliver -- no gaps, no leftover space, no scroll).
+// Hover shows a bigger cursor-following preview (desktop/fine-pointer only, a
+// hover box makes no sense on a touchscreen); click opens the image in a modal.
 const SLIDES: { src: string; slot: string; alt: string; caption: string }[] = [
   {
     src: '/projects/spoin/topic.jpg',
@@ -76,7 +76,7 @@ export function SpoinGallery() {
 
   return (
     <div className="relative mb-3">
-      <div className="grid grid-cols-6 grid-rows-6 gap-[3px] aspect-square w-full max-w-[520px] mx-auto">
+      <div className="grid grid-cols-6 grid-rows-6 gap-[3px] aspect-[16/9] w-full">
         {SLIDES.map((s, i) => (
           <button
             key={s.src}
