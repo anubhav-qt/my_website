@@ -83,6 +83,14 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
 
       {isOpen && (
         <div className="relative" onClick={(e) => e.stopPropagation()}>
+          {p.id === 'spoin' && (
+            <img
+              src="/projects/spoin/feed.jpg"
+              alt="Spoin's feed, a grounded card with its image source credited underneath"
+              className="w-full border border-border/70 mb-2.5"
+              loading="lazy"
+            />
+          )}
           <ProjectDetailBody p={p} />
 
           {p.id === 'spoin' && (
