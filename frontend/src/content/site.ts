@@ -26,7 +26,7 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
     highlight: 'fine-tuning the new harness and doing UI quality checks',
     descriptionEnd: ' of the newly generated cards.',
     tags: [
-      { label: 'case study', href: '/projects#spoin' },
+      { label: 'case study', href: '/projects/spoin' },
     ],
   },
 };

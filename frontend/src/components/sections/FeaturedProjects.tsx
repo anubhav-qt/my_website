@@ -44,7 +44,7 @@ export function FeaturedProjects() {
             )}
           </div>
           <Link
-            to={`/projects#${FEATURED.id}`}
+            to={`/projects/${FEATURED.id}`}
             className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group"
           >
             Case study

@@ -1,20 +1,73 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS, type ProjectItem } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
-import { SpoinSimulator } from '../components/simulator/SpoinSimulator';
 import { CommentThread } from '@/components/CommentThread';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 
-// Every featured project's full inline accordion. Spoin is the only one slated
-// to get its own dedicated page (coming separately, with real photos/video) --
-// until then, every featured project expands in place here.
+// Spoin: the one featured project with its own page. The whole card navigates
+// there on click, except the description text itself, which stays inert so it
+// can be selected/read without leaving the list.
+function SpoinFeaturedCard({ p }: { p: ProjectItem }) {
+  const navigate = useNavigate();
+  useViewTracking('project', p.id, false); // still records the view; no longer displayed
+
+  return (
+    <li
+      id={p.id}
+      className="relative scroll-mt-6 border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-3 cursor-pointer hover:border-amber/70 hover:bg-surface/70 transition-colors duration-150"
+      onClick={() => navigate(`/projects/${p.id}`)}
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.04) 0%, transparent 60%)' }}
+      />
+      <div className="relative flex items-baseline justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
+          <span className="text-dim text-[10px] uppercase tracking-wide font-bold">{p.category}</span>
+        </div>
+        <div className="flex items-center gap-2.5 shrink-0">
+          {p.repoUrl && (
+            <a
+              href={p.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-dim hover:text-amber transition-colors p-1.5 -m-1.5"
+              aria-label={`${p.title} on GitHub`}
+            >
+              <ExternalLink size={12} />
+            </a>
+          )}
+          <Link
+            to={`/projects/${p.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group"
+          >
+            Case study
+            <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </div>
+
+      <p className="relative text-xs text-dim leading-relaxed mt-1" onClick={(e) => e.stopPropagation()}>
+        {p.skimDescription}
+      </p>
+
+      {p.team && (
+        <p className="relative text-[11px] text-dim mt-1">{p.team.note}</p>
+      )}
+    </li>
+  );
+}
+
+// Every other featured project's full inline accordion.
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
-  const [simOpen, setSimOpen] = useState(false);
   useViewTracking('project', p.id, isOpen); // still records the view; no longer displayed
 
   return (
@@ -84,40 +137,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
 
       {isOpen && (
         <div className="relative" onClick={(e) => e.stopPropagation()}>
-          {p.id === 'spoin' && (
-            <img
-              src="/projects/spoin/feed.jpg"
-              alt="Spoin's feed, a grounded card with its image source credited underneath"
-              className="w-full border border-border/70 mb-2.5"
-              loading="lazy"
-            />
-          )}
           <ProjectDetailBody p={p} />
-
-          {p.id === 'spoin' && (
-            <div className="mt-3 pt-2.5 border-t border-dashed border-border/70">
-              <button
-                onClick={() => setSimOpen((v) => !v)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-amber hover:text-heading transition-colors"
-              >
-                {simOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                <span>{simOpen ? 'Hide the live load_balancer simulator' : 'Open the live load_balancer simulator'}</span>
-              </button>
-              {simOpen && (
-                <>
-                  <p className="text-[11px] text-dim leading-relaxed mt-2.5">
-                    The working of my custom load_balancer for concurrent free tier usage of api keys.
-                  </p>
-                  <div className="mt-2 -mx-1 rounded-lg overflow-hidden border border-border">
-                    <SpoinSimulator />
-                  </div>
-                </>
-              )}
-              {/* SpoinTopics (live topics + suggest-a-topic) is archived for now, not deleted --
-                  the component still exists at components/SpoinTopics.tsx, just unmounted here. */}
-            </div>
-          )}
-
           <CommentThread targetType="project" targetId={p.id} accent="amber" />
         </div>
       )}
@@ -169,7 +189,9 @@ export default function Projects() {
   useEffect(() => {
     const id = location.hash.replace('#', '');
     if (!id) return;
-    if (featured.some((p) => p.id === id)) setOpenId(id);
+    // Spoin no longer expands inline -- it has its own page now -- so only the
+    // other featured ids have anything to open here.
+    if (id !== 'spoin' && featured.some((p) => p.id === id)) setOpenId(id);
     const raf = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ block: 'start' });
     });
@@ -232,14 +254,18 @@ export default function Projects() {
         </div>
 
         <ul>
-          {featured.map((p) => (
-            <ProjectListItem
-              key={p.id}
-              p={p}
-              isOpen={openId === p.id}
-              onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)}
-            />
-          ))}
+          {featured.map((p) =>
+            p.id === 'spoin' ? (
+              <SpoinFeaturedCard key={p.id} p={p} />
+            ) : (
+              <ProjectListItem
+                key={p.id}
+                p={p}
+                isOpen={openId === p.id}
+                onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)}
+              />
+            )
+          )}
         </ul>
       </section>
 
