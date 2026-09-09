@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS, type ProjectItem } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
 import { SpoinSimulator } from '../components/simulator/SpoinSimulator';
-import { SpoinTopics } from '@/components/SpoinTopics';
 import { CommentThread } from '@/components/CommentThread';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 
-// Spoin only, now: the one project that keeps its full inline accordion on
-// /projects itself instead of getting its own page.
+// Every featured project's full inline accordion. Spoin is the only one slated
+// to get its own dedicated page (coming separately, with real photos/video) --
+// until then, every featured project expands in place here.
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
   const [simOpen, setSimOpen] = useState(false);
   useViewTracking('project', p.id, isOpen); // still records the view; no longer displayed
@@ -100,23 +101,20 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
                 className="inline-flex items-center gap-1 text-xs font-bold text-amber hover:text-heading transition-colors"
               >
                 {simOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                <span>{simOpen ? 'Hide the live generation pipeline simulator' : 'Open the live generation pipeline simulator'}</span>
+                <span>{simOpen ? 'Hide the live load_balancer simulator' : 'Open the live load_balancer simulator'}</span>
               </button>
               {simOpen && (
                 <>
                   <p className="text-[11px] text-dim leading-relaxed mt-2.5">
-                    This is the quota governor as it ran during the free-tier Gemini era, when the constraint
-                    was 33 stingy API keys rather than a corpus. The win then wasn't a bigger model, it was
-                    squeezing 218 cards/min out of a 2D key x model quota grid (ADR-0028) with fallback ladders
-                    and per-cell serialization (ADR-0040), instead of blocking on one key at a time. Generation
-                    has since moved to Mistral, so read this as history.
+                    The working of my custom load_balancer for concurrent free tier usage of api keys.
                   </p>
                   <div className="mt-2 -mx-1 rounded-lg overflow-hidden border border-border">
                     <SpoinSimulator />
                   </div>
                 </>
               )}
-              <SpoinTopics />
+              {/* SpoinTopics (live topics + suggest-a-topic) is archived for now, not deleted --
+                  the component still exists at components/SpoinTopics.tsx, just unmounted here. */}
             </div>
           )}
 
@@ -127,57 +125,25 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
   );
 }
 
-// A featured project other than Spoin: one line, a link to its own page. The deep
-// description, metrics, and audit still exist in the data, they just render on
-// /projects/:id now instead of expanding inline here.
-function FeaturedProjectRow({ p }: { p: ProjectItem }) {
-  return (
-    <li id={p.id} className="relative scroll-mt-6 border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-3">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.04) 0%, transparent 60%)' }}
-      />
-      <div className="relative flex items-baseline justify-between gap-2 flex-wrap">
-        <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
-        <Link
-          to={`/projects/${p.id}`}
-          className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group shrink-0"
-        >
-          Read the case study
-          <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-      <p className="relative text-xs text-dim leading-relaxed mt-1">{p.skimDescription}</p>
-      {p.tech.length > 0 && (
-        <div className="relative flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
-          {p.tech.slice(0, 4).map((t) => (
-            <span key={t} className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40">
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
-    </li>
-  );
-}
-
-// Everything else: title, one sentence, done. No expand, no page, no metrics.
+// Everything else: title, one sentence below it, done. No expand, no page, no metrics.
 function OtherProjectRow({ p }: { p: ProjectItem }) {
   return (
-    <div id={p.id} className="flex items-baseline gap-3 py-2.5 border-t border-border/60 flex-wrap scroll-mt-6">
-      <span className="text-body text-xs font-bold shrink-0">{p.title.split(':')[0]}</span>
-      <span className="flex-1 min-w-[140px] text-xs text-dim leading-relaxed">{p.skimDescription}</span>
-      {p.repoUrl && (
-        <a
-          href={p.repoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-dim hover:text-amber transition-colors p-1 -m-1 shrink-0"
-          aria-label={`${p.title} on GitHub`}
-        >
-          <ExternalLink size={11} />
-        </a>
-      )}
+    <div id={p.id} className="py-2.5 scroll-mt-6">
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-body text-xs font-bold">{p.title.split(':')[0]}</span>
+        {p.repoUrl && (
+          <a
+            href={p.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-dim hover:text-amber transition-colors p-1 -m-1 shrink-0"
+            aria-label={`${p.title} on GitHub`}
+          >
+            <SiGithub size={12} />
+          </a>
+        )}
+      </div>
+      <p className="text-xs text-dim leading-relaxed mt-0.5">{p.skimDescription}</p>
     </div>
   );
 }
@@ -195,18 +161,15 @@ export default function Projects() {
   const projects = PROJECTS.filter((p) => p.id !== 'secondary-screen');
   const building = CURRENTLY_MAKING[FEATURED_IDS[0]];
 
-  // Spoin keeps its original inline card (audit already dropped in the data itself).
-  // The other featured projects get their own page and a compact link-out row here.
-  // Everything else is a single line, no expand, no page.
-  const otherFeatured = projects.filter((p) => p.featured && p.id !== 'spoin');
+  // Every featured project expands inline (Spoin included). Everything else is
+  // a single static line, no expand, no page.
+  const featured = projects.filter((p) => p.featured);
   const nonFeatured = projects.filter((p) => !p.featured);
 
   useEffect(() => {
     const id = location.hash.replace('#', '');
     if (!id) return;
-    // Only Spoin still has anything to open inline; every other id (including
-    // one that moved to /projects/:id) just needs the scroll.
-    if (id === 'spoin') setOpenId('spoin');
+    if (featured.some((p) => p.id === id)) setOpenId(id);
     const raf = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ block: 'start' });
     });
@@ -269,14 +232,13 @@ export default function Projects() {
         </div>
 
         <ul>
-          <ProjectListItem
-            key="spoin"
-            p={projects.find((p) => p.id === 'spoin')!}
-            isOpen={openId === 'spoin'}
-            onToggleOpen={() => setOpenId(openId === 'spoin' ? null : 'spoin')}
-          />
-          {otherFeatured.map((p) => (
-            <FeaturedProjectRow key={p.id} p={p} />
+          {featured.map((p) => (
+            <ProjectListItem
+              key={p.id}
+              p={p}
+              isOpen={openId === p.id}
+              onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)}
+            />
           ))}
         </ul>
       </section>
@@ -287,7 +249,7 @@ export default function Projects() {
           <span className="flex-1 border-t border-dashed border-border" />
         </div>
 
-        <div>
+        <div className="divide-y divide-border/60">
           {nonFeatured.map((p) => (
             <OtherProjectRow key={p.id} p={p} />
           ))}

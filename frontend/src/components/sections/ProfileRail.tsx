@@ -315,7 +315,7 @@ export function ProfileRail() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex-1 sm:flex-initial text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
+              className={`flex-1 sm:flex-initial cursor-pointer text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
                 }`}
             >
               {t.label}
