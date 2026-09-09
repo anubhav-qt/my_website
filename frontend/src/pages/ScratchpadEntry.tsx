@@ -3,10 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { WRITEUPS } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
-import { useLikeTracking } from '@/hooks/useLikeTracking';
-import { useCommentTracking } from '@/hooks/useCommentTracking';
 import { CommentThread } from '@/components/CommentThread';
-import { ContentMeta } from '@/components/ContentMeta';
 
 export default function ScratchpadEntry() {
   const { slug } = useParams<{ slug: string }>();
@@ -14,9 +11,7 @@ export default function ScratchpadEntry() {
   const entry = index >= 0 ? WRITEUPS[index] : undefined;
   const prev = index > 0 ? WRITEUPS[index - 1] : undefined;
   const next = index >= 0 && index < WRITEUPS.length - 1 ? WRITEUPS[index + 1] : undefined;
-  const views = useViewTracking('scratchpad', slug ?? '');
-  const like = useLikeTracking('scratchpad', slug ?? '');
-  const commentCount = useCommentTracking('scratchpad', slug ?? '');
+  useViewTracking('scratchpad', slug ?? ''); // still records the view; no longer displayed
 
   useSEO({
     title: entry ? entry.title : 'Scratchpad',
@@ -55,7 +50,6 @@ export default function ScratchpadEntry() {
             </span>
           ))}
           <span className="flex-1" />
-          <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
         </div>
 
         {entry.body.map((p, i) => (
@@ -64,7 +58,7 @@ export default function ScratchpadEntry() {
           </p>
         ))}
 
-        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" like={like} />
+        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" />
       </div>
 
       <div className="flex gap-3 pt-3 border-t-2 border-border">

@@ -19,7 +19,10 @@ export interface ProjectItem {
   title: string;
   category: 'Flagship' | 'Architecture Spec' | 'Production & Systems' | 'Open Source' | 'AI & Machine Learning';
   skimDescription: string; // one plain sentence: what the thing IS, for someone who's never heard of it
-  deepDescription: string; // opens with what it does for a user, then how it's built
+  // opens with what it does for a user, then how it's built. A string[] renders as
+  // one <p> per paragraph (used by projects with a dedicated page); a plain string
+  // is one paragraph, same as always.
+  deepDescription: string | string[];
   // detail is required: a number with nothing next to it saying what it means
   // was the single thing readers said they could not parse. See Projects.tsx.
   metrics?: { label: string; value: string; detail: string }[];
@@ -42,9 +45,13 @@ export const RAW_PROJECTS: ProjectItem[] = [
     title: 'Spoin: For the Curious',
     category: 'Flagship',
     featured: true,
-    skimDescription: 'A scrollable feed of bite-sized knowledge cards, pick a topic and learn at your own level.',
-    deepDescription:
-      "Pick a topic you want to learn, and Spoin gives you a scrollable feed of bite-sized cards at your difficulty level, with an inline AI chat and personal notes to dig deeper on anything that catches your interest. The rule the whole system is built around is that the feed never calls an LLM: a swipe is 50ms and an LLM call is 2 to 10 seconds, so cards are generated ahead of time by an async pipeline and served straight out of Postgres. The generation side is where the work is. Cards used to be drafted from whatever the model happened to remember, with a quality gate checking the facts after the fact. Now every card is grounded first: frog, a sibling package that owns the embedder, retrieves from the_spoin_universe, a separate hand-curated corpus database, and both the drafter and the verifier read the same passages. Each card records the chunk IDs that grounded it, so any claim on the feed can be traced back to the source it came from. Drafting runs on ministral-8b with ministral-14b doing the thinking passes, which is what let the whole free-tier key juggling act go away.",
+    skimDescription:
+      "Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn (choose either from the presets or your own choice of topics), with an entire planned curriculum and a road to mastery while scrolling and climbing through difficulty tiers (beginner, intermediate and advanced) via passing the quizzes. The webapp (and later mobile app) is just the tip of the iceberg. It actually has a very deep and thought-out system underneath it.",
+    deepDescription: [
+      "Starting with the constraints that I put on myself: I don't want to pay anything to the LLM providers for as long as possible, so I built a simple load balancer that is LLM-independent. I provide the .env file with a lot of free-tier API keys, and it consumes all the top models first and then the mediocre models, for all the keys in parallel while doing all the generation, keeping Requests Per Minute and Tokens Per Minute limits in mind.",
+      'I also wanted the LLM to be as predictable as possible, because predictable outputs are easy to debug and work around. But LLMs are probabilistic in nature, so I created a custom RAG system with a manually curated knowledge base as the single source of truth, also created a custom ASCII arts library with over 200 ASCII arts for the feed to not just be a wall of text but also look interesting visually, and always grounded all the LLM calls with this verified, high-quality data. This reduces the chances of hallucination a lot, and for further verification, I have a card reviewing panel in the /admin route, for the final quality check. Also, there is a "report broken card" feature for each card where users can report cards and I will review and fix them.',
+      'The manually curated knowledge corpus is the biggest manual task, which needs to be done without any shortcuts to make sure the content in all the cards is as accurate as possible. But this also opens a lot more doors for future projects. Having a high-quality knowledge corpus to work with can be used to create content not just for Spoin, but for many ambitious projects I have in mind right now. Also, with this, I will be creating a semantic knowledge graph collecting all the related topics and linking them to each other for a special recommender system for Spoin.',
+    ],
     caseStudyHref: '/work/spoin',
     metrics: [
       { label: 'Grounded Throughput', value: '24.85 cards/min', detail: '523 cards in 21m 03s, 2.2x the ungrounded run' },
@@ -55,16 +62,6 @@ export const RAW_PROJECTS: ProjectItem[] = [
     ],
     tech: ['Python', 'FastAPI', 'LangChain', 'LangGraph', 'PostgreSQL', 'pgvector', 'SQLAlchemy', 'Mistral API', 'Qwen3 Embeddings', 'Next.js', 'React Native', 'Docker'],
     team: { note: 'currently building', collaborators: [] },
-    audit: {
-      problem:
-        "Spoin's whole claim is quiz-gated mastery of true things, but the drafter was writing from whatever the model remembered and the quality gate checked it afterwards against its own memory. Two models disagreeing is a coin flip, not a check.",
-      constraint:
-        "The read path can never call an LLM, so grounding has to happen entirely upstream of the feed. And a 3B model's recall is not something a truth guarantee can rest on, so the facts have to come from a corpus rather than from the weights.",
-      decision:
-        'Split retrieval into frog, its own importable package that owns the embedder, with the corpus in the_spoin_universe, a separate database with its own alembic environment so a corpus migration structurally cannot land on the production database. The drafter and the verifier both retrieve from it, and every card stores the chunk IDs that grounded it.',
-      whatBroke:
-        'The embedder environment variable never reached the api, worker, and seed containers, so every vector in the database was hash-stand-in output rather than real embeddings, and nothing raised. Similarity search had been running on noise. Rather than build a resumable backfill, the database was dropped and rebuilt from the migration chain, and one embedder at one dimension is now used everywhere so the two halves cannot drift apart again.',
-    },
   },
   {
     id: 'anchorate',
@@ -97,7 +94,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     id: 'trotter',
     title: 'Trotter: Deterministic Quantitative Stock Engine',
     category: 'Production & Systems',
-    featured: true,
+    featured: false,
     skimDescription: 'Type in a stock ticker, get a real analysis: a score, a verdict, a target price.',
     deepDescription:
       'Type in a ticker and Trotter gives you a real analysis, a score, a verdict, and a target price, across weekly, monthly, and long-term horizons, without a hallucinated number anywhere in it. Every indicator, momentum, valuation, volume, FinBERT sentiment off Yahoo and Google News, volatility, is computed straight from market data in TypeScript. Gemini 2.5 Flash writes the narrative and estimated targets on top of the fixed scores, with Tavily grounding the industry P/E comparisons in current data, and can nudge a chart pattern into the verdict, but only within a capped range.',
@@ -146,7 +143,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     id: 'fraud-vote',
     title: 'Fraud Vote Detection Pipeline: Automated Electoral Roll PDF Audit',
     category: 'Production & Systems',
-    featured: true,
+    featured: false,
     skimDescription: 'Scans PDF electoral rolls and automatically flags fake or duplicate voter registrations.',
     deepDescription:
       "A tool that scans PDF electoral rolls and automatically flags fake or duplicate voter registrations, the same face registered twice under different names, or identical personal details reused, without a human eyeballing thousands of scanned ID cards. It segments each voter card with OpenCV, reads the fields with Google Cloud Vision OCR at 98%+ accuracy, and flags the same face registered twice at a 90%+ similarity threshold, all scored through a fixed formula instead of an LLM's verdict.",
@@ -218,7 +215,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     id: 'trippinator',
     title: 'Trippinator: Real-Time Audio Visualizer',
     category: 'Open Source',
-    featured: false,
+    featured: true,
     skimDescription: 'A visualizer for the second monitor that listens to whatever is playing and draws it.',
     deepDescription:
       'It captures whatever your system is playing and renders a feedback-loop organism on a portrait secondary monitor at around 178fps. Nothing in the image is drawn as geometry: every frame samples the previous frame through a warp, decays it, and adds new audio-driven light on top, so what you see is the accumulated history of the music rather than a picture of the current moment. A kaleidoscoped mandala says what is playing, and the background says how it feels, with a second tier that stays genuinely absent until a passage earns it. Every track is classified continuously across three archetypes from slow features, and everything downstream is a linear blend of the three parameter sets, so a song that changes character mid-way crosses over during a phrase instead of snapping. Written in Rust on wgpu and cpal, and the values that were found by ear rather than derived are marked as such in the code, with the range they were swept over.',

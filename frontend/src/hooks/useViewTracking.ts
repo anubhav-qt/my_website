@@ -76,8 +76,11 @@ export function useViewTracking(targetType: TargetType, targetId: string, record
 // site", not a sum of every project/writeup view.
 const SITE_TARGET_TYPE = 'site';
 const SITE_TARGET_ID = 'site';
-const SITE_CACHE_KEY = `${SITE_TARGET_TYPE}:${SITE_TARGET_ID}`;
 
+// Still recorded on every app mount (see App.tsx) even though nothing on the
+// site displays a total anymore -- the content archive's session-deduped
+// view counts are a backend concern, not a UI one, so recording keeps
+// running with the display cut.
 export function recordSiteVisit() {
   if (!supabase || isLikelyBot()) return;
   supabase
@@ -87,30 +90,4 @@ export function recordSiteVisit() {
       { onConflict: 'target_type,target_id,session_id', ignoreDuplicates: true },
     )
     .then(() => {});
-}
-
-async function fetchSiteViews(): Promise<number> {
-  if (!supabase) return 0;
-  const { count, error } = await supabase
-    .from('views')
-    .select('*', { count: 'exact', head: true })
-    .eq('target_type', SITE_TARGET_TYPE)
-    .eq('target_id', SITE_TARGET_ID);
-  if (error) throw error;
-  return count ?? 0;
-}
-
-// Read-only -- recording happens once via recordSiteVisit() on app mount
-// (see App.tsx), not from every component that displays the count.
-export function useTotalViews(): number {
-  const [count, setCount] = useState(() => readCachedCount(SITE_CACHE_KEY));
-  const { data } = useSupabaseQuery(fetchSiteViews, []);
-
-  useEffect(() => {
-    if (data === null) return;
-    setCount(data);
-    writeCachedCount(SITE_CACHE_KEY, data);
-  }, [data]);
-
-  return count;
 }

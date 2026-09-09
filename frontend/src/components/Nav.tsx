@@ -1,17 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import { Eye } from 'lucide-react';
-import { useTotalViews } from '@/hooks/useViewTracking';
 
 const LINKS = [
   { to: '/', label: 'home', end: true },
-  { to: '/projects', label: 'projects', end: true },
+  { to: '/projects', label: 'projects', end: false },
   { to: '/scratchpad', label: 'scratchpad', end: false },
   { to: '/contact', label: 'contact', end: true },
 ];
 
 export function Nav() {
-  const totalViews = useTotalViews();
-
   return (
     <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur">
       <div className="max-w-2xl mx-auto px-4 xs:px-5 pt-3">
@@ -30,14 +26,6 @@ export function Nav() {
               {l.label}
             </NavLink>
           ))}
-          {/* ml-auto instead of a spacer element: on one line it does the same
-              job, but once the links stop leaving room for it (around 330px)
-              the badge wraps onto a line of its own, and auto margin keeps it
-              pinned right there too rather than stranding it on the left. */}
-          <span className="flex items-center gap-1 ml-auto text-dim text-[10px] sm:text-[11px] font-normal border border-border px-1.5 py-0.5 shrink-0">
-            <Eye size={11} />
-            {totalViews}
-          </span>
         </nav>
       </div>
     </header>

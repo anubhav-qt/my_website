@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Heart } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
-import { getSessionId } from '@/lib/session';
 import { censorText, censorNickname } from '@/lib/censor';
 import type { Accent } from '@/content/site';
 import type { Comment, TargetType } from '@/lib/backend-types';
@@ -18,7 +16,6 @@ interface AccentClasses {
   border18: string;
   actionBtn: string;
   replyLink: string;
-  likeActive: string;
 }
 
 const ACCENT: Record<Accent, AccentClasses> = {
@@ -30,7 +27,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
     border18: 'border-amber/18',
     actionBtn: 'border-amber/50 text-amber bg-amber/8 hover:enabled:border-amber hover:enabled:bg-amber/16',
     replyLink: 'text-dim hover:text-amber',
-    likeActive: 'text-amber hover:text-amber',
   },
   gold: {
     dot: 'bg-gold',
@@ -40,7 +36,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
     border18: 'border-gold/18',
     actionBtn: 'border-gold/50 text-gold bg-gold/8 hover:enabled:border-gold hover:enabled:bg-gold/16',
     replyLink: 'text-dim hover:text-gold',
-    likeActive: 'text-gold hover:text-gold',
   },
   sage: {
     dot: 'bg-sage',
@@ -50,7 +45,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
     border18: 'border-sage/18',
     actionBtn: 'border-sage/50 text-sage bg-sage/8 hover:enabled:border-sage hover:enabled:bg-sage/16',
     replyLink: 'text-dim hover:text-sage',
-    likeActive: 'text-sage hover:text-sage',
   },
   clay: {
     dot: 'bg-clay',
@@ -60,7 +54,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
     border18: 'border-clay/18',
     actionBtn: 'border-clay/50 text-clay bg-clay/8 hover:enabled:border-clay hover:enabled:bg-clay/16',
     replyLink: 'text-dim hover:text-clay',
-    likeActive: 'text-clay hover:text-clay',
   },
   rose: {
     dot: 'bg-rose',
@@ -70,7 +63,6 @@ const ACCENT: Record<Accent, AccentClasses> = {
     border18: 'border-rose/18',
     actionBtn: 'border-rose/50 text-rose bg-rose/8 hover:enabled:border-rose hover:enabled:bg-rose/16',
     replyLink: 'text-dim hover:text-rose',
-    likeActive: 'text-rose hover:text-rose',
   },
 };
 
@@ -127,46 +119,20 @@ async function fetchComments(targetType: TargetType, targetId: string): Promise<
   return data as Comment[];
 }
 
-interface CommentLikeRow {
-  comment_id: string;
-  session_id: string;
-}
-
-async function fetchCommentLikes(commentIds: string[]): Promise<CommentLikeRow[]> {
-  if (!supabase || commentIds.length === 0) return [];
-  const { data, error } = await supabase.from('comment_likes').select('comment_id, session_id').in('comment_id', commentIds);
-  if (error) throw error;
-  return data as CommentLikeRow[];
-}
-
 const POST_COOLDOWN_MS = 15_000;
-
-interface LikeState {
-  liked: boolean;
-  count: number;
-  toggle: () => void;
-  available: boolean;
-}
 
 export function CommentThread({
   targetType,
   targetId,
   accent,
-  like,
 }: {
   targetType: TargetType;
   targetId: string;
   accent: Accent;
-  like: LikeState;
 }) {
   const { data: comments, refetch: refetchComments } = useSupabaseQuery(
     () => fetchComments(targetType, targetId),
     [targetType, targetId],
-  );
-  const commentIds = useMemo(() => (comments ?? []).map((c) => c.id), [comments]);
-  const { data: commentLikes, refetch: refetchCommentLikes } = useSupabaseQuery(
-    () => fetchCommentLikes(commentIds),
-    [commentIds.join(',')],
   );
 
   const [nickname, setNickname] = useState('');
@@ -181,27 +147,8 @@ export function CommentThread({
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
 
   const tree = useMemo(() => buildTree(comments ?? []), [comments]);
-  const sessionId = useMemo(() => getSessionId(), []);
 
   const onCooldown = Date.now() - lastPostedAt < POST_COOLDOWN_MS;
-
-  function commentLikeCount(commentId: string): number {
-    return (commentLikes ?? []).filter((l) => l.comment_id === commentId).length;
-  }
-
-  function commentLikedByMe(commentId: string): boolean {
-    return (commentLikes ?? []).some((l) => l.comment_id === commentId && l.session_id === sessionId);
-  }
-
-  async function toggleCommentLike(commentId: string) {
-    if (!supabase) return;
-    if (commentLikedByMe(commentId)) {
-      await supabase.from('comment_likes').delete().eq('comment_id', commentId).eq('session_id', sessionId);
-    } else {
-      await supabase.from('comment_likes').insert({ comment_id: commentId, session_id: sessionId });
-    }
-    refetchCommentLikes();
-  }
 
   function toggleNodeExpansion(nodeId: string, defaultCollapsed: boolean) {
     if (defaultCollapsed) {
@@ -253,7 +200,6 @@ export function CommentThread({
   function renderNode(node: ThreadNode, depth: number) {
     const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-2.5 sm:ml-4' : 'ml-4 sm:ml-6';
     const borderClass = depth === 0 ? ACCENT[accent].border30 : depth === 1 ? ACCENT[accent].border18 : 'border-border';
-    const liked = commentLikedByMe(node.id);
 
     // Only auto-collapse if this node itself has 3+ direct children
     const directChildrenCount = node.children.length;
@@ -284,16 +230,6 @@ export function CommentThread({
         </p>
 
         <div className="flex items-center gap-3 mt-1">
-          <button
-            onClick={() => toggleCommentLike(node.id)}
-            disabled={!supabase}
-            className={`flex items-center gap-1 text-[10.5px] font-bold disabled:opacity-40 transition-colors ${
-              liked ? ACCENT[accent].likeActive : ACCENT[accent].replyLink
-            }`}
-          >
-            <Heart size={10} fill={liked ? 'currentColor' : 'none'} />
-            <span>{commentLikeCount(node.id)}</span>
-          </button>
           <button
             onClick={() => {
               if (replyingTo === node.id) {
@@ -397,25 +333,11 @@ export function CommentThread({
 
   return (
     <div className="mt-4">
-      {/* Header with Comments title, count, and like button */}
+      {/* Header with Comments title */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
         <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
         <span className="flex-1 border-t border-dashed border-border min-w-[20px]" />
-        <span className="text-dim text-[10px] shrink-0 mr-1">{(comments ?? []).length}</span>
-        <button
-          onClick={like.toggle}
-          disabled={!like.available}
-          aria-pressed={like.liked}
-          className={`flex items-center gap-1.5 text-xs font-bold px-2 py-1 border disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${
-            like.liked
-              ? `${ACCENT[accent].border} ${ACCENT[accent].likeActive} bg-current/10`
-              : `border-border text-dim hover:${ACCENT[accent].text} hover:${ACCENT[accent].border}`
-          }`}
-        >
-          <Heart size={13} fill={like.liked ? 'currentColor' : 'none'} />
-          <span>{like.count}</span>
-        </button>
       </div>
 
       {/* Main post input box with max character limits & indicators */}
