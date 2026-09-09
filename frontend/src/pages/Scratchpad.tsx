@@ -4,9 +4,6 @@ import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
 import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type WriteupEntry, type CollapsibleEntry, type LinkEntry, type Audience } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
-import { useLikeTracking } from '@/hooks/useLikeTracking';
-import { useCommentTracking } from '@/hooks/useCommentTracking';
-import { ContentMeta } from '@/components/ContentMeta';
 import { CommentThread } from '@/components/CommentThread';
 
 type Accent = 'amber' | 'gold' | 'sage' | 'clay';
@@ -49,9 +46,7 @@ function SectionHeader({ color, label, count, latest }: { color: Accent; label: 
 }
 
 function WriteupCard({ w }: { w: WriteupEntry }) {
-  const views = useViewTracking('scratchpad', w.slug, false);
-  const like = useLikeTracking('scratchpad', w.slug);
-  const commentCount = useCommentTracking('scratchpad', w.slug);
+  useViewTracking('scratchpad', w.slug, false); // still records the view; no longer displayed
 
   return (
     <Link
@@ -71,7 +66,6 @@ function WriteupCard({ w }: { w: WriteupEntry }) {
           </span>
         ))}
         <span className="flex-1 min-w-[8px]" />
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
         <span className="text-amber text-xs font-bold ml-1">read &#8594;</span>
       </div>
     </Link>
@@ -79,9 +73,7 @@ function WriteupCard({ w }: { w: WriteupEntry }) {
 }
 
 function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: CollapsibleEntry; accent: Accent; isOpen: boolean; onToggleOpen: () => void }) {
-  const views = useViewTracking('scratchpad', entry.id, isOpen);
-  const like = useLikeTracking('scratchpad', entry.id);
-  const commentCount = useCommentTracking('scratchpad', entry.id);
+  useViewTracking('scratchpad', entry.id, isOpen); // still records the view; no longer displayed
 
   return (
     <div className="border-b border-dashed border-border/60 py-1.5">
@@ -94,12 +86,11 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
         )}
         <span className={`text-xs font-semibold leading-relaxed ${TEXT[accent]}`}>{entry.title}</span>
         <span className="flex-1" />
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1">
           <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1">{entry.body}</p>
-          <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} like={like} />
+          <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} />
         </div>
       )}
     </div>
@@ -125,9 +116,7 @@ function CollapsibleList({ entries, accent }: { entries: CollapsibleEntry[]; acc
 }
 
 function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: boolean; onToggleOpen: () => void }) {
-  const views = useViewTracking('scratchpad', link.id, isOpen);
-  const like = useLikeTracking('scratchpad', link.id);
-  const commentCount = useCommentTracking('scratchpad', link.id);
+  useViewTracking('scratchpad', link.id, isOpen); // still records the view; no longer displayed
 
   return (
     <div className="border-b border-dashed border-border/60 py-2">
@@ -159,12 +148,11 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
         >
           <ExternalLink size={11} className="translate-y-px" />
         </a>
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
       <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-3 sm:pl-[97px]">{link.commentary}</p>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1">
-          <CommentThread targetType="scratchpad" targetId={link.id} accent="clay" like={like} />
+          <CommentThread targetType="scratchpad" targetId={link.id} accent="clay" />
         </div>
       )}
     </div>

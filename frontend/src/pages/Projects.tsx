@@ -6,18 +6,15 @@ import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
 import { SpoinSimulator } from '../components/simulator/SpoinSimulator';
 import { SpoinTopics } from '@/components/SpoinTopics';
 import { CommentThread } from '@/components/CommentThread';
-import { ContentMeta } from '@/components/ContentMeta';
+import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
-import { useLikeTracking } from '@/hooks/useLikeTracking';
-import { useCommentTracking } from '@/hooks/useCommentTracking';
 
+// Spoin only, now: the one project that keeps its full inline accordion on
+// /projects itself instead of getting its own page.
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
   const [simOpen, setSimOpen] = useState(false);
-  const [heroMetric, ...restMetrics] = p.metrics ?? [];
-  const views = useViewTracking('project', p.id, isOpen);
-  const like = useLikeTracking('project', p.id);
-  const commentCount = useCommentTracking('project', p.id);
+  useViewTracking('project', p.id, isOpen); // still records the view; no longer displayed
 
   return (
     <li
@@ -51,7 +48,6 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               <ExternalLink size={12} />
             </a>
           )}
-          <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
           <ChevronDown
             size={13}
             className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
@@ -87,65 +83,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
 
       {isOpen && (
         <div className="relative" onClick={(e) => e.stopPropagation()}>
-          <p className="text-xs text-body/90 leading-relaxed mt-2.5 pt-2.5 border-t border-dashed border-border/70">
-            {p.deepDescription}
-          </p>
-
-          {heroMetric && (
-            <div className="mt-2.5 pt-2 border-t border-dashed border-border/70">
-              <div className="flex items-baseline gap-2.5">
-                <span className="text-amber text-xl font-bold leading-none tracking-tight">{heroMetric.value}</span>
-                <span className="text-dim text-[11px] uppercase tracking-widest font-semibold">{heroMetric.label}</span>
-              </div>
-              {heroMetric.detail && <p className="text-dim text-[11px] mt-0.5 pl-0.5">{heroMetric.detail}</p>}
-
-              {/* Every metric carries its detail line here. A bare number was the
-                  thing readers said they could not parse, and this page is the
-                  only place a number appears at all now. */}
-              {restMetrics.length > 0 && (
-                <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-5 gap-y-2 mt-2.5 pt-2 border-t border-border/40">
-                  {restMetrics.map((m) => (
-                    <div key={m.label} className="flex flex-col min-w-0">
-                      <span className="text-[10px] text-dim uppercase tracking-wide leading-tight">{m.label}</span>
-                      <span className="text-body text-[12px] font-semibold leading-tight mt-0.5">{m.value}</span>
-                      <span className="text-dim text-[11px] leading-snug mt-0.5">{m.detail}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {p.tech.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
-              {p.tech.map((t) => (
-                <span key={t} className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40">
-                  {t}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {p.audit && (
-            <div className="flex flex-col gap-2 sm:gap-1.5 mt-3 pt-2.5 border-t border-dashed border-border/70">
-              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
-                <span className="sm:w-[74px] shrink-0 text-dim font-bold text-[10px] tracking-wide sm:pt-px">problem</span>
-                <span className="text-body/90">{p.audit.problem}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
-                <span className="sm:w-[74px] shrink-0 text-rose font-bold text-[10px] tracking-wide sm:pt-px">constraint</span>
-                <span className="text-body/90">{p.audit.constraint}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
-                <span className="sm:w-[74px] shrink-0 text-amber font-bold text-[10px] tracking-wide sm:pt-px">decision</span>
-                <span className="text-body/90">{p.audit.decision}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 text-[11.5px] leading-relaxed">
-                <span className="sm:w-[74px] shrink-0 text-sage font-bold text-[10px] tracking-wide sm:pt-px">what broke</span>
-                <span className="text-body/90">{p.audit.whatBroke}</span>
-              </div>
-            </div>
-          )}
+          <ProjectDetailBody p={p} />
 
           {p.id === 'spoin' && (
             <div className="mt-3 pt-2.5 border-t border-dashed border-border/70">
@@ -174,10 +112,65 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
             </div>
           )}
 
-          <CommentThread targetType="project" targetId={p.id} accent="amber" like={like} />
+          <CommentThread targetType="project" targetId={p.id} accent="amber" />
         </div>
       )}
     </li>
+  );
+}
+
+// A featured project other than Spoin: one line, a link to its own page. The deep
+// description, metrics, and audit still exist in the data, they just render on
+// /projects/:id now instead of expanding inline here.
+function FeaturedProjectRow({ p }: { p: ProjectItem }) {
+  return (
+    <li id={p.id} className="relative scroll-mt-6 border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-3">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.04) 0%, transparent 60%)' }}
+      />
+      <div className="relative flex items-baseline justify-between gap-2 flex-wrap">
+        <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
+        <Link
+          to={`/projects/${p.id}`}
+          className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group shrink-0"
+        >
+          Read the case study
+          <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+      <p className="relative text-xs text-dim leading-relaxed mt-1">{p.skimDescription}</p>
+      {p.tech.length > 0 && (
+        <div className="relative flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
+          {p.tech.slice(0, 4).map((t) => (
+            <span key={t} className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40">
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+    </li>
+  );
+}
+
+// Everything else: title, one sentence, done. No expand, no page, no metrics.
+function OtherProjectRow({ p }: { p: ProjectItem }) {
+  return (
+    <div id={p.id} className="flex items-baseline gap-3 py-2.5 border-t border-border/60 flex-wrap scroll-mt-6">
+      <span className="text-body text-xs font-bold shrink-0">{p.title.split(':')[0]}</span>
+      <span className="flex-1 min-w-[140px] text-xs text-dim leading-relaxed">{p.skimDescription}</span>
+      {p.repoUrl && (
+        <a
+          href={p.repoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-dim hover:text-amber transition-colors p-1 -m-1 shrink-0"
+          aria-label={`${p.title} on GitHub`}
+        >
+          <ExternalLink size={11} />
+        </a>
+      )}
+    </div>
   );
 }
 
@@ -194,10 +187,18 @@ export default function Projects() {
   const projects = PROJECTS.filter((p) => p.id !== 'secondary-screen');
   const building = CURRENTLY_MAKING[FEATURED_IDS[0]];
 
+  // Spoin keeps its original inline card (audit already dropped in the data itself).
+  // The other featured projects get their own page and a compact link-out row here.
+  // Everything else is a single line, no expand, no page.
+  const otherFeatured = projects.filter((p) => p.featured && p.id !== 'spoin');
+  const nonFeatured = projects.filter((p) => !p.featured);
+
   useEffect(() => {
     const id = location.hash.replace('#', '');
     if (!id) return;
-    if (projects.some((p) => p.id === id)) setOpenId(id);
+    // Only Spoin still has anything to open inline; every other id (including
+    // one that moved to /projects/:id) just needs the scroll.
+    if (id === 'spoin') setOpenId('spoin');
     const raf = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ block: 'start' });
     });
@@ -255,15 +256,34 @@ export default function Projects() {
 
       <section className="mb-10">
         <div className="mb-4 flex items-center gap-3">
-          <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Projects</span>
+          <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Featured</span>
           <span className="flex-1 border-t border-dashed border-border" />
         </div>
 
         <ul>
-          {projects.map((p) => (
-            <ProjectListItem key={p.id} p={p} isOpen={openId === p.id} onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)} />
+          <ProjectListItem
+            key="spoin"
+            p={projects.find((p) => p.id === 'spoin')!}
+            isOpen={openId === 'spoin'}
+            onToggleOpen={() => setOpenId(openId === 'spoin' ? null : 'spoin')}
+          />
+          {otherFeatured.map((p) => (
+            <FeaturedProjectRow key={p.id} p={p} />
           ))}
         </ul>
+      </section>
+
+      <section className="mb-10">
+        <div className="mb-2 flex items-center gap-3">
+          <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">Other Projects</span>
+          <span className="flex-1 border-t border-dashed border-border" />
+        </div>
+
+        <div>
+          {nonFeatured.map((p) => (
+            <OtherProjectRow key={p.id} p={p} />
+          ))}
+        </div>
       </section>
     </div>
   );

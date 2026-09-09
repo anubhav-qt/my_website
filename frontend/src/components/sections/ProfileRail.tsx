@@ -24,10 +24,7 @@ import {
 import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
 import { CommentThread } from '@/components/CommentThread';
-import { ContentMeta } from '@/components/ContentMeta';
 import { useViewTracking } from '@/hooks/useViewTracking';
-import { useLikeTracking } from '@/hooks/useLikeTracking';
-import { useCommentTracking } from '@/hooks/useCommentTracking';
 
 type Tab = 'stack' | 'career' | 'education';
 
@@ -208,9 +205,7 @@ function CareerItem({
   onToggle: () => void;
 }) {
   const targetId = `career-${entry.id}`;
-  const views = useViewTracking('project', targetId, isOpen);
-  const like = useLikeTracking('project', targetId);
-  const commentCount = useCommentTracking('project', targetId);
+  useViewTracking('project', targetId, isOpen); // still records the view; no longer displayed
 
   return (
     <div
@@ -227,7 +222,6 @@ function CareerItem({
           <span className="text-heading text-xs">{entry.role}</span>
           <div className="ml-auto flex items-center gap-2">
             <span className="text-dim text-[11px] shrink-0">{entry.period}</span>
-            <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
             <ChevronDown
               size={12}
               className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
@@ -259,7 +253,7 @@ function CareerItem({
             <ChevronRight size={11} />
           </Link>
 
-          <CommentThread targetType="project" targetId={targetId} accent="amber" like={like} />
+          <CommentThread targetType="project" targetId={targetId} accent="amber" />
         </div>
       )}
     </div>
@@ -285,9 +279,7 @@ function CareerPanel() {
 
 function EducationPanel() {
   const targetId = 'education';
-  const views = useViewTracking('project', targetId, true);
-  const like = useLikeTracking('project', targetId);
-  const commentCount = useCommentTracking('project', targetId);
+  useViewTracking('project', targetId, true); // still records the view; no longer displayed
 
   return (
     <div className="border border-border/70 bg-surface/30 p-3">
@@ -297,7 +289,6 @@ function EducationPanel() {
           <p className="text-body text-xs mt-1">{EDUCATION.school}</p>
           <p className="text-dim text-[12px] mt-0.5">{EDUCATION.period}</p>
         </div>
-        <ContentMeta views={views} liked={like.liked} likeCount={like.count} commentCount={commentCount} />
       </div>
 
       <div className="flex flex-wrap items-center gap-3 mt-2.5 pt-2.5 border-t border-dashed border-border">
@@ -307,7 +298,7 @@ function EducationPanel() {
 
       <p className="text-dim text-[12px] leading-relaxed mt-2">{EDUCATION.note}</p>
 
-      <CommentThread targetType="project" targetId={targetId} accent="amber" like={like} />
+      <CommentThread targetType="project" targetId={targetId} accent="amber" />
     </div>
   );
 }

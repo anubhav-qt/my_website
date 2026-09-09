@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, type Location } from 'react-router-dom';
 import { Nav } from './components/Nav';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
+import ProjectEntry from './pages/ProjectEntry';
 import Scratchpad from './pages/Scratchpad';
 import ScratchpadEntry from './pages/ScratchpadEntry';
 import Contact from './pages/Contact';
@@ -46,6 +47,7 @@ export default function App() {
               <Routes location={slotLocation}>
                 <Route path="/" element={<Home />} />
                 <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:id" element={<ProjectEntry />} />
                 <Route path="/scratchpad" element={<Scratchpad />} />
                 <Route path="/scratchpad/:slug" element={<ScratchpadEntry />} />
                 <Route path="/contact" element={<Contact />} />
