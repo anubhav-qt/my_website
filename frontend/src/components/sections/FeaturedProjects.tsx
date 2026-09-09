@@ -5,10 +5,10 @@ import { FEATURED_IDS } from '@/content/site';
 
 const FEATURED = PROJECTS.find((p) => p.id === FEATURED_IDS[0])!;
 
-// No metrics here on purpose. A number with nothing next to it explaining what
-// it means reads as noise to someone who has never heard of the project, which
-// is exactly who the home page is for. Every metric lives on /projects, beside
-// the deep description and the problem/constraint/decision it came out of.
+// No metrics or tech badges here on purpose. A number or a badge wall with
+// nothing next to it explaining what it means reads as noise to someone who
+// has never heard of the project, which is exactly who the home page is for.
+// The deep description, metrics, and tech stack all live on /projects.
 export function FeaturedProjects() {
   return (
     <div className="relative">
@@ -52,22 +52,11 @@ export function FeaturedProjects() {
           </Link>
         </div>
 
-        {/* Description */}
-        <p className="relative text-xs text-dim leading-relaxed mt-1">{FEATURED.skimDescription}</p>
-
-        {/* Tech tags */}
-        {FEATURED.tech.length > 0 && (
-          <div className="relative flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-border/40">
-            {FEATURED.tech.map((t) => (
-              <span
-                key={t}
-                className="text-[10px] px-1.5 py-0.5 border border-border/70 text-body/80 bg-bg/40"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        )}
+        {/* Description: an excerpt of the project's own skimDescription paragraph,
+            trimmed to fit two lines on this narrow card -- not separate copy. */}
+        <p className="relative text-xs text-dim leading-relaxed mt-1 line-clamp-2">
+          Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn.
+        </p>
       </div>
     </div>
   );

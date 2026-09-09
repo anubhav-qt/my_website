@@ -22,9 +22,9 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], {
   spoin: {
     title: 'Spoin: For the Curious',
     progress: 85,
-    description: "103 ADRs deep, and the pipeline now grounds every card in a curated corpus instead of the model's memory. What is left is ",
-    highlight: 'refilling the corpus after the rebuild',
-    descriptionEnd: ', UI polish, and the last standalone pages.',
+    description: '103 ADRs written and the new custom RAG implementation (frog) tested. Currently ',
+    highlight: 'fine-tuning the new harness and doing UI quality checks',
+    descriptionEnd: ' of the newly generated cards.',
     tags: [
       { label: 'case study', href: '/projects#spoin' },
     ],
