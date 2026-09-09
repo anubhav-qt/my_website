@@ -6,36 +6,46 @@ import { useState } from 'react';
 // one-line caption below the image. No cursor- or element-position math, so
 // nothing here touches the 1.2x page zoom (index.css) the way the old
 // hover-preview did.
+//
+// Filenames are historical and a few of them lie: profile.jpg is the
+// request-a-topic modal, settings.jpg is the profile/momentum page. Captions
+// and alt text describe what each shot actually shows.
 const SLIDES: { src: string; alt: string; caption: string }[] = [
   {
     src: '/projects/spoin/feed.jpg',
-    alt: 'The card feed',
-    caption: 'The feed, grounded and served straight out of Postgres.',
+    alt: 'The reading view, one card open',
+    caption:
+      'The reading view. Cards come out of Postgres with a real sourced image, no model on the read path.',
   },
   {
     src: '/projects/spoin/topic.jpg',
-    alt: 'Topic tier quizzes and curriculum roadmap',
-    caption: "A topic's tier-certification quizzes and curriculum roadmap.",
-  },
-  {
-    src: '/projects/spoin/profile.jpg',
-    alt: 'Momentum and streak calendar',
-    caption: 'Momentum: a day streak and a calendar of cards read.',
-  },
-  {
-    src: '/projects/spoin/themes.jpg',
-    alt: 'Theme and palette picker',
-    caption: 'Five grounds to read in, picked at onboarding or from settings.',
-  },
-  {
-    src: '/projects/spoin/onboarding.jpg',
-    alt: 'Topic onboarding picker',
-    caption: 'Onboarding: pick a few topics and a starting difficulty.',
+    alt: 'A topic opened, showing tier quizzes and its subtopic list',
+    caption:
+      'A topic opened up: tier quizzes to certify out of, a coverage bar, and every subtopic listed.',
   },
   {
     src: '/projects/spoin/settings.jpg',
-    alt: 'Settings: daily goal and topics',
-    caption: 'Settings: daily goal, per-topic difficulty, and the palette.',
+    alt: 'The profile page with streak and reading calendar',
+    caption:
+      'Your profile: a day streak, a calendar of what you read, and all-time card and topic counts.',
+  },
+  {
+    src: '/projects/spoin/themes.jpg',
+    alt: 'The card-style picker at onboarding',
+    caption:
+      'Eleven card styles to read in, set at onboarding and swapped anytime from the rail.',
+  },
+  {
+    src: '/projects/spoin/onboarding.jpg',
+    alt: 'Onboarding topic and difficulty picker',
+    caption:
+      "Pick a few topics and a difficulty for each. That's all it takes to start the feed.",
+  },
+  {
+    src: '/projects/spoin/profile.jpg',
+    alt: 'The request-a-topic modal',
+    caption:
+      "Need a topic that isn't there yet? Request it, and one batched call generates them all.",
   },
 ];
 
