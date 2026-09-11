@@ -30,6 +30,7 @@ export interface ProjectItem {
   repoUrl?: string;
   secondaryRepoUrl?: { label: string; url: string };
   caseStudyHref?: string;
+  writeup?: { title: string; href: string };
   audit?: ProjectAudit;
   featured?: boolean;
   team?: { note: string; collaborators: Collaborator[] };
@@ -53,6 +54,10 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'The manually curated knowledge corpus is the biggest manual task, which needs to be done without any shortcuts to make sure the content in all the cards is as accurate as possible. But this also opens a lot more doors for future projects. Having a high-quality knowledge corpus to work with can be used to create content not just for Spoin, but for many ambitious projects I have in mind right now. Also, with this, I will be creating a semantic knowledge graph collecting all the related topics and linking them to each other for a special recommender system for Spoin.',
     ],
     caseStudyHref: '/work/spoin',
+    writeup: {
+      title: 'Writeup: I Lost to Gemini. Fuck You.',
+      href: '/scratchpad/i-lost-to-gemini-fuck-you',
+    },
     metrics: [
       { label: 'Grounded Throughput', value: '24.85 cards/min', detail: '523 cards in 21m 03s, 2.2x the ungrounded run' },
       { label: 'Architecture', value: '103 ADRs', detail: 'Sole system architect' },
