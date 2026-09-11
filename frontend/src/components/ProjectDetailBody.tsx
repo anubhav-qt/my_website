@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import type { ProjectItem } from '@/content/projects';
 
 // Shared between the inline Spoin accordion on /projects and the standalone
@@ -17,6 +19,18 @@ export function ProjectDetailBody({ p }: { p: ProjectItem }) {
           {paragraph}
         </p>
       ))}
+
+      {p.writeup && (
+        <div className="mt-2.5">
+          <Link
+            to={p.writeup.href}
+            className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group"
+          >
+            {p.writeup.title}
+            <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      )}
 
       {heroMetric && (
         <div className="mt-2.5 pt-2 border-t border-dashed border-border/70">
