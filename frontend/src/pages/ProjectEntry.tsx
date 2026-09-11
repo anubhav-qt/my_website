@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronRight } from 'lucide-react';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS } from '@/content/projects';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { CommentThread } from '@/components/CommentThread';
@@ -57,7 +58,7 @@ export default function ProjectEntry() {
               className="text-dim hover:text-amber transition-colors p-1.5 -m-1.5"
               aria-label={`${p.title} on GitHub`}
             >
-              <ExternalLink size={13} />
+              <SiGithub size={13} />
             </a>
           )}
         </div>
@@ -89,7 +90,7 @@ export default function ProjectEntry() {
 
         {p.id === 'spoin' && <SpoinGallery />}
 
-        <ProjectDetailBody p={p} />
+        <ProjectDetailBody p={p} isCaseStudy={true} />
 
         {p.id === 'spoin' && (
           <div className="mt-3 pt-2.5 border-t border-dashed border-border/70">

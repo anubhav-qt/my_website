@@ -5,9 +5,10 @@ import type { ProjectItem } from '@/content/projects';
 // Shared between the inline Spoin accordion on /projects and the standalone
 // /projects/:id page every other featured project gets. Same rendering,
 // two call sites, so a metrics/audit layout change never has to be made twice.
-export function ProjectDetailBody({ p }: { p: ProjectItem }) {
+export function ProjectDetailBody({ p, isCaseStudy = false }: { p: ProjectItem; isCaseStudy?: boolean }) {
   const [heroMetric, ...restMetrics] = p.metrics ?? [];
-  const paragraphs = Array.isArray(p.deepDescription) ? p.deepDescription : [p.deepDescription];
+  const textSource = isCaseStudy && p.caseStudyDescription ? p.caseStudyDescription : p.deepDescription;
+  const paragraphs = Array.isArray(textSource) ? textSource : [textSource];
 
   return (
     <>

@@ -23,6 +23,7 @@ export interface ProjectItem {
   // one <p> per paragraph (used by projects with a dedicated page); a plain string
   // is one paragraph, same as always.
   deepDescription: string | string[];
+  caseStudyDescription?: string | string[];
   // detail is required: a number with nothing next to it saying what it means
   // was the single thing readers said they could not parse. See Projects.tsx.
   metrics?: { label: string; value: string; detail: string }[];
@@ -47,8 +48,14 @@ export const RAW_PROJECTS: ProjectItem[] = [
     category: 'Flagship',
     featured: true,
     skimDescription:
-      "Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn (choose either from the presets or your own choice of topics), with an entire planned curriculum and a road to mastery while scrolling and climbing through difficulty tiers (beginner, intermediate and advanced) via passing the quizzes. The webapp (and later mobile app) is just the tip of the iceberg. It actually has a very deep and thought-out system underneath it.",
+      'A grounded knowledge feed built around curated knowledge, mastery-based learning, and pre-generated cards. FROG is a custom, faster RAG implementation built specifically for Spoin, with model verification and user feedback on top.',
     deepDescription: [
+      'Spoin is a scrollable knowledge feed built around grounded generation and mastery-based learning. Cards are generated ahead of time and served without an LLM call on the read path.',
+      'The knowledge layer is the_spoin_universe, a curated source of truth that feeds FROG, a custom and faster RAG implementation built specifically for Spoin. Generation uses broad retrieval, while verification uses precise retrieval against the same knowledge base.',
+      'Curricula are built around prerequisites and learning progression rather than isolated topic lists, with separate generation, verification and deterministic validation layers. Users can also report broken cards, bad diagrams, broken art and other issues, which feeds another quality-control loop through the admin panel.',
+      '103 ADRs and counting.',
+    ],
+    caseStudyDescription: [
       "Starting with the constraints that I put on myself: I don't want to pay anything to the LLM providers for as long as possible, so I built a simple load balancer that is LLM-independent. I provide the .env file with a lot of free-tier API keys, and it consumes all the top models first and then the mediocre models, for all the keys in parallel while doing all the generation, keeping Requests Per Minute and Tokens Per Minute limits in mind.",
       'I also wanted the LLM to be as predictable as possible, because predictable outputs are easy to debug and work around. But LLMs are probabilistic in nature, so I created a custom RAG system with a manually curated knowledge base as the single source of truth, also created a custom ASCII arts library with over 200 ASCII arts for the feed to not just be a wall of text but also look interesting visually, and always grounded all the LLM calls with this verified, high-quality data. This reduces the chances of hallucination a lot, and for further verification, I have a card reviewing panel in the /admin route, for the final quality check. Also, there is a "report broken card" feature for each card where users can report cards and I will review and fix them.',
       'The manually curated knowledge corpus is the biggest manual task, which needs to be done without any shortcuts to make sure the content in all the cards is as accurate as possible. But this also opens a lot more doors for future projects. Having a high-quality knowledge corpus to work with can be used to create content not just for Spoin, but for many ambitious projects I have in mind right now. Also, with this, I will be creating a semantic knowledge graph collecting all the related topics and linking them to each other for a special recommender system for Spoin.',
@@ -65,34 +72,52 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Read Latency', value: '< 50ms', detail: 'No LLM on the read path' },
       { label: 'Grounding Per Card', value: 'Top 2 chunks', detail: 'Chunk IDs recorded on the card' },
     ],
-    tech: ['Python', 'FastAPI', 'LangChain', 'LangGraph', 'PostgreSQL', 'pgvector', 'SQLAlchemy', 'Mistral API', 'Qwen3 Embeddings', 'Next.js', 'React Native', 'Docker'],
+    tech: ['FastAPI', 'PostgreSQL', 'pgvector', 'FROG', 'LLMs', 'Next.js', 'React'],
     team: { note: 'currently building', collaborators: [] },
+  },
+  {
+    id: 'paribelle',
+    title: 'PariBelle: Independent Fashion Commerce Ecosystem',
+    category: 'Production & Systems',
+    featured: true,
+    skimDescription:
+      'A full commerce ecosystem for independent fashion vendors, from branded storefronts and catalog management to KYC, payments, bookings, fulfillment, promotions, reviews, search, and vendor operations.',
+    deepDescription: [
+      'PariBelle is a full commerce ecosystem built around independent fashion vendors, rather than just another centralized marketplace.',
+      'Vendors can run their own branded storefronts while the platform handles vendor KYC, catalogs, inventory, location management, GST-compliant invoicing, bookings, payments, promotions, reviews, search, referrals, fulfillment and wallet/ledger operations.',
+      'The ecosystem also has a separate customer-facing storefront, vendor tooling and the backend systems connecting everything together, with real-time updates and payment infrastructure underneath.',
+      '28+ backend modules.',
+    ],
+    repoUrl: 'https://github.com/anubhav-qt/paribelle-backend',
+    secondaryRepoUrl: { label: 'Frontend Repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
+    metrics: [
+      { label: 'Backend', value: '28 Modules', detail: 'Vendors, bookings, promos, search, wallet' },
+      { label: 'Payments', value: 'Razorpay', detail: 'GST/HSN invoicing built in' },
+    ],
+    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Next.js', 'Razorpay', 'TanStack Query', 'Socket.IO'],
+    team: { note: 'built with', collaborators: [{ label: '@ajaniljoshi', url: 'https://github.com/ajaniljoshi' }] },
   },
   {
     id: 'anchorate',
     title: 'Anchor8: Cognitive Firewall for AI Agents',
     category: 'Production & Systems',
     featured: true,
-    skimDescription: "A security layer you drop in front of AI agents so a compromised one can't run wild.",
-    deepDescription:
-      "Drop Anchor8 in front of an autonomous AI agent and it watches every tool call the agent makes, catching a leaked secret, a prompt injection, or a destructive action before it lands, without adding noticeable latency to the agent's normal work. Fast heuristics, PII regex, injection pattern matching, rolling Z-score anomaly detection in Redis, pgvector similarity against the agent's own history, plus dedicated behavioral, business-logic, and vision/RPA detectors, catch most things in milliseconds. Anything ambiguous escalates to a DualJuror courtroom: two LLM agents arguing worst-case risk versus legitimate use, voting on whether the action goes through. On top of that sits Universal Agent Identity: every agent gets a DID, Know-Your-Agent and safety verifiable credentials, and an instant global kill switch for compromised ones. Ships as SDKs in Python, TypeScript, and Go, with a 3-line LangChain integration. Internal codebase, no public link.",
+    skimDescription:
+      'A security and governance layer for autonomous AI agents. It monitors tool calls and enforces policy before risky actions reach the real system.',
+    deepDescription: [
+      'Anchor8 is a security and governance layer that sits in front of autonomous AI agents and watches what they do in real time.',
+      'It monitors tool calls, checks arguments and context, detects suspicious behavior, and can block or escalate high-risk actions before they reach the underlying system.',
+      'The SDK is designed to drop into agent workflows with minimal integration while keeping the security layer independent from the agent framework.',
+    ],
     metrics: [
       { label: 'Pipeline', value: '3-Lane Design', detail: 'Observer, Guard, Courtroom' },
       { label: 'Identity', value: 'DID + VCs', detail: 'Know-Your-Agent credentials, kill switch' },
       { label: 'Integration', value: '3 lines', detail: 'LangChain callback handler' },
     ],
-    tech: ['Python', 'FastAPI', 'LangChain', 'PostgreSQL', 'pgvector', 'Pinecone', 'Redis', 'DeepSeek', 'Gemini', 'TypeScript', 'Go'],
+    tech: ['Python', 'FastAPI', 'LangChain', 'Redis', 'pgvector', 'DeepSeek', 'Gemini'],
     team: {
       note: 'Built by a 5-person founding team at Anchorate, our first startup.',
       collaborators: [],
-    },
-    audit: {
-      problem: 'AI agents calling real tools are a black box. You cannot audit, insure, or trust what you cannot see.',
-      constraint: 'A security layer that adds real latency on every agent action is dead on arrival. Most checks need to be fast enough to be invisible.',
-      decision:
-        'Split into three lanes: a fire-and-forget Observer lane for telemetry, a synchronous Guard lane for critical actions, and a DualJuror courtroom for the ambiguous middle, two LLM agents arguing opposite sides and voting. Identity rides on top as DIDs and verifiable credentials, so a compromised agent can be revoked instantly and globally.',
-      whatBroke:
-        'A brand-new agent has no history, so the pgvector contextual-anomaly check had nothing to compare against and would flag everything it did. Fixed with an explicit cold-start bypass for agents that have not built up enough history yet.',
     },
   },
   {
@@ -117,31 +142,6 @@ export const RAW_PROJECTS: ProjectItem[] = [
         'A deterministic scoring core computes momentum, valuation, volume, sentiment, and volatility straight from market data across all three horizons. Gemini only ever sees the finished numbers, writes the narrative, and estimates targets on top of them, with results cached per symbol for 10 minutes.',
       whatBroke:
         'Chart vision was initially free to overwrite the quantitative verdict outright, and during volatile setups it would hallucinate right over solid fundamentals. Capped it to a shift of at most 10 to 15 points out of 100 from the baseline score.',
-    },
-  },
-  {
-    id: 'paribelle',
-    title: 'Paribelle: Multi-Vendor Marketplace Platform',
-    category: 'Production & Systems',
-    featured: true,
-    skimDescription: 'A multi-vendor online marketplace, vendors run their own storefront, I built the backend.',
-    deepDescription:
-      "A multi-vendor online marketplace, think a mini Amazon: independent vendors sign up, get KYC-verified, and run their own branded storefront, while the backend handles payments, GST-compliant invoicing, bookings, and fulfillment behind the scenes. The NestJS/TypeORM backend is close to 30 modules deep: vendor KYC and location management, GST/HSN-compliant invoicing, Razorpay payments, bookings, promotions, reviews, search, and a referral system backed by a wallet ledger. Paired with a Next.js 14 storefront (TanStack Query, Zustand, Socket.IO for live updates) that swaps vendor branding at runtime.",
-    repoUrl: 'https://github.com/anubhav-qt/paribelle-backend',
-    secondaryRepoUrl: { label: 'Frontend Repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
-    metrics: [
-      { label: 'Backend', value: '28 Modules', detail: 'Vendors, bookings, promos, search, wallet' },
-      { label: 'Payments', value: 'Razorpay', detail: 'GST/HSN invoicing built in' },
-    ],
-    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'Neon', 'TypeORM', 'Next.js 14', 'Razorpay', 'TanStack Query', 'Socket.IO', 'AWS', 'Vercel', 'Render'],
-    team: { note: 'built with', collaborators: [{ label: '@ajaniljoshi', url: 'https://github.com/ajaniljoshi' }] },
-    audit: {
-      problem: 'Supporting independent vendor storefronts, theming, KYC, location, catalog, on one shared marketplace without the checkout paths colliding.',
-      constraint: 'Two orders for the last unit of a product can interleave between a stock check and a stock decrement. A naive read-then-write oversells the item.',
-      decision:
-        'Every stock reservation is a single conditional UPDATE, it only succeeds while the stock is actually there, run in the same transaction as the sales-count increment, so a rolled-back order cannot inflate either number.',
-      whatBroke:
-        'A raw SQL fragment referenced the TypeORM property name instead of the actual Postgres column, which took down every order on every payment method the moment stock reservation ran. Fixed by naming the real column in the raw query.',
     },
   },
   {
@@ -221,26 +221,19 @@ export const RAW_PROJECTS: ProjectItem[] = [
     title: 'Trippinator: Real-Time Audio Visualizer',
     category: 'Open Source',
     featured: true,
-    skimDescription: 'A visualizer for the second monitor that listens to whatever is playing and draws it.',
-    deepDescription:
-      'It captures whatever your system is playing and renders a feedback-loop organism on a portrait secondary monitor at around 178fps. Nothing in the image is drawn as geometry: every frame samples the previous frame through a warp, decays it, and adds new audio-driven light on top, so what you see is the accumulated history of the music rather than a picture of the current moment. A kaleidoscoped mandala says what is playing, and the background says how it feels, with a second tier that stays genuinely absent until a passage earns it. Every track is classified continuously across three archetypes from slow features, and everything downstream is a linear blend of the three parameter sets, so a song that changes character mid-way crosses over during a phrase instead of snapping. Written in Rust on wgpu and cpal, and the values that were found by ear rather than derived are marked as such in the code, with the range they were swept over.',
+    skimDescription:
+      'An open-source music visualizer that turns whatever is playing on your system into a live audiovisual scene.',
+    deepDescription: [
+      'Trippinator is an open-source music visualizer built for a second monitor.',
+      'It continuously analyzes whatever is playing and turns it into a live audiovisual scene, with multiple visual archetypes, time-varying transitions and a procedural warp system running at high frame rates.',
+    ],
     repoUrl: 'https://github.com/anubhav-qt/trippinator',
     metrics: [
       { label: 'Frame Rate', value: '~178 fps', detail: 'Every frame reads the last one back through a warp' },
       { label: 'Song Profiles', value: '3 archetypes', detail: 'pulse, drift, swarm, blended, never switched' },
       { label: 'Warp Motion', value: '6 components', detail: 'Radial, rotation, spiral, shear, turbulence, kick' },
     ],
-    tech: ['Rust', 'wgpu', 'WGSL', 'cpal', 'WASAPI Loopback'],
-    audit: {
-      problem:
-        'I wanted something on the portrait second monitor that reacts to music properly, not a spectrum bar chart that looks identical no matter what is playing.',
-      constraint:
-        "One tuning cannot serve every kind of music. Drums and a held chord need different envelopes, and a quiet master has to reach the same visual range as a loud one, so every level decision keys off loudness relative to the track's own recent ceiling rather than raw RMS.",
-      decision:
-        'Classify the track continuously across three archetypes from slow features with time constants in the tens of seconds, and blend the three parameter sets linearly, so a track that is half riff and half held chord gets a configuration halfway between.',
-      whatBroke:
-        'Every motion constant was applied per frame, which quietly made the speed of everything in the image a function of how fast the GPU happened to be running. They are all rates per second times dt now. Separately the warp was one fixed inward spiral for every track, so only the amplitude ever changed; it is now six independent components whose signs come from the archetype and wander inside a bounded range, seeded per run.',
-    },
+    tech: ['Rust', 'wgpu', 'egui', 'cpal', 'WASAPI', 'MIDI'],
   },
   {
     id: 'secondary-screen',

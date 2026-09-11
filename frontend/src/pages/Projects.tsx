@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS, type ProjectItem } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
@@ -9,64 +9,7 @@ import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 
-// Spoin: the one featured project with its own page. The whole card navigates
-// there on click, except the description text itself, which stays inert so it
-// can be selected/read without leaving the list.
-function SpoinFeaturedCard({ p }: { p: ProjectItem }) {
-  const navigate = useNavigate();
-  useViewTracking('project', p.id, false); // still records the view; no longer displayed
-
-  return (
-    <li
-      id={p.id}
-      className="relative scroll-mt-6 border-l-2 border-amber/50 bg-surface/60 px-3.5 py-3 mb-3 cursor-pointer hover:border-amber/70 hover:bg-surface/70 transition-colors duration-150"
-      onClick={() => navigate(`/projects/${p.id}`)}
-    >
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: 'linear-gradient(135deg, rgba(217,138,79,0.04) 0%, transparent 60%)' }}
-      />
-      <div className="relative flex items-baseline justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-heading font-bold text-sm">{p.title.split(':')[0]}</span>
-          <span className="text-dim text-[10px] uppercase tracking-wide font-bold">{p.category}</span>
-        </div>
-        <div className="flex items-center gap-2.5 shrink-0">
-          {p.repoUrl && (
-            <a
-              href={p.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="text-dim hover:text-amber transition-colors p-1.5 -m-1.5"
-              aria-label={`${p.title} on GitHub`}
-            >
-              <ExternalLink size={12} />
-            </a>
-          )}
-          <Link
-            to={`/projects/${p.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group"
-          >
-            Case study
-            <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
-      </div>
-
-      <p className="relative text-xs text-dim leading-relaxed mt-1" onClick={(e) => e.stopPropagation()}>
-        {p.skimDescription}
-      </p>
-
-      {p.team && (
-        <p className="relative text-[11px] text-dim mt-1">{p.team.note}</p>
-      )}
-    </li>
-  );
-}
-
-// Every other featured project's full inline accordion.
+// Featured project inline accordion.
 function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: boolean; onToggleOpen: () => void }) {
   useViewTracking('project', p.id, isOpen); // still records the view; no longer displayed
 
@@ -99,8 +42,18 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               className="text-dim hover:text-amber transition-colors p-1.5 -m-1.5"
               aria-label={`${p.title} on GitHub`}
             >
-              <ExternalLink size={12} />
+              <SiGithub size={12} />
             </a>
+          )}
+          {p.id === 'spoin' && (
+            <Link
+              to={`/projects/${p.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors group"
+            >
+              Case study
+              <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
           )}
           <ChevronDown
             size={13}
@@ -189,9 +142,7 @@ export default function Projects() {
   useEffect(() => {
     const id = location.hash.replace('#', '');
     if (!id) return;
-    // Spoin no longer expands inline -- it has its own page now -- so only the
-    // other featured ids have anything to open here.
-    if (id !== 'spoin' && featured.some((p) => p.id === id)) setOpenId(id);
+    if (featured.some((p) => p.id === id)) setOpenId(id);
     const raf = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ block: 'start' });
     });
@@ -254,18 +205,14 @@ export default function Projects() {
         </div>
 
         <ul>
-          {featured.map((p) =>
-            p.id === 'spoin' ? (
-              <SpoinFeaturedCard key={p.id} p={p} />
-            ) : (
-              <ProjectListItem
-                key={p.id}
-                p={p}
-                isOpen={openId === p.id}
-                onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)}
-              />
-            )
-          )}
+          {featured.map((p) => (
+            <ProjectListItem
+              key={p.id}
+              p={p}
+              isOpen={openId === p.id}
+              onToggleOpen={() => setOpenId(openId === p.id ? null : p.id)}
+            />
+          ))}
         </ul>
       </section>
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ExternalLink, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS } from '@/content/projects';
 import { FEATURED_IDS } from '@/content/site';
 
@@ -39,7 +40,7 @@ export function FeaturedProjects() {
                 className="text-dim hover:text-amber transition-colors"
                 aria-label={`${FEATURED.title} on GitHub`}
               >
-                <ExternalLink size={12} />
+                <SiGithub size={12} />
               </a>
             )}
           </div>
