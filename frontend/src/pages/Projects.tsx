@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
-import { PROJECTS, type ProjectItem } from '@/content/projects';
+import { PROJECTS, liveSite, type ProjectItem } from '@/content/projects';
 import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
 import { CommentThread } from '@/components/CommentThread';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
+import { LiveSiteLink } from '@/components/LiveSiteLink';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { projectAccent, tint } from '@/lib/palette';
@@ -138,6 +139,7 @@ export default function Projects() {
   const projects = PROJECTS;
   const [buildingId, setBuildingId] = useState<(typeof FEATURED_IDS)[number]>(FEATURED_IDS[0]);
   const building = CURRENTLY_MAKING[buildingId];
+  const buildingSite = liveSite(PROJECTS.find((p) => p.id === buildingId)!);
 
   // Every featured project expands inline. Everything else is a single static
   // line, no expand, no page.
@@ -185,9 +187,19 @@ export default function Projects() {
         id="building-card"
         role="tabpanel"
         style={tint(projectAccent(buildingId))}
-        className="tile relative px-4 py-3.5 mb-10"
+        className="tile relative hover:border-(--c)/50 px-4 py-3.5 mb-10"
       >
-        <p className="font-title text-heading text-[1.35rem] leading-none">{building.title}</p>
+        {/* Like the home cards, the whole card opens the project's page, through
+            the name's stretched after: box. The site and the tags sit above it. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <Link
+            to={`/projects/${buildingId}`}
+            className="font-title text-heading text-[1.35rem] leading-none after:absolute after:inset-0 after:rounded-[18px]"
+          >
+            {building.title}
+          </Link>
+          {buildingSite && <LiveSiteLink site={buildingSite} />}
+        </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
           {building.progress !== undefined ? (
             <div className="flex items-center gap-1.5 w-28">
@@ -203,7 +215,7 @@ export default function Projects() {
             <Link
               key={t.label}
               to={t.href}
-              className="font-dot text-heading text-[11px] underline underline-offset-4 decoration-(--c) hover:opacity-70 transition-opacity"
+              className="relative z-10 font-dot text-heading text-[11px] underline underline-offset-4 decoration-(--c) hover:opacity-70 transition-opacity"
             >
               {t.label}
             </Link>

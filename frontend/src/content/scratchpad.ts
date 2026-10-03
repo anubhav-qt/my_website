@@ -86,7 +86,7 @@ export const WRITEUPS: WriteupEntry[] = [
       "Back in August I wrote that I was thinking about getting into homelabbing, turning my ThinkPad into a little server and splitting it into a bunch of virtual machines. \"No real end goal yet, I just think it would be pretty fun to set up.\"",
       "Well, I did it. Mostly.",
       "I skipped the VMs. Once I started setting things up, Docker made way more sense for what I was doing. I didn't need full separate operating systems for these services, so I just went straight with Docker.",
-      "It's my ThinkPad running Arch Linux. It's always on now, lid shut. If the power goes, it goes with it lol. No UPS setup yet.",
+      "It's my ThinkPad running Arch (btw). It's always on now, lid shut. If the power goes, it goes with it lol. No UPS setup yet.",
       "The two things on it I care about here are Breader and PariBelle. Breader went live on it on 26th September, and PariBelle moved onto it the day after.",
       "Cloudflare Tunnel is how the outside world reaches the laptop. For PariBelle, a Cloudflare Worker sends requests through the tunnel to a Caddy gate in front of the apps.",
       "Both apps have somewhere to go when the laptop is off. Breader switches to a free Render server. PariBelle falls back to Vercel, Render and Supabase.",
