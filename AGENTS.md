@@ -2,7 +2,7 @@
 
 Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tailwind v4).
 
-> **Current status**: v3.2. All four pages (`/`, `/projects`, `/scratchpad`, `/contact`) are
+> **Current status**: v4. All four pages (`/`, `/projects`, `/scratchpad`, `/contact`) are
 > hand-designed and finished. v2 added a Supabase backend: live Spoin topics, threaded
 > comments with both page-level and per-comment likes, session-deduped view counts, and
 > build-time metrics pulled from the database, across every Scratchpad category, not just
@@ -10,7 +10,8 @@ Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tai
 > desktop monitor, where before it was built for a PC only. v3.2 acted on outside feedback:
 > the home page stopped holding paragraphs, numbers stopped appearing without the sentence
 > that explains them, the site-wide lowercase came off everything except the nav, and the
-> project list narrowed to one flagship. See `README.md` for the full backend rundown, the
+> project list narrowed to one flagship. v4 traded the plum and amber terminal look for
+> Breader's black and white one, on the same layout. See `README.md` for the full backend rundown, the
 > CLI tools for managing it, and how the responsive system fits together.
 
 Design direction: Breader's look (github.com/anubhav-qt/breader) on the same dense,

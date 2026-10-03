@@ -45,9 +45,11 @@ function gitProvenance() {
       return '';
     }
   };
+  // Vercel can build without the .git folder, so fall back to the commit it
+  // reports in its system env vars. It has no commit date, so that stays empty there.
   return {
-    sha: read(['rev-parse', 'HEAD']) || undefined,
-    message: read(['log', '-1', '--format=%B']) || undefined,
+    sha: read(['rev-parse', 'HEAD']) || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
+    message: read(['log', '-1', '--format=%B']) || process.env.VERCEL_GIT_COMMIT_MESSAGE || undefined,
     committedAt: read(['log', '-1', '--format=%cI']) || undefined,
   };
 }

@@ -1,35 +1,34 @@
-# my_website_v3.2
+# my_website_v4
 
 ```
-──────────────────────────────────────────
-  personal site + dev log
-──────────────────────────────────────────
+•
+  •
+    •      my little corner
+  •        anubhav-qt.dev
+•
 ```
+
 live at **[anubhav-qt.dev](https://www.anubhav-qt.dev)**
 
-<table>
-<tr>
-<td><img src="screenshots/home.png" width="400" alt="home page"></td>
-<td><img src="screenshots/projects.png" width="400" alt="projects page"></td>
-</tr>
-<tr>
-<td><img src="screenshots/scratchpad.png" width="400" alt="scratchpad page"></td>
-<td><img src="screenshots/contact.png" width="400" alt="contact page"></td>
-</tr>
-</table>
+**Look**: Breader's ([github.com/anubhav-qt/breader](https://github.com/anubhav-qt/breader)) on a dense,
+list-based dev-log layout. A black page, white ink, hairline-edged cards, Doto's dot matrix for
+interface text, Dongle for names, IBM Plex Mono for reading. Colour belongs to the content, one
+book colour per project, section and tag.
 
 **Stack**: React 19 · TypeScript · Vite · Tailwind v4 · Vercel · Supabase (Postgres + Edge Functions)
 
 ## Quickstart
 
+Needs Node 22 or newer.
+
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev          # http://localhost:5173
 ```
 
 Backend features (topics, comments, likes, views) degrade quietly to "not available" until
-`.env.local` has real Supabase credentials — the site runs fine without them.
+`.env.local` has real Supabase credentials. The site runs fine without them.
 
 ```bash
 cp .env.example .env.local   # then fill in VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
