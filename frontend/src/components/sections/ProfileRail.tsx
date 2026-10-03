@@ -331,7 +331,8 @@ export function ProfileRail() {
             >
               <span className="relative">
                 {t.label}
-                {isActive && <span className="absolute left-0 right-0 -bottom-1 h-0.5 rounded-full bg-heading" />}
+                {/* Trimmed by Doto's trailing blank space, same as the nav's bar. */}
+                {isActive && <span className="absolute left-0 right-[0.1em] -bottom-1 h-0.5 rounded-full bg-heading" />}
               </span>
             </button>
           );
