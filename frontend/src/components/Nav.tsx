@@ -28,7 +28,9 @@ export function Nav() {
               {({ isActive }) => (
                 <>
                   {l.label}
-                  {isActive && <span className="absolute left-0 right-0 bottom-1 h-0.5 rounded-full bg-(--c)" />}
+                  {/* Doto's last letter carries about 0.1em of blank space after its
+                      dots, so a bar to the box's right edge overhangs the word. */}
+                  {isActive && <span className="absolute left-0 right-[0.1em] bottom-1 h-0.5 rounded-full bg-(--c)" />}
                 </>
               )}
             </NavLink>
