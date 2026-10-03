@@ -29,7 +29,10 @@ export interface ProjectItem {
   metrics?: { label: string; value: string; detail: string }[];
   tech: string[];
   repoUrl?: string;
-  secondaryRepoUrl?: { label: string; url: string };
+  // Everything else worth linking: the live site, the other repos.
+  links?: { label: string; url: string }[];
+  // The card on Home: one line, then one-line bullets (Home stays one line per row).
+  homeCard?: { summary: string; bullets: string[] };
   caseStudyHref?: string;
   writeup?: { title: string; href: string };
   audit?: ProjectAudit;
@@ -43,9 +46,71 @@ export interface ProjectItem {
 // still record what each number actually read at that build.
 export const RAW_PROJECTS: ProjectItem[] = [
   {
+    id: 'paribelle',
+    title: "PariBelle Ecosystem: Software for My Family's Fashion Business",
+    category: 'Flagship',
+    featured: true,
+    skimDescription:
+      "The software I built for my family's fashion business: the paribelle.in storefront, POM for orders and operations, and Seelie, an AI agent for the shop.",
+    deepDescription: [
+      "PariBelle is my family's fashion business, mostly women's clothing like kurtis and coord sets. There's a physical store, and a lot of the business around it was handled manually over WhatsApp and calls, with no proper software running the whole thing. So I built it myself instead of using Shopify.",
+      "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying.",
+      'POM is the operations side, and its own app instead of an /admin page. It pulls in orders from paribelle.in, Amazon, Meesho and Flipkart, and handles the warehouse work, stock, reports, invoices and profit. My family and I use it every day.',
+      "Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos and videos, Instagram and Meta ads, and routines and memories. It landed on 2nd October, so it's very new.",
+      "Since 27th September all of it runs on my ThinkPad, with Vercel, Render and Supabase as the fallback. I'm also exploring whether the same system can run other storefronts.",
+    ],
+    links: [
+      { label: 'paribelle.in', url: 'https://paribelle.in' },
+      { label: 'POM repo', url: 'https://github.com/anubhav-qt/pom' },
+      { label: 'Storefront repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
+      { label: 'Backend repo', url: 'https://github.com/anubhav-qt/paribelle-backend' },
+    ],
+    homeCard: {
+      summary: "I built the software for my family's fashion business: the storefront, POM and Seelie.",
+      bullets: [
+        'paribelle.in has been live since July 2026, taking real orders.',
+        'POM handles orders from paribelle.in, Amazon, Meesho and Flipkart.',
+      ],
+    },
+    tech: ['Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Drizzle', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Docker', 'Caddy', 'cloudflared'],
+    writeup: {
+      title: "Writeup: I Built the Software for My Family's Business",
+      href: '/scratchpad/i-built-the-software-for-my-familys-business',
+    },
+  },
+  {
+    id: 'breader',
+    title: 'Breader: An Immersive Web-First E-Reader',
+    category: 'Open Source',
+    featured: true,
+    skimDescription:
+      'An immersive web-first e-reader PWA. Free, open source, nothing to install and no sign-up.',
+    deepDescription: [
+      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It's a PWA, so it can go on your home screen and open like an app, and it works offline and syncs when it can.",
+      'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
+      "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
+      'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
+      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
+    ],
+    repoUrl: 'https://github.com/anubhav-qt/breader',
+    links: [{ label: 'breader.site', url: 'https://breader.site' }],
+    homeCard: {
+      summary: 'An immersive web-first e-reader PWA. Free and open source.',
+      bullets: [
+        'Live on breader.site since 26th September 2026.',
+        'Immersive dims the page and lights up the words as it reads to you.',
+      ],
+    },
+    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age'],
+    writeup: {
+      title: 'Writeup: Homelabbing journey begins!',
+      href: '/scratchpad/homelabbing-journey-begins',
+    },
+  },
+  {
     id: 'spoin',
     title: 'Spoin: For the Curious',
-    category: 'Flagship',
+    category: 'AI & Machine Learning',
     featured: true,
     skimDescription:
       'A grounded knowledge feed built around curated knowledge, mastery-based learning, and pre-generated cards. FROG is a custom, faster RAG implementation built specifically for Spoin, with model verification and user feedback on top.',
@@ -53,7 +118,8 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'Spoin is a scrollable knowledge feed built around grounded generation and mastery-based learning. Cards are generated ahead of time and served without an LLM call on the read path.',
       'The knowledge layer is the_spoin_universe, a curated source of truth that feeds FROG, a custom and faster RAG implementation built specifically for Spoin. Generation uses broad retrieval, while verification uses precise retrieval against the same knowledge base.',
       'Curricula are built around prerequisites and learning progression rather than isolated topic lists, with separate generation, verification and deterministic validation layers. Users can also report broken cards, bad diagrams, broken art and other issues, which feeds another quality-control loop through the admin panel.',
-      '103 ADRs and counting.',
+      '103 ADRs.',
+      'Paused for now. My time is going to PDE, PariBelle and Breader.',
     ],
     caseStudyDescription: [
       "Starting with the constraints that I put on myself: I don't want to pay anything to the LLM providers for as long as possible, so I built a simple load balancer that is LLM-independent. I provide the .env file with a lot of free-tier API keys, and it consumes all the top models first and then the mediocre models, for all the keys in parallel while doing all the generation, keeping Requests Per Minute and Tokens Per Minute limits in mind.",
@@ -72,30 +138,15 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Read Latency', value: '< 50ms', detail: 'No LLM on the read path' },
       { label: 'Grounding Per Card', value: 'Top 2 chunks', detail: 'Chunk IDs recorded on the card' },
     ],
+    homeCard: {
+      summary: 'Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn.',
+      bullets: [
+        'Paused for now, my time is going to PDE, PariBelle and Breader.',
+        'Built a custom fast RAG implementation "frog".',
+      ],
+    },
     tech: ['FastAPI', 'PostgreSQL', 'pgvector', 'FROG', 'LLMs', 'Next.js', 'React'],
-    team: { note: 'currently building', collaborators: [] },
-  },
-  {
-    id: 'paribelle',
-    title: 'PariBelle: Independent Fashion Commerce Ecosystem',
-    category: 'Production & Systems',
-    featured: true,
-    skimDescription:
-      'A full commerce ecosystem for independent fashion vendors, from branded storefronts and catalog management to KYC, payments, bookings, fulfillment, promotions, reviews, search, and vendor operations.',
-    deepDescription: [
-      'PariBelle is a full commerce ecosystem built around independent fashion vendors, rather than just another centralized marketplace.',
-      'Vendors can run their own branded storefronts while the platform handles vendor KYC, catalogs, inventory, location management, GST-compliant invoicing, bookings, payments, promotions, reviews, search, referrals, fulfillment and wallet/ledger operations.',
-      'The ecosystem also has a separate customer-facing storefront, vendor tooling and the backend systems connecting everything together, with real-time updates and payment infrastructure underneath.',
-      '28+ backend modules.',
-    ],
-    repoUrl: 'https://github.com/anubhav-qt/paribelle-backend',
-    secondaryRepoUrl: { label: 'Frontend Repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
-    metrics: [
-      { label: 'Backend', value: '28 Modules', detail: 'Vendors, bookings, promos, search, wallet' },
-      { label: 'Payments', value: 'Razorpay', detail: 'GST/HSN invoicing built in' },
-    ],
-    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Next.js', 'Razorpay', 'TanStack Query', 'Socket.IO'],
-    team: { note: 'built with', collaborators: [{ label: '@ajaniljoshi', url: 'https://github.com/ajaniljoshi' }] },
+    team: { note: 'paused', collaborators: [] },
   },
   {
     id: 'anchorate',
@@ -108,6 +159,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'Anchor8 is a security and governance layer that sits in front of autonomous AI agents and watches what they do in real time.',
       'It monitors tool calls, checks arguments and context, detects suspicious behavior, and can block or escalate high-risk actions before they reach the underlying system.',
       'The SDK is designed to drop into agent workflows with minimal integration while keeping the security layer independent from the agent framework.',
+      "Still going. I'm building on it on weekends, making its security checks stronger and faster.",
     ],
     metrics: [
       { label: 'Pipeline', value: '3-Lane Design', detail: 'Observer, Guard, Courtroom' },
@@ -145,82 +197,10 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'fraud-vote',
-    title: 'Fraud Vote Detection Pipeline: Automated Electoral Roll PDF Audit',
-    category: 'Production & Systems',
-    featured: false,
-    skimDescription: 'Scans PDF electoral rolls and automatically flags fake or duplicate voter registrations.',
-    deepDescription:
-      "A tool that scans PDF electoral rolls and automatically flags fake or duplicate voter registrations, the same face registered twice under different names, or identical personal details reused, without a human eyeballing thousands of scanned ID cards. It segments each voter card with OpenCV, reads the fields with Google Cloud Vision OCR at 98%+ accuracy, and flags the same face registered twice at a 90%+ similarity threshold, all scored through a fixed formula instead of an LLM's verdict.",
-    repoUrl: 'https://github.com/anubhav-qt/fraud-vote-detection',
-    metrics: [
-      { label: 'OCR Accuracy', value: '98%+', detail: 'Multilingual Hindi/English' },
-      { label: 'Face Match', value: '90%+ similarity', detail: 'HOG / CNN / Haar fallback ladder' },
-      { label: 'Audit Path', value: '100% Deterministic', detail: 'No stochastic LLMs' },
-    ],
-    tech: ['Python', 'OpenCV', 'Google Cloud Vision OCR', 'Deep Learning Face Encodings', 'Pandas', 'HTML Reports'],
-    audit: {
-      problem: 'Catching counterfeit ballots, duplicate voter registrations, and identity spoofing across huge multi-page electoral roll PDFs.',
-      constraint:
-        "This has to hold up for legal and government audits. An LLM's verdict can drift between runs on the exact same input, which rules it out here.",
-      decision:
-        'Split extraction from decisioning. OpenCV segments the cards, Google Cloud Vision OCR reads the names at 98%+ accuracy, and face encodings flag a match above a 90% similarity threshold. Two fraud scenarios run side by side: identical personal details registered twice, and the same face registered under different details.',
-      whatBroke:
-        'A single face detector was not reliable across scan quality. Fixed with a fallback ladder: fast HOG first, a CNN when accuracy matters more, and a Haar cascade as the last resort when both fail.',
-    },
-  },
-  {
-    id: 'synthetic-generator',
-    title: 'Synthetic Medical Dataset Generator (DCGAN)',
-    category: 'AI & Machine Learning',
-    featured: false,
-    skimDescription: 'Generates fake but realistic chest X-rays to help train medical AI on rare conditions.',
-    deepDescription:
-      'A generative model that produces fake but realistic chest X-rays for rare pulmonary conditions, where real scans are scarce and mostly locked behind patient privacy, so a diagnostic model has something to train on. A DCGAN trained for 125 epochs on the NIH Chest X-ray dataset generates 256x256 synthetic scans. A handful of anti-mode-collapse tricks, one-sided label smoothing, Gaussian noise injection, a slower discriminator learning rate, gradient clipping, keep the diversity score above 0.35 throughout training instead of collapsing to a handful of repeated images.',
-    repoUrl: 'https://github.com/anubhav-qt/synthetic-dataset-generator',
-    metrics: [
-      { label: 'Evaluation', value: 'FID ~150-180', detail: 'Diversity score 0.35+, no collapse' },
-      { label: 'Architecture', value: '125 epochs', detail: '1.8M generator / 2.4M discriminator params' },
-    ],
-    tech: ['PyTorch', 'DCGAN', 'Torchvision', 'Scikit-Learn', 'Matplotlib'],
-    audit: {
-      problem: 'Training a diagnostic model on rare pulmonary conditions is hard when the real data is scarce, imbalanced, and mostly off-limits for privacy reasons.',
-      constraint: 'Synthetic scans need anatomically plausible lungs, ribs, and pathology, not just something that looks like an X-ray at a glance.',
-      decision:
-        'Trained a DCGAN, 7 transposed-conv layers generating 256x256 grayscale images, with strided convolutions, batch norm, and LeakyReLU on normalized NIH chest X-rays, then checked quality with FID and a diversity score against the real scans.',
-      whatBroke:
-        'Early runs suffered discriminator saturation and mode collapse: the generator found a handful of images that fooled the discriminator and stopped exploring. Fixed with one-sided label smoothing, noise injection, a slower discriminator learning rate, and gradient clipping.',
-    },
-  },
-  {
-    id: 'amazon-ml',
-    title: 'Amazon ML Challenge: Multimodal Price Prediction',
-    category: 'AI & Machine Learning',
-    featured: false,
-    skimDescription: "Predicts an Amazon product's price from nothing but its photo and listing text.",
-    deepDescription:
-      "A model that predicts an Amazon product's price from nothing but its photo and listing text. Built for a hackathon on 75,000 real listings with a heavily right-skewed price range and a test set stacked with brands the model had never seen. Rather than deep embeddings, it leans on 18 engineered image-quality features (sharpness, composition, color) and 22 engineered text features, feeding an Optuna-tuned ensemble of XGBoost, LightGBM, and a small neural net.",
-    repoUrl: 'https://github.com/anubhav-qt/amazon-ml-challenge',
-    metrics: [
-      { label: 'Ensemble SMAPE', value: '22.49%', detail: 'XGBoost 22.51 / LightGBM 22.75 / NN 24.69' },
-      { label: 'Dataset', value: '75,000 listings', detail: '60% unseen brands in the test set' },
-    ],
-    tech: ['Python', 'XGBoost', 'LightGBM', 'PyTorch', 'Scikit-Learn', 'Optuna', 'Pandas'],
-    team: { note: 'Built for a hackathon by a team of 4, as Team Amazon Hunters.', collaborators: [] },
-    audit: {
-      problem: 'Predicting a product price from a messy catalog entry: noisy titles, missing attributes, and a test set with 60% brands the model had never seen.',
-      constraint: 'Deep embeddings need labels and time a hackathon window does not have, and the test set diverges enough from training that overfit brand or packaging features actively hurt.',
-      decision:
-        'Dropped brand and packaging features entirely instead of imputing them, and leaned on 18 engineered image-quality features plus 22 engineered text features feeding an Optuna-tuned ensemble of XGBoost, LightGBM, and a small neural net.',
-      whatBroke:
-        "The price target is heavily right-skewed, $0.99 items sitting next to $2,796 industrial gear, which skewed the raw regression. Fixed by log-transforming the target and calibrating the ensemble's output distribution back against the training statistics.",
-    },
-  },
-  {
     id: 'trippinator',
     title: 'Trippinator: Real-Time Audio Visualizer',
     category: 'Open Source',
-    featured: true,
+    featured: false,
     skimDescription:
       'An open-source music visualizer that turns whatever is playing on your system into a live audiovisual scene.',
     deepDescription: [
@@ -234,29 +214,6 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Warp Motion', value: '6 components', detail: 'Radial, rotation, spiral, shear, turbulence, kick' },
     ],
     tech: ['Rust', 'wgpu', 'egui', 'cpal', 'WASAPI', 'MIDI'],
-  },
-  {
-    id: 'secondary-screen',
-    title: 'Secondary Screen: A Second-Monitor Dashboard',
-    category: 'Open Source',
-    featured: false,
-    skimDescription: 'A glanceable second-monitor dashboard: clock, todos, habits, a YouTube player.',
-    deepDescription:
-      'A dashboard for the portrait monitor off to the side, the one you glance at instead of work on. A clock, a todo list, a week view, habit tracking, and a YouTube player, all in a monochrome terminal theme. No build step, no dependencies, no framework, just HTML, CSS, and JS served by a 40-line Python script, with a Windows launcher that auto-detects the portrait display and puts the window there in fullscreen on login.',
-    repoUrl: 'https://github.com/anubhav-qt/secondary-screen',
-    metrics: [
-      { label: 'Footprint', value: '3 Static Files', detail: 'No build step, no framework' },
-      { label: 'Launcher', value: 'Zero-config', detail: 'Auto-detects the portrait monitor' },
-    ],
-    tech: ['Vanilla JavaScript', 'Python', 'PowerShell', 'localStorage'],
-    audit: {
-      problem: "Wanted something to glance at on the second monitor, a clock, today's list, the week ahead, without dragging in Electron for what is basically three static files.",
-      constraint: "It has to survive a reboot and land on the right monitor without hardcoded coordinates, and it can't lose its stored data by accident.",
-      decision:
-        'Three static files and a 40-line Python server on localhost, with a PowerShell installer that finds the first non-primary display taller than it is wide and puts the window there, fullscreened, 12 seconds after login so the displays have time to settle.',
-      whatBroke:
-        'Opening the dashboard as a file:// path instead of through the local server gave it a different, empty localStorage origin, so all the todos and habit data looked like it had vanished. Fixed by always serving it from http://localhost and never opening the file directly.',
-    },
   },
 ];
 

@@ -4,6 +4,8 @@ import { WRITEUPS } from '@/content/scratchpad';
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { CommentThread } from '@/components/CommentThread';
+import { Tag } from '@/components/Tag';
+import { accentFor, tint } from '@/lib/palette';
 
 export default function ScratchpadEntry() {
   const { slug } = useParams<{ slug: string }>();
@@ -22,7 +24,7 @@ export default function ScratchpadEntry() {
   if (!entry) {
     return (
       <div>
-        <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors mb-4">
+        <Link to="/scratchpad" className="inline-flex items-center gap-1 font-dot text-dim text-[12px] hover:text-heading transition-colors mb-4">
           <ChevronLeft size={12} />
           Scratchpad
         </Link>
@@ -31,69 +33,69 @@ export default function ScratchpadEntry() {
     );
   }
 
+  const accent = accentFor(entry.slug);
+
   return (
-    <div className="pb-12">
-      <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors mb-4">
-        <ChevronLeft size={11} />
+    <div className="pb-12" style={tint(accent)}>
+      <Link to="/scratchpad" className="inline-flex items-center gap-1 font-dot text-dim text-[12px] hover:text-heading transition-colors mb-4">
+        <ChevronLeft size={12} />
         Scratchpad
       </Link>
 
       <div>
-        <h1 className="text-heading text-xl font-bold leading-snug mb-2">{entry.title}</h1>
+        <h1 className="font-title text-heading text-[2rem] leading-none pt-1 mb-2.5">{entry.title}</h1>
 
-        <div className="flex items-center gap-3 pb-3 border-b-2 border-border mb-5 flex-wrap">
-          <span className="text-dim text-[11px]">{entry.date}</span>
-          <span className="text-dim text-[11px]">{entry.readTime}</span>
+        <div className="flex items-center gap-x-3 gap-y-2 pb-3.5 border-b border-border mb-5 flex-wrap">
+          <span className="font-dot text-(--c) text-[11px]">{entry.date}</span>
+          <span className="font-dot text-dim text-[11px]">{entry.readTime}</span>
           {entry.tags.map((t) => (
-            <span key={t} className="text-[10px] text-body/80 border border-border/70 bg-bg/40 px-1.5 py-0.5">
-              {t}
-            </span>
+            <Tag key={t} tag={t} />
           ))}
           <span className="flex-1" />
         </div>
 
         {entry.body.map((p, i) => (
-          <p key={i} className="text-sm text-body/90 leading-relaxed mb-4">
+          <p key={i} className="text-sm text-body leading-relaxed mb-4">
             {p}
           </p>
         ))}
 
-        <CommentThread targetType="scratchpad" targetId={entry.slug} accent="amber" />
+        <CommentThread targetType="scratchpad" targetId={entry.slug} accent={accent} />
       </div>
 
-      <div className="flex gap-3 pt-3 border-t-2 border-border">
+      <div className="flex flex-col xs:flex-row gap-3 pt-4 border-t border-border">
         {prev ? (
           <Link
             to={`/scratchpad/${prev.slug}`}
-            className="flex-1 border-l-2 border-amber/35 bg-surface/45 px-3 py-2 hover:border-amber/70 hover:bg-surface/60 transition-colors"
+            className="tile hover:border-tile-hover flex-1 min-w-0 px-3.5 py-2.5"
           >
-            <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">previous</div>
-            <div className="text-body text-xs leading-snug">{prev.title}</div>
+            <div className="font-dot text-dim text-[10px] uppercase tracking-widest mb-1">previous</div>
+            <div className="font-title text-heading text-[1.1rem] leading-none">{prev.title}</div>
           </Link>
         ) : (
-          <div className="flex-1 border-l-2 border-border/80 bg-surface/30 px-3 py-2">
-            <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">previous</div>
+          <div className="flex-1 min-w-0 rounded-[18px] border border-dashed border-border px-3.5 py-2.5">
+            <div className="font-dot text-dim text-[10px] uppercase tracking-widest mb-1">previous</div>
             <div className="text-dim text-xs leading-snug">nothing older yet</div>
           </div>
         )}
         {next ? (
           <Link
             to={`/scratchpad/${next.slug}`}
-            className="flex-1 border-l-2 border-amber/35 bg-surface/45 px-3 py-2 hover:border-amber/70 hover:bg-surface/60 transition-colors"
+            className="tile hover:border-tile-hover flex-1 min-w-0 px-3.5 py-2.5"
           >
-            <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">next</div>
-            <div className="text-body text-xs leading-snug">{next.title}</div>
+            <div className="font-dot text-dim text-[10px] uppercase tracking-widest mb-1">next</div>
+            <div className="font-title text-heading text-[1.1rem] leading-none">{next.title}</div>
           </Link>
         ) : (
-          <div className="flex-1 border-l-2 border-border/80 bg-surface/30 px-3 py-2">
-            <div className="text-dim text-[10px] uppercase tracking-widest font-bold mb-0.5">next</div>
+          <div className="flex-1 min-w-0 rounded-[18px] border border-dashed border-border px-3.5 py-2.5">
+            <div className="font-dot text-dim text-[10px] uppercase tracking-widest mb-1">next</div>
             <div className="text-dim text-xs leading-snug">Nothing newer yet</div>
           </div>
         )}
       </div>
 
-      <Link to="/scratchpad" className="inline-flex items-center gap-1.5 text-dim text-xs hover:text-amber transition-colors mt-4">
-        <ChevronLeft size={11} />
+      <Link to="/scratchpad" className="inline-flex items-center gap-1 font-dot text-dim text-[12px] hover:text-heading transition-colors mt-4">
+        <ChevronLeft size={12} />
         Scratchpad
       </Link>
     </div>

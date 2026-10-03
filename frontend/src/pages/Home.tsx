@@ -17,28 +17,29 @@ export default function Home() {
     <div>
       <div className="mb-2">
         {/* Wraps rather than shrinks: below about 320px the name and the resume
-            button stop fitting on one line, and since the name cannot break
-            (whitespace-nowrap, it is a name) it would otherwise run underneath
-            the button. Letting the button drop to a line of its own, still
-            pinned right, keeps both readable at full size. */}
+            button stop fitting on one line, and since the name doesn't break
+            from 380px up (whitespace-nowrap, it is a name) it would otherwise
+            run underneath the button. Letting the button drop to a line of its
+            own, still pinned right, keeps both readable at full size. Below
+            380px the name itself is wider than the screen, so there it wraps. */}
         <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-1.5">
           <div className="min-w-0">
-            <h1 className="text-heading text-xl sm:text-2xl font-bold leading-tight whitespace-nowrap">{PROFILE.name}</h1>
-            <p className="text-amber font-semibold text-[13px] sm:text-sm mt-0.5 whitespace-nowrap">{PROFILE.role}</p>
+            <h1 className="font-title text-heading text-[1.9rem] sm:text-[2.2rem] leading-none xs:whitespace-nowrap pt-1">{PROFILE.name}</h1>
+            <p className="font-dot text-heading text-[12px] sm:text-[13px] mt-1 whitespace-nowrap">{PROFILE.role}</p>
           </div>
           <a
             href={PROFILE.resume}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber border border-amber/60 hover:bg-amber/10 px-2 py-1.5 sm:py-1 transition-colors shrink-0 ml-auto"
+            className="btn gap-1.5 py-2 shrink-0 ml-auto"
           >
             <FileText size={12} />
             Resume
           </a>
         </div>
         <div className="flex items-center justify-between gap-3 mt-0.5 w-full">
-          <span className="inline-flex items-center gap-1.5 text-dim text-xs whitespace-nowrap">
-            <MapPin size={14} />
+          <span className="inline-flex items-center gap-1.5 text-dim text-[11px] font-dot whitespace-nowrap">
+            <MapPin size={13} />
             {PROFILE.location}
           </span>
           <div className="flex items-center gap-0.5 sm:gap-2 -mr-1.5 sm:mr-0">
@@ -47,7 +48,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
-              className="text-dim hover:text-amber transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
+              className="text-dim hover:text-heading transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
             >
               <SiGithub size={16} />
             </a>
@@ -56,7 +57,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
-              className="text-dim hover:text-amber transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
+              className="text-dim hover:text-heading transition-colors flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto"
             >
               <LinkedinIcon size={16} />
             </a>
@@ -64,9 +65,9 @@ export default function Home() {
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed mb-2">{PROFILE.status}</p>
+      <p className="text-sm leading-relaxed mt-1 mb-3">{PROFILE.status}</p>
 
-      <div className="border-b-2 border-border mb-3" />
+      <div className="border-b border-border mb-4" />
 
       <ProfileRail />
 

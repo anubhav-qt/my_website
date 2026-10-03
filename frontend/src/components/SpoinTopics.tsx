@@ -43,8 +43,8 @@ export function SpoinTopics() {
   return (
     <div className="mt-3">
       <div className="flex items-center gap-2 mb-2">
-        <span className="w-1.5 h-1.5 shrink-0 bg-amber" />
-        <span className="text-[10px] uppercase tracking-widest font-bold text-amber shrink-0">Live Topics</span>
+        <span className="w-1.5 h-1.5 shrink-0 bg-ochre" />
+        <span className="text-[10px] uppercase tracking-widest font-bold text-ochre shrink-0">Live Topics</span>
         <span className="flex-1 border-t border-dashed border-border" />
         {!loading && <span className="text-dim text-[10px] shrink-0">{String(topics?.length ?? 0).padStart(2, '0')}</span>}
       </div>
@@ -68,7 +68,7 @@ export function SpoinTopics() {
         <div className="flex flex-col">
           {topics.map((t) => (
             <div key={t.id} className="flex items-baseline gap-2 py-1 border-b border-dashed border-border/50 last:border-none">
-              <span className="w-[5px] h-[5px] rounded-full bg-amber shadow-[0_0_6px_rgba(217,138,79,0.5)] shrink-0 translate-y-[-1px]" />
+              <span className="w-[5px] h-[5px] rounded-full bg-ochre shadow-[0_0_6px_rgba(255,208,120,0.5)] shrink-0 translate-y-[-1px]" />
               <span className="text-xs font-semibold text-heading">{t.title}</span>
             </div>
           ))}
@@ -84,12 +84,12 @@ export function SpoinTopics() {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Topic title"
             maxLength={80}
-            className="flex-1 min-w-0 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-amber transition-colors"
+            className="flex-1 min-w-0 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-ochre transition-colors"
           />
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="shrink-0 bg-amber/8 border border-amber/50 text-amber text-[11px] font-bold px-3 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:border-amber hover:enabled:bg-amber/16 transition-colors"
+            className="shrink-0 bg-ochre/8 border border-ochre/50 text-ochre text-[11px] font-bold px-3 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:border-ochre hover:enabled:bg-ochre/16 transition-colors"
           >
             Suggest
           </button>
@@ -100,9 +100,9 @@ export function SpoinTopics() {
           onChange={(e) => setNote(e.target.value)}
           placeholder="Optional note (why this one?)"
           maxLength={160}
-          className="w-full mt-1.5 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-amber transition-colors"
+          className="w-full mt-1.5 bg-surface border border-border text-heading text-xs px-2 py-1.5 placeholder:text-dim focus:outline-none focus:border-ochre transition-colors"
         />
-        {justSubmitted && <p className="text-[10.5px] text-sage mt-1.5">Thanks, it's in the queue</p>}
+        {justSubmitted && <p className="text-[10.5px] text-green mt-1.5">Thanks, it's in the queue</p>}
         {!supabase && <p className="text-[10.5px] text-dim mt-1.5">Topic suggestions open once the backend is live</p>}
       </div>
     </div>

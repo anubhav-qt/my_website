@@ -199,7 +199,7 @@ export function SpoinSimulator() {
           y1: originRect.bottom - containerRect.top,
           x2: cellRect.left + cellRect.width / 2 - containerRect.left,
           y2: cellRect.top - containerRect.top,
-          color: task.burstTriggered429 ? '#e08a9a' : '#d98a4f',
+          color: task.burstTriggered429 ? '#ffa8b2' : '#ffd078',
           poisoned: Boolean(task.burstTriggered429),
         });
       }
@@ -227,9 +227,9 @@ export function SpoinSimulator() {
   const cellColor = (cell: SimulationState['cells'][string]) => {
     if (cell.isPoisoned429) return 'bg-rose/70 border-rose text-bg';
     if (cell.rpdSpent >= cell.rpdLimit) return 'bg-dim/20 border-border text-dim';
-    if (cell.isLocked) return 'bg-amber/70 border-amber text-bg';
-    if (cell.rpmInFlightCount > 0) return 'bg-amber/40 border-amber/60 text-heading';
-    return 'bg-sage/10 border-sage/40 text-body';
+    if (cell.isLocked) return 'bg-ochre/70 border-ochre text-bg';
+    if (cell.rpmInFlightCount > 0) return 'bg-ochre/40 border-ochre/60 text-heading';
+    return 'bg-green/10 border-green/40 text-body';
   };
 
   return (
@@ -247,7 +247,7 @@ export function SpoinSimulator() {
         <button
           onClick={toggleRun}
           className={`flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded font-bold text-bg transition-colors ${
-            state.isRunning ? 'bg-amber hover:bg-amber/80' : 'bg-sage hover:bg-sage/80'
+            state.isRunning ? 'bg-ochre hover:bg-ochre/80' : 'bg-green hover:bg-green/80'
           }`}
           aria-label={state.isRunning ? 'Pause simulation' : 'Start simulation'}
         >
@@ -281,7 +281,7 @@ export function SpoinSimulator() {
           }
           className={`flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded font-bold transition-colors ${
             state.config.serializeSameCellCalls
-              ? 'bg-amber/15 border border-amber/50 text-amber'
+              ? 'bg-ochre/15 border border-ochre/50 text-ochre'
               : 'bg-rose/15 border border-rose/50 text-rose'
           }`}
         >
@@ -299,7 +299,7 @@ export function SpoinSimulator() {
         <button
           onClick={handleRunOptimalCase}
           title="Preset: independent-project keys, serialization on — the fixed path"
-          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded bg-sage/10 border border-sage/30 text-sage hover:bg-sage/20 transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 sm:py-1 rounded bg-green/10 border border-green/30 text-green hover:bg-green/20 transition-colors"
         >
           <ShieldCheck className="w-3 h-3" /> Fixed
         </button>
@@ -315,7 +315,7 @@ export function SpoinSimulator() {
                 key={spd.ms}
                 onClick={() => setSpeedMs(spd.ms)}
                 className={`px-1.5 py-0.5 rounded border ${
-                  speedMs === spd.ms ? 'border-amber/50 text-amber' : 'border-transparent hover:text-heading'
+                  speedMs === spd.ms ? 'border-ochre/50 text-ochre' : 'border-transparent hover:text-heading'
                 }`}
               >
                 {spd.label}
@@ -348,7 +348,7 @@ export function SpoinSimulator() {
             </button>
             <button
               onClick={() => handleAddKey(true)}
-              className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-amber/30 text-amber hover:bg-amber/10"
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-ochre/30 text-ochre hover:bg-ochre/10"
             >
               <AlertTriangle className="w-2.5 h-2.5" /> same-project key
             </button>
@@ -367,7 +367,7 @@ export function SpoinSimulator() {
           className={`px-3 py-2 border-b text-[11px] font-mono flex items-center justify-between gap-2 ${
             state.stats.total429BurstErrors > 0
               ? 'bg-rose/10 border-rose/30 text-rose'
-              : 'bg-sage/10 border-sage/30 text-sage'
+              : 'bg-green/10 border-green/30 text-green'
           }`}
         >
           <div className="flex items-center gap-1.5">
@@ -391,7 +391,7 @@ export function SpoinSimulator() {
         <div className="p-4 bg-bg/20 text-[11px] font-mono text-body space-y-1">
           <div>Status: <strong className="text-heading">{state.status.toUpperCase()}</strong> (tick {state.tick})</div>
           <div>ADR-0040 serialization: <strong className="text-heading">{state.config.serializeSameCellCalls ? 'ON' : 'OFF'}</strong></div>
-          <div>Cards committed: <strong className="text-sage">{state.stats.totalCardsAccepted}</strong></div>
+          <div>Cards committed: <strong className="text-green">{state.stats.totalCardsAccepted}</strong></div>
           <div>Phantom 429s: <strong className="text-rose">{state.stats.total429BurstErrors}</strong></div>
         </div>
       ) : (
@@ -420,7 +420,7 @@ export function SpoinSimulator() {
           {/* Pipeline: one swimlane per topic, drawn horizontally, all running in parallel */}
           <div className="p-4 border-b border-border">
             <div className="flex items-center gap-2 mb-1">
-              <Layers className="w-3.5 h-3.5 text-amber" />
+              <Layers className="w-3.5 h-3.5 text-ochre" />
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-heading">LangGraph Pipeline</h3>
               <span className="text-[10px] text-dim ml-auto">{state.activeTasks.length} worker task(s)</span>
             </div>
@@ -429,7 +429,7 @@ export function SpoinSimulator() {
               title="fan_out_topics: START Send()s every topic's resolve_and_plan_topic concurrently, not one at a time."
             >
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-bg/50 text-[9px] font-mono font-bold text-heading">
-                <ListChecks className="w-3 h-3 text-amber" />
+                <ListChecks className="w-3 h-3 text-ochre" />
                 {state.topics.length} input topics
               </div>
               <ArrowDown className="w-3 h-3 text-dim" />
@@ -450,11 +450,11 @@ export function SpoinSimulator() {
                       ref={registerTopicRef(topic.id)}
                       title={`resolve_and_plan_topic (thinking pool): ${topic.name}. Generates curriculum, groups subtopics by subtopic_group_id.`}
                       className={`shrink-0 w-full sm:w-[118px] flex flex-col justify-center px-2 py-1 rounded border text-[9px] font-mono transition-colors ${
-                        isTopicPlanning ? 'border-amber bg-amber/15 text-amber' : 'border-border text-body'
+                        isTopicPlanning ? 'border-ochre bg-ochre/15 text-ochre' : 'border-border text-body'
                       }`}
                     >
                       <span className="font-bold leading-snug break-words">{topic.name}</span>
-                      <span className={isTopicPlanning ? 'text-amber' : 'text-dim'}>
+                      <span className={isTopicPlanning ? 'text-ochre' : 'text-dim'}>
                         {isTopicPlanning ? 'curriculum…' : topic.status === 'pending' ? 'queued' : `${topic.groups.filter((g) => g.status === 'completed').length}/${topic.groups.length} groups`}
                       </span>
                     </div>
@@ -473,9 +473,9 @@ export function SpoinSimulator() {
                             }`}
                             className={`flex flex-col gap-1 px-1.5 py-1 rounded border text-[9px] font-mono min-w-[148px] transition-colors ${
                               stage === 'persist'
-                                ? 'border-sage/40 bg-sage/5'
+                                ? 'border-green/40 bg-green/5'
                                 : stage !== 'idle'
-                                ? 'border-amber/40 bg-amber/5'
+                                ? 'border-ochre/40 bg-ochre/5'
                                 : 'border-border bg-transparent'
                             }`}
                           >
@@ -483,7 +483,7 @@ export function SpoinSimulator() {
 
                             <div className="flex items-center gap-1">
                               <span
-                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'generate' ? 'bg-gold text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'generate' ? 'bg-lilac text-bg font-bold' : 'bg-bg/60 text-dim'}`}
                               >
                                 gen
                               </span>
@@ -491,13 +491,13 @@ export function SpoinSimulator() {
                                 <RotateCcw className="w-2 h-2" />
                               </span>
                               <span
-                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'gate' ? 'bg-amber text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'gate' ? 'bg-ochre text-bg font-bold' : 'bg-bg/60 text-dim'}`}
                               >
                                 gate
                               </span>
                               <ArrowRight className="w-2 h-2 text-dim" />
                               <span
-                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'persist' ? 'bg-sage text-bg font-bold' : 'bg-bg/60 text-dim'}`}
+                                className={`px-1 py-0.5 rounded text-[8px] ${stage === 'persist' ? 'bg-green text-bg font-bold' : 'bg-bg/60 text-dim'}`}
                               >
                                 ✓
                               </span>
@@ -512,9 +512,9 @@ export function SpoinSimulator() {
                                   key={tier}
                                   className={`flex-1 h-1 rounded-full ${
                                     idx < group.currentTierIndex || group.status === 'completed'
-                                      ? 'bg-sage'
+                                      ? 'bg-green'
                                       : idx === group.currentTierIndex
-                                      ? 'bg-amber'
+                                      ? 'bg-ochre'
                                       : 'bg-border'
                                   }`}
                                 />
@@ -533,7 +533,7 @@ export function SpoinSimulator() {
             <div className="flex flex-col items-center gap-0.5 mt-3 pt-2.5 border-t border-dashed border-border/60">
               <ArrowDown className="w-3 h-3 text-dim" />
               <span className="text-[8px] font-mono text-dim">fan in, per-group as each finishes</span>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-sage/40 bg-sage/10 text-[9px] font-mono font-bold text-sage">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-green/40 bg-green/10 text-[9px] font-mono font-bold text-green">
                 <Database className="w-3 h-3" />
                 {state.stats.totalCardsAccepted} cards persisted in Postgres
               </div>
@@ -545,7 +545,7 @@ export function SpoinSimulator() {
                   <span
                     key={item.id}
                     title={item.title}
-                    className="px-1.5 py-0.5 rounded border border-sage/30 bg-sage/5 text-[9px] font-mono text-sage max-w-[180px] break-words"
+                    className="px-1.5 py-0.5 rounded border border-green/30 bg-green/5 text-[9px] font-mono text-green max-w-[180px] break-words"
                   >
                     {item.title}
                   </span>
@@ -557,7 +557,7 @@ export function SpoinSimulator() {
           {/* Quota governor grid */}
           <div className="p-4 bg-bg/20">
             <div className="flex items-center gap-2 mb-3">
-              <Cpu className="w-3.5 h-3.5 text-amber" />
+              <Cpu className="w-3.5 h-3.5 text-ochre" />
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-heading">Quota Governor</h3>
               <span className="text-[10px] text-dim">{state.config.keys.length} keys</span>
               <span
@@ -573,7 +573,7 @@ export function SpoinSimulator() {
               return (
                 <div key={pool} className="mb-3 last:mb-0">
                   <div className="flex items-center gap-1.5 mb-1 text-[9px] font-mono">
-                    <span className={`px-1 py-0.5 rounded ${pool === 'thinking' ? 'bg-clay/15 text-clay' : 'bg-gold/15 text-gold'}`}>
+                    <span className={`px-1 py-0.5 rounded ${pool === 'thinking' ? 'bg-sky/15 text-sky' : 'bg-lilac/15 text-lilac'}`}>
                       {pool}
                     </span>
                   </div>
@@ -608,7 +608,7 @@ export function SpoinSimulator() {
                                 title={`Key ${cell.keyIndex} · ${model.name}: ${cell.rpdSpent}/${cell.rpdLimit} RPD, ${cell.rpmWindowCalls.length}/${cell.rpmLimit} RPM`}
                                 className={`h-6 rounded border cursor-pointer transition-colors flex items-center justify-center text-[8px] font-mono font-bold ${cellColor(
                                   cell
-                                )} ${selectedCellKey === cellKey ? 'ring-2 ring-amber' : ''}`}
+                                )} ${selectedCellKey === cellKey ? 'ring-2 ring-ochre' : ''}`}
                               >
                                 {cell.isPoisoned429 ? <XCircle className="w-2.5 h-2.5" /> : ''}
                               </div>
@@ -623,8 +623,8 @@ export function SpoinSimulator() {
             })}
 
             <div className="flex items-center gap-3 text-[9px] font-mono text-dim mt-1">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-sage/30 border border-sage/40" /> open</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber/70 border border-amber" /> locked / in-flight</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-green/30 border border-green/40" /> open</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-ochre/70 border border-ochre" /> locked / in-flight</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-rose/70 border border-rose" /> poisoned (429)</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-dim/20 border border-border" /> RPD spent</span>
             </div>
@@ -662,13 +662,13 @@ export function SpoinSimulator() {
         <span>
           <strong
             className={
-              state.status === 'completed' ? 'text-sage' : state.status === 'exhausted_requeued' ? 'text-amber' : 'text-body'
+              state.status === 'completed' ? 'text-green' : state.status === 'exhausted_requeued' ? 'text-ochre' : 'text-body'
             }
           >
             {state.status.replace('_', ' ')}
           </strong>
         </span>
-        <span>cards <strong className="text-sage">{state.stats.totalCardsAccepted}</strong></span>
+        <span>cards <strong className="text-green">{state.stats.totalCardsAccepted}</strong></span>
         <span>429s <strong className={state.stats.total429BurstErrors > 0 ? 'text-rose' : 'text-dim'}>{state.stats.total429BurstErrors}</strong></span>
         <span className="ml-auto truncate max-w-xs text-body/70">{state.events[0]?.message || 'standing by'}</span>
       </div>

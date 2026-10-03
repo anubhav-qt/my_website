@@ -13,9 +13,16 @@ Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tai
 > project list narrowed to one flagship. See `README.md` for the full backend rundown, the
 > CLI tools for managing it, and how the responsive system fits together.
 
-Design direction: warm dev-log terminal aesthetic, dark plum/amber palette, IBM Plex Mono,
-dense list-based sections, small line icons, no big hero graphics. See
-`frontend/src/index.css` for the token system (`--color-*` under `@theme`).
+Design direction: Breader's look (github.com/anubhav-qt/breader) on the same dense,
+list-based dev-log layout. A pure black page with white ink and hairline-edged rounded
+cards (`tile`). Doto, the dot-matrix face, for interface text (`font-dot`), Dongle bold for
+titles and names (`font-title`), IBM Plex Mono for running text. The interface has no
+colour of its own: colour belongs to content, one of Breader's dark-mode book colours per
+project, stack group, career entry, scratchpad section and tag (`src/lib/palette.ts`, set
+as `--c` and read with classes like `text-(--c)`). Breader's clay is left out because it
+reads as orange, and there is no orange anywhere. Buttons are white rounded rectangles
+(`btn`), never pill-shaped. Small line icons, no big hero graphics. See
+`frontend/src/index.css` for the tokens and utilities.
 
 Responsive rules: mobile-first, with a custom `xs` tier at 380px for small phones and folds,
 `sm` at 640px splitting narrow from wide, and a page-level `zoom` above 880px. Anything new
