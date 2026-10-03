@@ -57,7 +57,7 @@ export function SpoinGallery() {
 
   return (
     <div className="mb-3 w-full">
-      <div className="relative border border-border bg-bg overflow-hidden">
+      <div className="relative rounded-[18px] border border-tile bg-bg overflow-hidden">
         <div className="relative w-full aspect-[40/21] flex items-center justify-center">
           <img
             key={active.src}
@@ -70,7 +70,7 @@ export function SpoinGallery() {
             type="button"
             onClick={() => go(index - 1)}
             aria-label="Previous screenshot"
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center bg-bg/70 border border-border text-heading cursor-pointer transition-colors hover:bg-amber/[0.18] hover:border-amber/60"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-lg bg-bg/80 border border-tile text-heading cursor-pointer transition-colors hover:border-tile-hover"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 18l-6-6 6-6" />
@@ -80,19 +80,19 @@ export function SpoinGallery() {
             type="button"
             onClick={() => go(index + 1)}
             aria-label="Next screenshot"
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center bg-bg/70 border border-border text-heading cursor-pointer transition-colors hover:bg-amber/[0.18] hover:border-amber/60"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-lg bg-bg/80 border border-tile text-heading cursor-pointer transition-colors hover:border-tile-hover"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
 
-          <span className="absolute top-2.5 right-2.5 text-[10px] font-bold tracking-[0.08em] text-dim bg-bg/70 border border-border px-1.5 py-0.5">
+          <span className="absolute top-2.5 right-2.5 font-dot text-[10px] tracking-[0.08em] text-dim bg-bg/80 border border-tile rounded-md px-1.5 py-1">
             {index + 1} / {count}
           </span>
         </div>
 
-        <div className="px-3.5 pt-2.5 pb-3 border-t border-border">
+        <div className="px-4 pt-2.5 pb-3 border-t border-tile">
           <p className="m-0 text-[12.5px] text-body leading-snug">{active.caption}</p>
         </div>
       </div>
@@ -109,7 +109,7 @@ export function SpoinGallery() {
           >
             <span
               className={`block w-1.5 h-1.5 rounded-full transition-colors ${
-                i === index ? 'bg-amber' : 'bg-border group-hover:bg-dim'
+                i === index ? 'bg-(--c)' : 'bg-border group-hover:bg-dim'
               }`}
             />
           </button>

@@ -1,3 +1,5 @@
+import type { Accent } from '../lib/palette';
+
 export const PROFILE = {
   name: 'Anubhav Joshi',
   role: 'Software Engineer',
@@ -37,8 +39,6 @@ export const CURRENTLY_MAKING: Partial<Record<(typeof FEATURED_IDS)[number], Cur
   },
 };
 
-export type Accent = 'amber' | 'sage' | 'rose' | 'clay' | 'gold';
-
 export interface StackGroup {
   label: string;
   icon: 'code' | 'server' | 'brain' | 'device' | 'cloud';
@@ -50,31 +50,31 @@ export const STACK_GROUPS: StackGroup[] = [
   {
     label: 'Languages',
     icon: 'code',
-    accent: 'amber',
+    accent: 'sky',
     items: ['Python', 'TypeScript', 'Rust'],
   },
   {
     label: 'Backend & AI',
     icon: 'brain',
-    accent: 'rose',
+    accent: 'lilac',
     items: ['FastAPI', 'NestJS', 'LangGraph', 'SQLAlchemy', 'TypeORM', 'OpenCV', 'PyTorch'],
   },
   {
     label: 'Data',
     icon: 'server',
-    accent: 'sage',
+    accent: 'green',
     items: ['PostgreSQL', 'PgBouncer', 'pgvector', 'Redis', 'Pinecone'],
   },
   {
     label: 'Infrastructure',
     icon: 'cloud',
-    accent: 'gold',
+    accent: 'ochre',
     items: ['AWS', 'Docker', 'Docker Compose', 'Kubernetes', 'Linux', 'Caddy', 'cloudflared', 'age'],
   },
   {
     label: 'Frontend',
     icon: 'device',
-    accent: 'clay',
+    accent: 'rose',
     items: ['Next.js', 'React', 'React Native', 'Tailwind CSS'],
   },
 ];

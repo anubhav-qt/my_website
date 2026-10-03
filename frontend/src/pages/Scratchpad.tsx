@@ -5,22 +5,8 @@ import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS, type WriteupEn
 import { useSEO } from '@/hooks/useSEO';
 import { useViewTracking } from '@/hooks/useViewTracking';
 import { CommentThread } from '@/components/CommentThread';
-
-type Accent = 'amber' | 'gold' | 'sage' | 'clay';
-
-const DOT: Record<Accent, string> = {
-  amber: 'bg-amber',
-  gold: 'bg-gold',
-  sage: 'bg-sage',
-  clay: 'bg-clay',
-};
-
-const TEXT: Record<Accent, string> = {
-  amber: 'text-amber',
-  gold: 'text-gold',
-  sage: 'text-sage',
-  clay: 'text-clay',
-};
+import { Tag } from '@/components/Tag';
+import { accentFor, tint, type Accent } from '@/lib/palette';
 
 function parseDateDMY(dateStr: string): number {
   const parts = dateStr.split(/[/.-]/).map(Number);
@@ -33,11 +19,11 @@ function parseDateDMY(dateStr: string): number {
 
 function SectionHeader({ color, label, count, latest }: { color: Accent; label: string; count: number; latest?: string }) {
   return (
-    <div className="flex items-center gap-2.5 mb-2.5">
-      <span className={`w-1.5 h-1.5 shrink-0 ${DOT[color]}`} />
-      <span className={`text-[11px] uppercase tracking-widest font-bold shrink-0 ${TEXT[color]}`}>{label}</span>
-      <span className="flex-1 border-t border-dashed border-border" />
-      <span className="text-dim text-[11px] shrink-0">
+    <div style={tint(color)} className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-3">
+      <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-(--c)" />
+      <span className="font-dot text-[11px] uppercase tracking-widest shrink-0 text-(--c)">{label}</span>
+      <span className="flex-1 border-t border-dashed border-border min-w-[20px]" />
+      <span className="font-dot text-dim text-[11px] shrink-0">
         {String(count).padStart(2, '0')}
         {latest ? ` · ${latest}` : ''}
       </span>
@@ -51,22 +37,23 @@ function WriteupCard({ w }: { w: WriteupEntry }) {
   return (
     <Link
       to={`/scratchpad/${w.slug}`}
-      className="w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 hover:border-amber/70 hover:bg-surface/60 transition-colors"
+      style={tint(accentFor(w.slug))}
+      className="tile hover:border-(--c)/50 w-[85vw] max-w-[352px] sm:w-[352px] shrink-0 snap-start flex flex-col px-4 py-3.5 group"
     >
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-heading text-sm font-bold leading-snug">{w.title}</span>
-        <span className="text-dim text-[11px] shrink-0">{w.date}</span>
-      </div>
-      <p className="text-xs text-dim leading-relaxed mt-1.5">{w.dek}</p>
+      <span className="font-dot text-(--c) text-[11px]">{w.date}</span>
+      <span className="font-title text-heading text-[1.35rem] leading-none mt-1.5">{w.title}</span>
+      <p className="text-xs text-dim leading-relaxed mt-2">{w.dek}</p>
       <span className="flex-1 min-h-[13.5px]" />
-      <div className="flex items-center gap-2 pt-1.5 mt-2 border-t border-border/40 flex-wrap">
-        {w.tags.map((t) => (
-          <span key={t} className="text-[10px] text-body/80 border border-border/70 bg-bg/40 px-1.5 py-0.5">
-            {t}
-          </span>
-        ))}
-        <span className="flex-1 min-w-[8px]" />
-        <span className="text-amber text-xs font-bold ml-1">read &#8594;</span>
+      <div className="flex items-end gap-2 pt-2.5 mt-2 border-t border-border">
+        <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
+          {w.tags.map((t) => (
+            <Tag key={t} tag={t} />
+          ))}
+        </div>
+        <span className="btn shrink-0">
+          Read
+          <ChevronRight size={11} className="transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
     </Link>
   );
@@ -76,20 +63,20 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
   useViewTracking('scratchpad', entry.id, isOpen); // still records the view; no longer displayed
 
   return (
-    <div className="border-b border-dashed border-border/60 py-1.5">
+    <div style={tint(accent)} className="border-b border-dashed border-border py-1.5">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 cursor-pointer" onClick={onToggleOpen}>
-        <span className="text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{entry.date}</span>
+        <span className="font-dot text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{entry.date}</span>
         {isOpen ? (
-          <ChevronDown size={10} className={`${TEXT[accent]} shrink-0 translate-y-px`} />
+          <ChevronDown size={10} className="text-(--c) shrink-0 translate-y-px" />
         ) : (
           <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
         )}
-        <span className={`text-xs font-semibold leading-relaxed ${TEXT[accent]}`}>{entry.title}</span>
+        <span className="text-xs font-semibold leading-relaxed text-(--c)">{entry.title}</span>
         <span className="flex-1" />
       </div>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1">
-          <p className="text-xs text-body/90 leading-relaxed mt-1.5 mb-1">{entry.body}</p>
+          <p className="text-xs text-body leading-relaxed mt-1.5 mb-1">{entry.body}</p>
           <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} />
         </div>
       )}
@@ -119,11 +106,11 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
   useViewTracking('scratchpad', link.id, isOpen); // still records the view; no longer displayed
 
   return (
-    <div className="border-b border-dashed border-border/60 py-2">
+    <div style={tint('sky')} className="border-b border-dashed border-border py-2">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 cursor-pointer group" onClick={onToggleOpen}>
-        <span className="text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{link.date}</span>
+        <span className="font-dot text-dim text-[11px] w-[62px] sm:w-[78px] shrink-0">{link.date}</span>
         {isOpen ? (
-          <ChevronDown size={10} className="text-clay shrink-0 translate-y-px" />
+          <ChevronDown size={10} className="text-(--c) shrink-0 translate-y-px" />
         ) : (
           <ChevronRight size={10} className="text-dim shrink-0 translate-y-px" />
         )}
@@ -132,27 +119,27 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="text-clay text-xs font-semibold leading-relaxed hover:text-heading hover:underline underline-offset-4"
+          className="text-(--c) text-xs font-semibold leading-relaxed hover:underline underline-offset-4"
         >
           {link.title}
         </a>
         <span className="flex-1" />
-        <span className="text-dim text-[11px] shrink-0">{link.domain}</span>
+        <span className="font-dot text-dim text-[11px] shrink-0">{link.domain}</span>
         <a
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="text-dim hover:text-clay transition-colors shrink-0 p-1.5 -m-1.5"
+          className="text-dim hover:text-heading transition-colors shrink-0 p-1.5 -m-1.5"
           aria-label={`open ${link.title}`}
         >
           <ExternalLink size={11} className="translate-y-px" />
         </a>
       </div>
-      <p className="text-[12.5px] text-body/85 leading-relaxed mt-0.5 pl-3 sm:pl-[97px]">{link.commentary}</p>
+      <p className="text-[12.5px] text-body leading-relaxed mt-0.5 pl-3 sm:pl-[97px]">{link.commentary}</p>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1">
-          <CommentThread targetType="scratchpad" targetId={link.id} accent="clay" />
+          <CommentThread targetType="scratchpad" targetId={link.id} accent="sky" />
         </div>
       )}
     </div>
@@ -160,10 +147,10 @@ function LinkRow({ link, isOpen, onToggleOpen }: { link: LinkEntry; isOpen: bool
 }
 
 const SECTIONS: { key: string; color: Accent; label: string }[] = [
-  { key: 'writeups', color: 'amber', label: 'Writeups' },
-  { key: 'mildly-interesting', color: 'gold', label: 'Mildly Interesting Stuff' },
-  { key: 'random-ideas', color: 'sage', label: 'Random Ideas' },
-  { key: 'links', color: 'clay', label: 'Links' },
+  { key: 'writeups', color: 'lilac', label: 'Writeups' },
+  { key: 'mildly-interesting', color: 'ochre', label: 'Mildly Interesting Stuff' },
+  { key: 'random-ideas', color: 'green', label: 'Random Ideas' },
+  { key: 'links', color: 'sky', label: 'Links' },
 ];
 
 const FILTER_OPTIONS: { value: Audience; label: string }[] = [
@@ -184,10 +171,10 @@ function AudienceFilterBar({ selected, onToggle }: { selected: Set<Audience>; on
             onClick={() => onToggle(opt.value)}
             aria-pressed={isActive}
             className={`
-              text-[11px] font-bold px-2.5 py-1.5 sm:py-1 border transition-all duration-200
+              font-dot text-[11px] px-2.5 py-1.5 rounded-lg border transition-colors duration-200
               ${isActive
-                ? 'border-amber/60 bg-amber/8 text-amber shadow-[0_0_12px_rgba(217,138,79,0.08)]'
-                : 'border-border text-dim hover:text-body hover:border-dim'}
+                ? 'border-heading bg-heading text-bg'
+                : 'border-tile text-dim hover:text-heading hover:border-tile-hover'}
             `}
           >
             {opt.label}
@@ -233,36 +220,33 @@ export default function Scratchpad() {
 
   return (
     <div className="pb-12">
-      <div className="flex items-center justify-between gap-3 mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <p className="text-xs opacity-75">weird and non-weird stuff that came to my mind</p>
         {!isEmpty && <AudienceFilterBar selected={selectedAudiences} onToggle={toggleAudience} />}
       </div>
 
       {isEmpty ? (
         <>
-          <div className="relative border-l-2 border-amber/35 bg-surface/45 px-4 py-3.5 mb-6">
-            <div className="flex items-baseline gap-2">
-              <span className="text-dim text-xs">&gt;</span>
-              <span className="text-heading text-sm font-bold">nothing here yet</span>
-            </div>
-            <p className="text-xs text-body/90 leading-relaxed mt-2">
+          <div className="tile relative px-4 py-3.5 mb-6">
+            <span className="font-title text-heading text-[1.35rem] leading-none">Nothing here yet</span>
+            <p className="text-xs text-body leading-relaxed mt-2">
               The pages that exist are the ones I've finished. This one starts filling up once I stop having a
               reason not to write.
             </p>
           </div>
 
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-dim text-[11px] uppercase tracking-widest font-bold shrink-0">What lands here</span>
+            <span className="font-dot text-dim text-[11px] uppercase tracking-widest shrink-0">What lands here</span>
             <span className="flex-1 border-t border-dashed border-border" />
           </div>
 
           <div className="flex flex-col gap-2.5">
             {SECTIONS.map((s) => (
-              <div key={s.key} className="flex items-baseline gap-3">
-                <span className={`w-1.5 h-1.5 shrink-0 ${DOT[s.color]} -translate-y-0.5`} />
-                <span className={`text-xs font-bold w-[132px] shrink-0 ${TEXT[s.color]}`}>{s.label}</span>
+              <div key={s.key} style={tint(s.color)} className="flex items-baseline gap-3">
+                <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-(--c) -translate-y-0.5" />
+                <span className="text-xs font-bold w-[132px] shrink-0 text-(--c)">{s.label}</span>
                 <span className="flex-1" />
-                <span className="text-dim text-[11px] shrink-0">00</span>
+                <span className="font-dot text-dim text-[11px] shrink-0">00</span>
               </div>
             ))}
           </div>
@@ -278,7 +262,7 @@ export default function Scratchpad() {
 
           {filteredWriteups.length > 0 && (
             <div>
-              <SectionHeader color="amber" label="writeups" count={filteredWriteups.length} latest={filteredWriteups[0]?.date} />
+              <SectionHeader color="lilac" label="writeups" count={filteredWriteups.length} latest={filteredWriteups[0]?.date} />
               <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1">
                 {filteredWriteups.map((w) => (
                   <WriteupCard key={w.id} w={w} />
@@ -290,25 +274,25 @@ export default function Scratchpad() {
           {filteredMildlyInteresting.length > 0 && (
             <div>
               <SectionHeader
-                color="gold"
+                color="ochre"
                 label="mildly interesting stuff"
                 count={filteredMildlyInteresting.length}
                 latest={filteredMildlyInteresting[0]?.date}
               />
-              <CollapsibleList entries={filteredMildlyInteresting} accent="gold" />
+              <CollapsibleList entries={filteredMildlyInteresting} accent="ochre" />
             </div>
           )}
 
           {filteredRandomIdeas.length > 0 && (
             <div>
-              <SectionHeader color="sage" label="random ideas" count={filteredRandomIdeas.length} latest={filteredRandomIdeas[0]?.date} />
-              <CollapsibleList entries={filteredRandomIdeas} accent="sage" />
+              <SectionHeader color="green" label="random ideas" count={filteredRandomIdeas.length} latest={filteredRandomIdeas[0]?.date} />
+              <CollapsibleList entries={filteredRandomIdeas} accent="green" />
             </div>
           )}
 
           {filteredLinks.length > 0 && (
             <div>
-              <SectionHeader color="clay" label="links" count={filteredLinks.length} latest={filteredLinks[0]?.date} />
+              <SectionHeader color="sky" label="links" count={filteredLinks.length} latest={filteredLinks[0]?.date} />
               <div className="pr-1">
                 {filteredLinks.map((l) => (
                   <LinkRow

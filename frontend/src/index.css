@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 @theme {
   /* Tailwind's smallest default breakpoint is sm at 640px, which lumps a
@@ -12,17 +13,110 @@
 
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --color-bg: #1b1e24;
-  --color-surface: #23272f;
-  --color-heading: #eef0f4;
-  --color-body: #a7afbd;
-  --color-dim: #5c6472;
-  --color-border: #2c313b;
-  --color-amber: #d98a4f;
-  --color-rose: #e08a9a;
-  --color-sage: #7bc9a8;
-  --color-clay: #6fa8dc;
-  --color-gold: #c9b673;
+  /* Breader's interface: a black page, white ink, and hairlines for edges. The
+     chrome has no colour of its own. Links, buttons, tabs and cards are black
+     and white, and colour is kept for the content: stack groups, scratchpad
+     sections, Spoin's simulator. */
+  --color-bg: #000000;
+  --color-surface: #141414;
+  --color-heading: #ffffff;
+  --color-body: #cccccc;
+  --color-dim: #999999;
+  --color-border: #262626;
+  /* Card edges, a hairline of white that strengthens on hover. */
+  --color-tile: rgb(255 255 255 / 0.14);
+  --color-tile-hover: rgb(255 255 255 / 0.36);
+}
+
+/* Content colours: Breader's book colours for a dark page, all of them except
+   its clay, which reads as orange. Each project, stack group, career entry,
+   scratchpad section and tag takes one (src/lib/palette.ts), the way each book
+   does in Breader. Static, so var(--color-<name>) always exists for the ones
+   picked at runtime. */
+@theme static {
+  --color-rose: #ffa8b2;
+  --color-ochre: #ffd078;
+  --color-sand: #e6d6b4;
+  --color-sage: #c8e1b8;
+  --color-moss: #a7cb8a;
+  --color-green: #72d1af;
+  --color-teal: #7dc9cc;
+  --color-sky: #8ac8fe;
+  --color-indigo: #94aefe;
+  --color-lilac: #c7b4ff;
+  --color-plum: #e399c5;
+  --color-blush: #fec9c0;
+  --color-graphite: #a5abb4;
+}
+
+/* Doto, the dot-matrix face, for interface text: nav, labels, dates, buttons.
+   Its weight is the size of its dots, so phones get the heaviest or small text
+   turns faint (Breader does the same). */
+@utility font-dot {
+  font-family: 'Doto', ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+  @media (max-width: 720px) {
+    font-weight: 900;
+  }
+}
+
+/* Dongle, bold, for titles and names. */
+@utility font-title {
+  font-family: 'Dongle', system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* A card: the page's own black and a hairline round it. */
+@utility tile {
+  border-radius: 18px;
+  border: 1px solid var(--color-tile);
+  background: var(--color-bg);
+  transition: border-color 220ms ease;
+}
+
+/* The one filled control: white with black text, Breader's .btn. Corners,
+   never a pill. */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--color-heading);
+  color: var(--color-bg);
+  font-family: 'Doto', ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 1.25;
+  /* Long labels (a writeup's title) wrap on narrow phones instead of running off. */
+  max-width: 100%;
+  text-align: left;
+  transition: opacity 160ms ease, transform 160ms ease;
+  &:hover {
+    opacity: 0.86;
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+  @media (max-width: 720px) {
+    font-weight: 900;
+  }
+}
+
+/* A tag: a small dotted label on a grey fill. */
+@utility chip {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-dim);
+  font-family: 'Doto', ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 1;
+  @media (max-width: 720px) {
+    font-weight: 900;
+  }
 }
 
 @layer base {
@@ -43,12 +137,22 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection {
-    background: var(--color-amber);
+    background: var(--color-heading);
     color: var(--color-bg);
   }
   :focus-visible {
-    outline: 2px solid var(--color-amber);
+    outline: 2px solid var(--color-heading);
     outline-offset: 2px;
+  }
+  /* Rounds the ring on elements with no corners of their own. */
+  :where(:focus-visible) {
+    border-radius: 6px;
+  }
+  /* Phones get a stronger grey, so small dotted text stays readable. */
+  @media (max-width: 720px) {
+    :root {
+      --color-dim: #b3b3b3;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     html {

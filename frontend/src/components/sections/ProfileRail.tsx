@@ -30,10 +30,11 @@ import {
   SiCloudflare,
   SiTailwindcss,
 } from '@icons-pack/react-simple-icons';
-import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent, type ExperienceEntry } from '@/content/site';
+import { STACK_GROUPS, EXPERIENCE, EDUCATION, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
 import { CommentThread } from '@/components/CommentThread';
 import { useViewTracking } from '@/hooks/useViewTracking';
+import { careerAccent, tint } from '@/lib/palette';
 
 type Tab = 'stack' | 'career' | 'education';
 
@@ -88,14 +89,6 @@ const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: strin
   'React Flow': Workflow,
   'React Native': SiReact,
   Expo: SiExpo,
-};
-
-const ACCENT: Record<Accent, { text: string; border: string; bg: string }> = {
-  amber: { text: 'text-amber', border: 'border-amber', bg: 'bg-amber/10' },
-  sage: { text: 'text-sage', border: 'border-sage', bg: 'bg-sage/10' },
-  rose: { text: 'text-rose', border: 'border-rose', bg: 'bg-rose/10' },
-  clay: { text: 'text-clay', border: 'border-clay', bg: 'bg-clay/10' },
-  gold: { text: 'text-gold', border: 'border-gold', bg: 'bg-gold/10' },
 };
 
 function projectsUsing(item: string) {
@@ -160,11 +153,10 @@ function StackPanel() {
     <div>
       <div className="flex flex-col gap-2">
         {STACK_GROUPS.map((group, groupIdx) => {
-          const accent = ACCENT[group.accent];
           return (
-            <div key={group.label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
-              <div className={`sm:w-[130px] shrink-0 sm:pt-0.5 ${accent.text}`}>
-                <span className="text-xs font-semibold leading-tight">{group.label}</span>
+            <div key={group.label} style={tint(group.accent)} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
+              <div className="sm:w-[130px] shrink-0 sm:pt-1 text-(--c)">
+                <span className="font-dot text-[12px] leading-tight">{group.label}</span>
               </div>
               <div className="flex flex-wrap gap-1 flex-1 min-w-0">
                 {group.items.map((s) => {
@@ -176,14 +168,15 @@ function StackPanel() {
                       key={s}
                       onClick={() => selectItem(s, isSelected)}
                       disabled={!hasMatches}
-                      className={`inline-flex items-center gap-1 text-[12px] px-1.5 py-0.5 border transition-colors ${isSelected
-                          ? `${accent.border} ${accent.text} ${accent.bg}`
+                      className={`inline-flex items-center gap-1 text-[12px] px-2 py-0.5 rounded-lg border transition-colors ${isSelected
+                          ? 'border-(--c) text-(--c) bg-(--c)/10'
                           : hasMatches
-                            ? 'border-border text-body hover:border-dim'
-                            : 'border-border/60 text-dim/70 cursor-default'
+                            ? 'border-tile text-body hover:border-tile-hover'
+                            : 'border-border text-dim/60 cursor-default'
                         }`}
                     >
-                      {Icon && <Icon size={12} />}
+                      {/* The group's colour shows on the icons of things actually in use. */}
+                      {Icon && <Icon size={12} className={hasMatches ? 'text-(--c)' : ''} />}
                       {s}
                     </button>
                   );
@@ -200,12 +193,12 @@ function StackPanel() {
       </div>
 
       {selected && (
-        <div ref={usedInRef} className="mt-2.5 pt-2 border-t border-dashed border-border text-[12px]">
+        <div ref={usedInRef} className="mt-3 pt-2.5 border-t border-dashed border-border text-[12px]">
           {matches.length > 0 ? (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
               {matches.map((p) => (
-                <Link key={p.id} to={p.id === 'spoin' ? '/projects/spoin' : `/projects#${p.id}`} className="text-heading font-semibold hover:text-amber transition-colors">
+                <Link key={p.id} to={p.id === 'spoin' ? '/projects/spoin' : `/projects#${p.id}`} className="text-heading font-semibold underline-offset-4 hover:underline">
                   → {p.title.split(':')[0]}
                 </Link>
               ))}
@@ -229,39 +222,43 @@ function CareerItem({
   onToggle: () => void;
 }) {
   const targetId = `career-${entry.id}`;
+  const accent = careerAccent(entry.id);
   useViewTracking('project', targetId, isOpen); // still records the view; no longer displayed
 
   return (
     <div
       id={targetId}
-      className={`border transition-colors ${isOpen ? 'border-amber/70 bg-surface/50' : 'border-border hover:border-dim'
-        }`}
+      style={tint(accent)}
+      className={`tile ${isOpen ? 'border-(--c)/50' : 'hover:border-tile-hover'}`}
     >
       <button
         onClick={onToggle}
-        className="w-full text-left px-2.5 py-2 transition-colors cursor-pointer"
+        className="w-full text-left px-3.5 py-3 cursor-pointer"
       >
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-amber text-xs font-bold">{entry.company}</span>
-          <span className="text-heading text-xs">{entry.role}</span>
+        <div className="flex items-baseline gap-x-2 gap-y-0.5 flex-wrap">
+          <span className="font-title text-heading text-[1.2rem] leading-none">
+            <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full bg-(--c) mr-2 align-middle -translate-y-[0.12em]" />
+            {entry.company}
+          </span>
+          <span className="font-dot text-dim text-[11px]">{entry.role}</span>
           <div className="ml-auto flex items-center gap-2">
-            <span className="text-dim text-[11px] shrink-0">{entry.period}</span>
+            <span className="font-dot text-dim text-[11px] shrink-0">{entry.period}</span>
             <ChevronDown
               size={12}
-              className={`transition-transform duration-150 ${isOpen ? 'rotate-180 text-amber' : 'text-dim'}`}
+              className={`self-center transition-transform duration-150 ${isOpen ? 'rotate-180 text-heading' : 'text-dim'}`}
             />
           </div>
         </div>
-        <p className="text-dim text-[12px] leading-snug mt-1">{entry.headline}</p>
+        <p className="text-dim text-[12px] leading-snug mt-1.5">{entry.headline}</p>
       </button>
 
       {isOpen && (
-        <div className="px-2.5 pb-3 pt-2 border-t border-dashed border-border/70">
+        <div className="px-3.5 pb-3.5 pt-2 border-t border-dashed border-border">
           <div className="space-y-2 mt-1">
             {entry.bullets.map((b, i) => (
               <p
                 key={i}
-                className="text-[12px] text-body/90 leading-relaxed pl-3 relative before:content-['-'] before:absolute before:left-0 before:text-amber"
+                className="text-[12px] text-body leading-relaxed pl-3 relative before:content-['-'] before:absolute before:left-0 before:text-(--c)"
               >
                 {b}
               </p>
@@ -272,14 +269,14 @@ function CareerItem({
           {entry.story && (
             <Link
               to={entry.story}
-              className="inline-flex items-center gap-1 text-amber text-[11px] font-bold hover:text-heading transition-colors mt-2"
+              className="btn mt-3"
             >
               Read the full story
               <ChevronRight size={11} />
             </Link>
           )}
 
-          <CommentThread targetType="project" targetId={targetId} accent="amber" />
+          <CommentThread targetType="project" targetId={targetId} accent={accent} />
         </div>
       )}
     </div>
@@ -308,23 +305,23 @@ function EducationPanel() {
   useViewTracking('project', targetId, true); // still records the view; no longer displayed
 
   return (
-    <div className="border border-border/70 bg-surface/30 p-3">
+    <div className="tile px-3.5 py-3">
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div>
-          <span className="text-heading text-xs font-bold">{EDUCATION.degree}</span>
-          <p className="text-body text-xs mt-1">{EDUCATION.school}</p>
-          <p className="text-dim text-[12px] mt-0.5">{EDUCATION.period}</p>
+          <span className="font-title text-heading text-[1.2rem] leading-none">{EDUCATION.degree}</span>
+          <p className="text-body text-xs mt-1.5">{EDUCATION.school}</p>
+          <p className="font-dot text-dim text-[11px] mt-1">{EDUCATION.period}</p>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 mt-2.5 pt-2.5 border-t border-dashed border-border">
-        <span className="text-sage text-xs font-bold">CGPA {EDUCATION.cgpa}</span>
-        <span className="text-gold text-xs font-semibold">{EDUCATION.honor}</span>
+        <span className="font-dot text-green text-[12px]">CGPA {EDUCATION.cgpa}</span>
+        <span className="text-ochre text-xs font-semibold">{EDUCATION.honor}</span>
       </div>
 
       <p className="text-dim text-[12px] leading-relaxed mt-2">{EDUCATION.note}</p>
 
-      <CommentThread targetType="project" targetId={targetId} accent="amber" />
+      <CommentThread targetType="project" targetId={targetId} accent="moss" />
     </div>
   );
 }
@@ -341,10 +338,13 @@ export function ProfileRail() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex-1 sm:flex-initial cursor-pointer text-center sm:text-left text-xs font-bold tracking-wide transition-colors underline-offset-4 py-2 sm:py-0 border-b-2 sm:border-b-0 ${isActive ? 'text-amber border-amber sm:underline' : 'text-dim border-transparent hover:text-body'
+              className={`flex-1 sm:flex-initial cursor-pointer text-center sm:text-left text-[12px] font-dot transition-colors py-2 sm:py-1 ${isActive ? 'text-heading' : 'text-dim hover:text-heading'
                 }`}
             >
-              {t.label}
+              <span className="relative">
+                {t.label}
+                {isActive && <span className="absolute left-0 right-0 -bottom-1 h-0.5 rounded-full bg-heading" />}
+              </span>
             </button>
           );
         })}

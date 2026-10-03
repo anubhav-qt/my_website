@@ -2,69 +2,14 @@ import { useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
 import { censorText, censorNickname } from '@/lib/censor';
-import type { Accent } from '@/content/site';
+import { tint, type Accent } from '@/lib/palette';
 import type { Comment, TargetType } from '@/lib/backend-types';
 
-// Tailwind's static scanner needs whole, literal class strings -- it can't
-// see `` `hover:${TEXT[accent]}` ``. Every combination this component uses is
-// spelled out per-accent below instead of assembled from fragments.
-interface AccentClasses {
-  dot: string;
-  text: string;
-  border: string;
-  border30: string;
-  border18: string;
-  actionBtn: string;
-  replyLink: string;
-}
-
-const ACCENT: Record<Accent, AccentClasses> = {
-  amber: {
-    dot: 'bg-amber',
-    text: 'text-amber',
-    border: 'border-amber',
-    border30: 'border-amber/30',
-    border18: 'border-amber/18',
-    actionBtn: 'border-amber/50 text-amber bg-amber/8 hover:enabled:border-amber hover:enabled:bg-amber/16',
-    replyLink: 'text-dim hover:text-amber',
-  },
-  gold: {
-    dot: 'bg-gold',
-    text: 'text-gold',
-    border: 'border-gold',
-    border30: 'border-gold/30',
-    border18: 'border-gold/18',
-    actionBtn: 'border-gold/50 text-gold bg-gold/8 hover:enabled:border-gold hover:enabled:bg-gold/16',
-    replyLink: 'text-dim hover:text-gold',
-  },
-  sage: {
-    dot: 'bg-sage',
-    text: 'text-sage',
-    border: 'border-sage',
-    border30: 'border-sage/30',
-    border18: 'border-sage/18',
-    actionBtn: 'border-sage/50 text-sage bg-sage/8 hover:enabled:border-sage hover:enabled:bg-sage/16',
-    replyLink: 'text-dim hover:text-sage',
-  },
-  clay: {
-    dot: 'bg-clay',
-    text: 'text-clay',
-    border: 'border-clay',
-    border30: 'border-clay/30',
-    border18: 'border-clay/18',
-    actionBtn: 'border-clay/50 text-clay bg-clay/8 hover:enabled:border-clay hover:enabled:bg-clay/16',
-    replyLink: 'text-dim hover:text-clay',
-  },
-  rose: {
-    dot: 'bg-rose',
-    text: 'text-rose',
-    border: 'border-rose',
-    border30: 'border-rose/30',
-    border18: 'border-rose/18',
-    actionBtn: 'border-rose/50 text-rose bg-rose/8 hover:enabled:border-rose hover:enabled:bg-rose/16',
-    replyLink: 'text-dim hover:text-rose',
-  },
-};
+// The thread takes the colour of whatever it's under (lib/palette.ts), as --c:
+// the label, the thread lines, the collapsed-replies note. The inputs and the
+// post button stay black and white like the rest of the interface.
+const INPUT =
+  'w-full bg-bg border border-tile rounded-lg text-heading placeholder:text-dim focus:outline-none focus:border-tile-hover';
 
 const MAX_NICKNAME_LENGTH = 50;
 const MAX_BODY_LENGTH = 2000;
@@ -199,7 +144,7 @@ export function CommentThread({
 
   function renderNode(node: ThreadNode, depth: number) {
     const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-2.5 sm:ml-4' : 'ml-4 sm:ml-6';
-    const borderClass = depth === 0 ? ACCENT[accent].border30 : depth === 1 ? ACCENT[accent].border18 : 'border-border';
+    const borderClass = depth === 0 ? 'border-(--c)/40' : depth === 1 ? 'border-(--c)/20' : 'border-border';
 
     // Only auto-collapse if this node itself has 3+ direct children
     const directChildrenCount = node.children.length;
@@ -213,11 +158,11 @@ export function CommentThread({
       <div key={node.id} className={`pl-2.5 py-2 border-l-2 ${borderClass} ${indentClass} min-w-[260px] sm:min-w-[320px]`}>
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-heading text-xs font-bold">{censorNickname(node.nickname)}</span>
-          <span className="text-dim text-[10.5px]">{relativeTime(node.created_at)}</span>
+          <span className="font-dot text-dim text-[10.5px]">{relativeTime(node.created_at)}</span>
           {node.children.length > 0 && (
             <button
               onClick={() => toggleNodeExpansion(node.id, defaultCollapsed)}
-              className="text-[10px] text-dim hover:text-heading transition-colors ml-auto cursor-pointer"
+              className="font-dot text-[10px] text-dim hover:text-heading transition-colors ml-auto cursor-pointer"
               title={isExpanded ? 'Collapse thread' : 'Expand thread'}
             >
               {isExpanded ? '[-] Hide' : `[+] ${totalRepliesCount} ${totalRepliesCount === 1 ? 'reply' : 'replies'}`}
@@ -225,7 +170,7 @@ export function CommentThread({
           )}
         </div>
 
-        <p className="text-body/90 text-[12.5px] leading-relaxed mt-0.5 whitespace-pre-wrap break-words">
+        <p className="text-body text-[12.5px] leading-relaxed mt-0.5 whitespace-pre-wrap break-words">
           {censorText(node.body)}
         </p>
 
@@ -241,14 +186,14 @@ export function CommentThread({
                 }
               }
             }}
-            className={`text-[10.5px] font-bold ${ACCENT[accent].replyLink} transition-colors cursor-pointer`}
+            className="font-dot text-[10.5px] text-dim hover:text-heading transition-colors cursor-pointer"
           >
             {replyingTo === node.id ? 'Cancel' : 'Reply'}
           </button>
         </div>
 
         {replyingTo === node.id && (
-          <div className="mt-2 p-2 bg-surface border-l-2 border-border max-w-xl">
+          <div className="mt-2 p-2 rounded-xl border border-tile max-w-xl">
             <div className="flex flex-col sm:flex-row gap-1.5">
               <div className="relative w-full sm:w-28 shrink-0">
                 <input
@@ -257,9 +202,9 @@ export function CommentThread({
                   value={activeReplyNick}
                   onChange={(e) => setReplyNickname(e.target.value)}
                   placeholder="Nickname"
-                  className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
+                  className={`${INPUT} text-[11.5px] px-2 pt-1.5 pb-5`}
                 />
-                <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
+                <span className="absolute right-1.5 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
                   {activeReplyNick.length}/{MAX_NICKNAME_LENGTH}
                 </span>
               </div>
@@ -269,9 +214,9 @@ export function CommentThread({
                   value={replyBody}
                   onChange={(e) => setReplyBody(e.target.value)}
                   placeholder="Reply..."
-                  className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
+                  className={`${INPUT} text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none`}
                 />
-                <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
+                <span className="absolute right-2 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
                   {replyBody.length}/{MAX_BODY_LENGTH}
                 </span>
               </div>
@@ -285,9 +230,9 @@ export function CommentThread({
                   })
                 }
                 disabled={onCooldown || !activeReplyNick.trim() || !replyBody.trim()}
-                className={`text-[10.5px] font-bold px-2.5 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors`}
+                className="btn disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                reply
+                Reply
               </button>
             </div>
           </div>
@@ -300,11 +245,11 @@ export function CommentThread({
               <div className="mt-1.5">
                 <button
                   onClick={() => toggleNodeExpansion(node.id, defaultCollapsed)}
-                  className="inline-flex items-center gap-1.5 text-[11px] text-amber border border-amber/35 bg-amber/8 hover:bg-amber/16 px-2.5 py-1 transition-colors group cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-[11px] text-(--c) border border-(--c)/35 bg-(--c)/8 hover:bg-(--c)/15 rounded-lg px-2.5 py-1 transition-colors group cursor-pointer"
                 >
                   <span className="font-bold">[+]</span>
                   <span>{totalRepliesCount} {totalRepliesCount === 1 ? 'reply' : 'replies'} collapsed</span>
-                  <span className="text-dim text-[10px] group-hover:text-amber/90 transition-colors">
+                  <span className="text-dim text-[10px] group-hover:text-(--c) transition-colors">
                     (might be a deep rabbit hole ahead)
                   </span>
                 </button>
@@ -314,7 +259,7 @@ export function CommentThread({
                 {defaultCollapsed && (
                   <button
                     onClick={() => toggleNodeExpansion(node.id, defaultCollapsed)}
-                    className="my-1 text-[10.5px] font-bold text-dim hover:text-amber transition-colors flex items-center gap-1 cursor-pointer"
+                    className="my-1 font-dot text-[10.5px] text-dim hover:text-heading transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <span>[-]</span>
                     <span>Collapse {totalRepliesCount} {totalRepliesCount === 1 ? 'reply' : 'replies'}</span>
@@ -332,16 +277,16 @@ export function CommentThread({
   }
 
   return (
-    <div className="mt-4">
+    <div className="mt-4" style={tint(accent)}>
       {/* Header with Comments title */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <span className={`w-1.5 h-1.5 shrink-0 ${ACCENT[accent].dot}`} />
-        <span className={`text-[10px] uppercase tracking-widest font-bold shrink-0 ${ACCENT[accent].text}`}>Comments</span>
+        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-(--c)" />
+        <span className="font-dot text-[10px] uppercase tracking-widest shrink-0 text-(--c)">Comments</span>
         <span className="flex-1 border-t border-dashed border-border min-w-[20px]" />
       </div>
 
       {/* Main post input box with max character limits & indicators */}
-      <div className={`p-2.5 bg-surface border-l-2 ${ACCENT[accent].border}`}>
+      <div className="p-2.5 rounded-xl border border-tile">
         <div className="flex flex-col sm:flex-row gap-1.5">
           <div className="relative w-full sm:w-28 shrink-0">
             <input
@@ -350,9 +295,9 @@ export function CommentThread({
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="Nickname"
-              className="w-full bg-bg border border-border text-heading text-[11.5px] px-1.5 pt-1.5 pb-5 placeholder:text-dim focus:outline-none focus:border-current"
+              className={`${INPUT} text-[11.5px] px-2 pt-1.5 pb-5`}
             />
-            <span className="absolute right-1 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
+            <span className="absolute right-1.5 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
               {nickname.length}/{MAX_NICKNAME_LENGTH}
             </span>
           </div>
@@ -362,23 +307,23 @@ export function CommentThread({
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Say something about this one..."
-              className="w-full bg-bg border border-border text-heading text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none placeholder:text-dim focus:outline-none focus:border-current"
+              className={`${INPUT} text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none`}
             />
-            <span className="absolute right-1.5 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
+            <span className="absolute right-2 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
               {body.length}/{MAX_BODY_LENGTH}
             </span>
           </div>
         </div>
         <div className="flex justify-between items-center mt-1.5">
-          <span className="text-[10px] text-dim/70">
+          <span className="font-dot text-[10px] text-dim">
             {MAX_BODY_LENGTH - body.length} characters left
           </span>
           <button
             onClick={() => post(null, nickname, body, () => setBody(''))}
             disabled={!supabase || onCooldown || !nickname.trim() || !body.trim()}
-            className={`text-[11px] font-bold px-3 py-1 border ${ACCENT[accent].actionBtn} disabled:opacity-40 disabled:cursor-not-allowed transition-colors`}
+            className="btn disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            post
+            Post
           </button>
         </div>
       </div>
@@ -390,7 +335,7 @@ export function CommentThread({
         </div>
       </div>
 
-      {!supabase && <p className="text-[10.5px] text-dim mt-2">comments open once the backend is live</p>}
+      {!supabase && <p className="font-dot text-[10.5px] text-dim mt-2">comments open once the backend is live</p>}
     </div>
   );
 }
