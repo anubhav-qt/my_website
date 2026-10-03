@@ -136,7 +136,8 @@ export default function Projects() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const projects = PROJECTS;
-  const building = CURRENTLY_MAKING[FEATURED_IDS[0]]!;
+  const [buildingId, setBuildingId] = useState<(typeof FEATURED_IDS)[number]>(FEATURED_IDS[0]);
+  const building = CURRENTLY_MAKING[buildingId];
 
   // Every featured project expands inline. Everything else is a single static
   // line, no expand, no page.
@@ -156,25 +157,40 @@ export default function Projects() {
   return (
     <div className="pb-12">
       <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className="font-dot text-dim text-[11px] uppercase tracking-widest shrink-0">Currently Building</span>
+        {/* Not shrink-0 like the other labels: it's too long for a 240px screen, so it wraps there. */}
+        <span className="font-dot text-dim text-[11px] uppercase tracking-widest">Building / Upgrading / Maintaining</span>
         <span className="hidden sm:block flex-1 border-t border-dashed border-border min-w-[20px]" />
+        {/* The same rounded-rectangle toggles as the scratchpad filters, one per home page featured project. */}
+        <div role="tablist" aria-label="Featured projects" className="flex flex-wrap gap-1">
+          {FEATURED_IDS.map((id) => {
+            const isActive = buildingId === id;
+            return (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls="building-card"
+                onClick={() => setBuildingId(id)}
+                className={`font-dot text-[11px] px-2.5 py-1.5 rounded-lg border transition-colors duration-200 cursor-pointer ${
+                  isActive ? 'border-heading bg-heading text-bg' : 'border-tile text-dim hover:text-heading hover:border-tile-hover'
+                }`}
+              >
+                {CURRENTLY_MAKING[id].title}
+              </button>
+            );
+          })}
+        </div>
       </div>
       <div
-        style={tint(projectAccent(FEATURED_IDS[0]))}
-        className="tile relative flex flex-col sm:flex-row gap-4 sm:items-center px-4 py-3.5 mb-10"
+        id="building-card"
+        role="tabpanel"
+        style={tint(projectAccent(buildingId))}
+        className="tile relative px-4 py-3.5 mb-10"
       >
-        <div className="w-24 sm:w-32 shrink-0 flex flex-col gap-2">
-          <div className="aspect-video rounded-lg border border-tile p-1 flex gap-1 items-stretch">
-            <div className="aspect-square h-full shrink-0 rounded-md border border-tile flex items-center justify-center">
-              <div className="w-9 h-9 rounded-full border-2 border-(--c)" />
-            </div>
-            <div className="flex-1 flex flex-col gap-1">
-              <div className="flex-1 rounded-sm bg-surface" />
-              <div className="flex-1 rounded-sm bg-surface" />
-            </div>
-          </div>
+        <p className="font-title text-heading text-[1.35rem] leading-none">{building.title}</p>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
           {building.progress !== undefined ? (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 w-28">
               <div className="flex-1 h-1 rounded-full bg-border overflow-hidden">
                 <div className="h-full bg-(--c)" style={{ width: `${building.progress}%` }} />
               </div>
@@ -183,26 +199,21 @@ export default function Projects() {
           ) : (
             building.status && <span className="font-dot text-(--c) text-[11px] leading-snug">{building.status}</span>
           )}
+          {building.tags.map((t) => (
+            <Link
+              key={t.label}
+              to={t.href}
+              className="font-dot text-heading text-[11px] underline underline-offset-4 decoration-(--c) hover:opacity-70 transition-opacity"
+            >
+              {t.label}
+            </Link>
+          ))}
         </div>
-        <div className="relative min-w-0">
-          <p className="font-title text-heading text-[1.35rem] leading-none">{building.title}</p>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
-            {building.tags.map((t) => (
-              <Link
-                key={t.label}
-                to={t.href}
-                className="font-dot text-heading text-[11px] underline underline-offset-4 decoration-(--c) hover:opacity-70 transition-opacity"
-              >
-                {t.label}
-              </Link>
-            ))}
-          </div>
-          <p className="text-xs text-body leading-relaxed mt-1.5">
-            {building.description}
-            <span className="text-(--c)">{building.highlight}</span>
-            {building.descriptionEnd}
-          </p>
-        </div>
+        <p className="text-xs text-body leading-relaxed mt-1.5">
+          {building.description}
+          <span className="text-(--c)">{building.highlight}</span>
+          {building.descriptionEnd}
+        </p>
       </div>
 
       <section className="mb-10">

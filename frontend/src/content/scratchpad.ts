@@ -35,7 +35,7 @@ export const WRITEUPS: WriteupEntry[] = [
     "id": "paribelle-family-business",
     "slug": "i-built-the-software-for-my-familys-business",
     "title": "I Built the Software for My Family's Business",
-    "dek": "My family's business was running on WhatsApp and calls. So I built it a storefront, POM and Seelie.",
+    "dek": "How I replaced INR 40K+ annual SaaS bills for my family business with a self-hosted ecosystem.",
     "date": "03/10/2026",
     "tags": [
       "paribelle",

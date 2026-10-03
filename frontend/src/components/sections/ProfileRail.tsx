@@ -91,39 +91,9 @@ const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: strin
   Expo: SiExpo,
 };
 
-function projectsUsing(item: string) {
-  const needle = item.toLowerCase();
-  return PROJECTS.filter((p) =>
-    p.tech.some((t) => {
-      const tLower = t.toLowerCase();
-      if (needle.includes('python') && tLower.includes('python')) return true;
-      if (needle.includes('clickhouse') && tLower.includes('clickhouse')) return true;
-      if (needle.includes('postgresql') && (tLower.includes('postgresql') || tLower.includes('postgres'))) return true;
-      if (needle.includes('pgvector') && tLower.includes('pgvector')) return true;
-      if (needle.includes('pinecone') && tLower.includes('pinecone')) return true;
-      if (needle.includes('langchain') && tLower.includes('langchain')) return true;
-      if (needle.includes('kubernetes') && tLower.includes('kubernetes')) return true;
-      if (needle === 'aws' && (tLower.includes('aws') || tLower.includes('amazon'))) return true;
-      // Too short to substring-match: "age" sits inside "Cloudflare Pages", "image", "storage".
-      if (needle === 'age') return tLower === 'age';
-      if (needle.includes('agent builder') && tLower.includes('agent builder')) return true;
-      if (needle.includes('mcp') && tLower.includes('mcp')) return true;
-      if (needle.includes('next.js') && tLower.includes('next.js')) return true;
-      if (needle.includes('docker') && tLower.includes('docker')) return true;
-      if (needle.includes('redis') && tLower.includes('redis')) return true;
-      if (needle.includes('fastapi') && tLower.includes('fastapi')) return true;
-      if (needle.includes('pytorch') && tLower.includes('pytorch')) return true;
-      if (needle.includes('langgraph') && tLower.includes('langgraph')) return true;
-      if (needle.includes('react native') && tLower.includes('react native')) return true;
-      if (needle.includes('google cloud') && (tLower.includes('gcp') || tLower.includes('google cloud'))) return true;
-      return tLower.includes(needle) || needle.includes(tLower);
-    })
-  );
-}
-
 const STACK_HINT_SEEN_KEY = 'stack-hint-seen';
 
-function StackPanel() {
+function StackPanel({ onOpenCareer }: { onOpenCareer: (id: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   // main.tsx uses createRoot (not hydrateRoot) -- the client fully replaces
   // the prerendered static HTML in one synchronous commit, it never
@@ -134,7 +104,7 @@ function StackPanel() {
   // bakes in a hint that most real visitors have already dismissed; see
   // scripts/prerender.mjs.)
   const [hintSeen, setHintSeen] = useState(() => localStorage.getItem(STACK_HINT_SEEN_KEY) === '1');
-  const matches = selected ? projectsUsing(selected) : [];
+  const usedIn = STACK_GROUPS.flatMap((g) => g.items).find((i) => i.name === selected)?.usedIn ?? [];
   const usedInRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -159,9 +129,9 @@ function StackPanel() {
                 <span className="font-dot text-[12px] leading-tight">{group.label}</span>
               </div>
               <div className="flex flex-wrap gap-1 flex-1 min-w-0">
-                {group.items.map((s) => {
+                {group.items.map(({ name: s, usedIn: where }) => {
                   const isSelected = selected === s;
-                  const hasMatches = projectsUsing(s).length > 0;
+                  const hasMatches = where.length > 0;
                   const Icon = TECH_ICON[s];
                   return (
                     <button
@@ -194,14 +164,26 @@ function StackPanel() {
 
       {selected && (
         <div ref={usedInRef} className="mt-3 pt-2.5 border-t border-dashed border-border text-[12px]">
-          {matches.length > 0 ? (
+          {usedIn.length > 0 ? (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-dim">used in:</span>
-              {matches.map((p) => (
-                <Link key={p.id} to={p.id === 'spoin' ? '/projects/spoin' : `/projects#${p.id}`} className="text-heading font-semibold underline-offset-4 hover:underline">
-                  → {p.title.split(':')[0]}
-                </Link>
-              ))}
+              {usedIn.map((id) => {
+                // Work that isn't a project on the site opens its card in the career tab.
+                const career = EXPERIENCE.find((e) => `career-${e.id}` === id);
+                if (career) {
+                  return (
+                    <button key={id} onClick={() => onOpenCareer(career.id)} className="text-heading font-semibold underline-offset-4 hover:underline cursor-pointer">
+                      → {career.company}
+                    </button>
+                  );
+                }
+                const p = PROJECTS.find((proj) => proj.id === id)!;
+                return (
+                  <Link key={id} to={p.id === 'spoin' ? '/projects/spoin' : `/projects#${p.id}`} className="text-heading font-semibold underline-offset-4 hover:underline">
+                    → {p.title.split(':')[0]}
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <span className="text-dim">not shipped anywhere yet.</span>
@@ -283,9 +265,7 @@ function CareerItem({
   );
 }
 
-function CareerPanel() {
-  const [selected, setSelected] = useState<string | null>(null);
-
+function CareerPanel({ selected, setSelected }: { selected: string | null; setSelected: (id: string | null) => void }) {
   return (
     <div className="flex flex-col gap-2">
       {EXPERIENCE.map((e) => (
@@ -328,6 +308,14 @@ function EducationPanel() {
 
 export function ProfileRail() {
   const [tab, setTab] = useState<Tab>('stack');
+  // Lives up here so a "used in" link on the stack tab can open a career entry.
+  const [career, setCareer] = useState<string | null>(null);
+
+  function openCareer(id: string) {
+    setTab('career');
+    setCareer(id);
+    requestAnimationFrame(() => document.getElementById(`career-${id}`)?.scrollIntoView({ block: 'nearest' }));
+  }
 
   return (
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 sm:min-h-56">
@@ -350,9 +338,10 @@ export function ProfileRail() {
         })}
       </div>
 
-      <div className="flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 h-[347px] overflow-y-auto">
-        {tab === 'stack' && <StackPanel />}
-        {tab === 'career' && <CareerPanel />}
+      {/* Narrow widths stack this under the tab row, whose border-b already draws the line between them. */}
+      <div className="flex-1 min-w-0 sm:border-l border-border pt-2.5 sm:pt-0 sm:pl-5 pr-1 h-[347px] overflow-y-auto">
+        {tab === 'stack' && <StackPanel onOpenCareer={openCareer} />}
+        {tab === 'career' && <CareerPanel selected={career} setSelected={setCareer} />}
         {tab === 'education' && <EducationPanel />}
       </div>
     </div>

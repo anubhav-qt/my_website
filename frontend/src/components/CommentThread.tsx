@@ -10,6 +10,9 @@ import type { Comment, TargetType } from '@/lib/backend-types';
 // post button stay black and white like the rest of the interface.
 const INPUT =
   'w-full bg-bg border border-tile rounded-lg text-heading placeholder:text-dim focus:outline-none focus:border-tile-hover';
+// One line of text plus padding. Shared by both fields so they line up at one
+// line, and by the comment box's sizer so it measures exactly what it mirrors.
+const FIELD = 'px-2 py-1.5 leading-[20px]';
 
 const MAX_NICKNAME_LENGTH = 50;
 const MAX_BODY_LENGTH = 2000;
@@ -66,6 +69,76 @@ async function fetchComments(targetType: TargetType, targetId: string): Promise<
 
 const POST_COOLDOWN_MS = 15_000;
 
+// The nickname and comment fields with the post button under them. The comment
+// box starts at one line and grows with the text instead of scrolling: it sits
+// in a grid cell with an invisible copy of its own text, and the cell takes the
+// copy's height. Pure CSS, so no measuring, which the page zoom would skew.
+function Composer({
+  nickname,
+  onNickname,
+  body,
+  onBody,
+  placeholder,
+  submitLabel,
+  disabled,
+  onSubmit,
+  className,
+}: {
+  nickname: string;
+  onNickname: (v: string) => void;
+  body: string;
+  onBody: (v: string) => void;
+  placeholder: string;
+  submitLabel: string;
+  disabled: boolean;
+  onSubmit: () => void;
+  className: string;
+}) {
+  // The note under the boxes counts down for whichever one was focused last.
+  const [focused, setFocused] = useState<'nickname' | 'body'>('body');
+  const left = focused === 'nickname' ? MAX_NICKNAME_LENGTH - nickname.length : MAX_BODY_LENGTH - body.length;
+
+  return (
+    <div className={`rounded-xl border border-tile ${className}`}>
+      <div className="flex flex-col sm:flex-row sm:items-start gap-1.5">
+        <input
+          type="text"
+          maxLength={MAX_NICKNAME_LENGTH}
+          value={nickname}
+          onChange={(e) => onNickname(e.target.value)}
+          onFocus={() => setFocused('nickname')}
+          placeholder="Nickname"
+          className={`${INPUT} ${FIELD} text-[11.5px] sm:w-28 shrink-0`}
+        />
+        <div className="grid flex-1 min-w-0">
+          <span
+            aria-hidden="true"
+            className={`${FIELD} invisible border border-transparent text-xs whitespace-pre-wrap break-words [grid-area:1/1]`}
+          >
+            {/* The trailing space keeps a final empty line from collapsing. */}
+            {(body || placeholder) + ' '}
+          </span>
+          <textarea
+            rows={1}
+            maxLength={MAX_BODY_LENGTH}
+            value={body}
+            onChange={(e) => onBody(e.target.value)}
+            onFocus={() => setFocused('body')}
+            placeholder={placeholder}
+            className={`${INPUT} ${FIELD} text-xs resize-none overflow-hidden [grid-area:1/1]`}
+          />
+        </div>
+      </div>
+      <div className="flex justify-between items-center gap-2 mt-1.5">
+        <span className="font-dot text-[10px] text-dim">{left} characters left</span>
+        <button onClick={onSubmit} disabled={disabled} className="btn disabled:opacity-40 disabled:cursor-not-allowed">
+          {submitLabel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function CommentThread({
   targetType,
   targetId,
@@ -82,7 +155,8 @@ export function CommentThread({
 
   const [nickname, setNickname] = useState('');
   const [body, setBody] = useState('');
-  const [lastPostedAt, setLastPostedAt] = useState(0);
+  // Set on a successful post and cleared by a timer, so the buttons come back on their own.
+  const [onCooldown, setOnCooldown] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyNickname, setReplyNickname] = useState('');
   const [replyBody, setReplyBody] = useState('');
@@ -92,8 +166,6 @@ export function CommentThread({
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
 
   const tree = useMemo(() => buildTree(comments ?? []), [comments]);
-
-  const onCooldown = Date.now() - lastPostedAt < POST_COOLDOWN_MS;
 
   function toggleNodeExpansion(nodeId: string, defaultCollapsed: boolean) {
     if (defaultCollapsed) {
@@ -136,7 +208,8 @@ export function CommentThread({
       body: rawBody,
     });
     if (!error) {
-      setLastPostedAt(Date.now());
+      setOnCooldown(true);
+      setTimeout(() => setOnCooldown(false), POST_COOLDOWN_MS);
       onDone();
       refetchComments();
     }
@@ -193,49 +266,22 @@ export function CommentThread({
         </div>
 
         {replyingTo === node.id && (
-          <div className="mt-2 p-2 rounded-xl border border-tile max-w-xl">
-            <div className="flex flex-col sm:flex-row gap-1.5">
-              <div className="relative w-full sm:w-28 shrink-0">
-                <input
-                  type="text"
-                  maxLength={MAX_NICKNAME_LENGTH}
-                  value={activeReplyNick}
-                  onChange={(e) => setReplyNickname(e.target.value)}
-                  placeholder="Nickname"
-                  className={`${INPUT} text-[11.5px] px-2 pt-1.5 pb-5`}
-                />
-                <span className="absolute right-1.5 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
-                  {activeReplyNick.length}/{MAX_NICKNAME_LENGTH}
-                </span>
-              </div>
-              <div className="relative flex-1 min-w-0">
-                <textarea
-                  maxLength={MAX_BODY_LENGTH}
-                  value={replyBody}
-                  onChange={(e) => setReplyBody(e.target.value)}
-                  placeholder="Reply..."
-                  className={`${INPUT} text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none`}
-                />
-                <span className="absolute right-2 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
-                  {replyBody.length}/{MAX_BODY_LENGTH}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 items-center mt-1.5">
-              <button
-                onClick={() =>
-                  post(node.id, activeReplyNick, replyBody, () => {
-                    setReplyBody('');
-                    setReplyingTo(null);
-                  })
-                }
-                disabled={onCooldown || !activeReplyNick.trim() || !replyBody.trim()}
-                className="btn disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Reply
-              </button>
-            </div>
-          </div>
+          <Composer
+            nickname={activeReplyNick}
+            onNickname={setReplyNickname}
+            body={replyBody}
+            onBody={setReplyBody}
+            placeholder="Reply..."
+            submitLabel="Reply"
+            disabled={onCooldown || !activeReplyNick.trim() || !replyBody.trim()}
+            onSubmit={() =>
+              post(node.id, activeReplyNick, replyBody, () => {
+                setReplyBody('');
+                setReplyingTo(null);
+              })
+            }
+            className="mt-2 p-2 max-w-xl"
+          />
         )}
 
         {/* Children replies handling */}
@@ -285,48 +331,17 @@ export function CommentThread({
         <span className="flex-1 border-t border-dashed border-border min-w-[20px]" />
       </div>
 
-      {/* Main post input box with max character limits & indicators */}
-      <div className="p-2.5 rounded-xl border border-tile">
-        <div className="flex flex-col sm:flex-row gap-1.5">
-          <div className="relative w-full sm:w-28 shrink-0">
-            <input
-              type="text"
-              maxLength={MAX_NICKNAME_LENGTH}
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="Nickname"
-              className={`${INPUT} text-[11.5px] px-2 pt-1.5 pb-5`}
-            />
-            <span className="absolute right-1.5 bottom-1.5 text-[9px] text-dim/60 pointer-events-none">
-              {nickname.length}/{MAX_NICKNAME_LENGTH}
-            </span>
-          </div>
-          <div className="relative flex-1 min-w-0">
-            <textarea
-              maxLength={MAX_BODY_LENGTH}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Say something about this one..."
-              className={`${INPUT} text-xs px-2 pt-1.5 pb-5 h-[58px] sm:h-[48px] resize-none`}
-            />
-            <span className="absolute right-2 bottom-1.5 text-[9.5px] text-dim/60 pointer-events-none">
-              {body.length}/{MAX_BODY_LENGTH}
-            </span>
-          </div>
-        </div>
-        <div className="flex justify-between items-center mt-1.5">
-          <span className="font-dot text-[10px] text-dim">
-            {MAX_BODY_LENGTH - body.length} characters left
-          </span>
-          <button
-            onClick={() => post(null, nickname, body, () => setBody(''))}
-            disabled={!supabase || onCooldown || !nickname.trim() || !body.trim()}
-            className="btn disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Post
-          </button>
-        </div>
-      </div>
+      <Composer
+        nickname={nickname}
+        onNickname={setNickname}
+        body={body}
+        onBody={setBody}
+        placeholder="Say something about this one..."
+        submitLabel="Post"
+        disabled={!supabase || onCooldown || !nickname.trim() || !body.trim()}
+        onSubmit={() => post(null, nickname, body, () => setBody(''))}
+        className="p-2.5"
+      />
 
       {/* Endless reply chain container with horizontal & vertical scroll */}
       <div className="mt-2 overflow-x-auto overflow-y-visible pb-2 max-w-full">

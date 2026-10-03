@@ -11,8 +11,8 @@ export const PROFILE = {
   resume: '/resume.pdf',
 };
 
-// Home's featured cards, in this order. The first one is also the
-// "Currently Building" card at the top of /projects.
+// Home's featured cards, in this order. Each one also gets a tab on the
+// card at the top of /projects, and the first is the one it opens on.
 export const FEATURED_IDS = ['paribelle', 'breader', 'spoin'] as const;
 
 export interface CurrentlyMaking {
@@ -26,10 +26,9 @@ export interface CurrentlyMaking {
   tags: { label: string; href: string }[];
 }
 
-export const CURRENTLY_MAKING: Partial<Record<(typeof FEATURED_IDS)[number], CurrentlyMaking>> = {
+export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], CurrentlyMaking> = {
   paribelle: {
     title: 'PariBelle Ecosystem',
-    status: 'Built, Upgrading and Maintaining',
     description: 'Live on paribelle.in since July 2026, with POM and Seelie running next to it. I keep ',
     highlight: 'adding things as the business needs them',
     descriptionEnd: '.',
@@ -37,13 +36,37 @@ export const CURRENTLY_MAKING: Partial<Record<(typeof FEATURED_IDS)[number], Cur
       { label: 'writeup', href: '/scratchpad/i-built-the-software-for-my-familys-business' },
     ],
   },
+  breader: {
+    title: 'Breader',
+    status: 'Live since 26th September 2026',
+    description: 'An immersive web-first e-reader PWA. ',
+    highlight: 'Free and open source',
+    descriptionEnd: '.',
+    tags: [{ label: 'writeup', href: '/scratchpad/homelabbing-journey-begins' }],
+  },
+  spoin: {
+    title: 'Spoin',
+    status: 'Paused for now',
+    description: 'Spoin is a scrollable feed of cards with bite-sized knowledge, ',
+    highlight: 'for topics you want to learn',
+    descriptionEnd: '.',
+    tags: [{ label: 'writeup', href: '/scratchpad/i-lost-to-gemini-fuck-you' }],
+  },
 };
+
+export interface StackItem {
+  name: string;
+  // Where it's actually used, checked against the repos: project ids from
+  // projects.ts, or `career-` plus an EXPERIENCE id below for work that isn't
+  // a project on the site (the same id the career card carries on the page).
+  usedIn: string[];
+}
 
 export interface StackGroup {
   label: string;
   icon: 'code' | 'server' | 'brain' | 'device' | 'cloud';
   accent: Accent;
-  items: string[];
+  items: StackItem[];
 }
 
 export const STACK_GROUPS: StackGroup[] = [
@@ -51,31 +74,63 @@ export const STACK_GROUPS: StackGroup[] = [
     label: 'Languages',
     icon: 'code',
     accent: 'sky',
-    items: ['Python', 'TypeScript', 'Rust'],
+    items: [
+      { name: 'Python', usedIn: ['anchorate', 'spoin', 'career-pde', 'career-freelance'] },
+      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'trotter', 'career-freelance'] },
+      { name: 'Rust', usedIn: ['trippinator'] },
+    ],
   },
   {
     label: 'Backend & AI',
     icon: 'brain',
     accent: 'lilac',
-    items: ['FastAPI', 'NestJS', 'LangGraph', 'SQLAlchemy', 'TypeORM', 'OpenCV', 'PyTorch'],
+    items: [
+      { name: 'FastAPI', usedIn: ['anchorate', 'spoin', 'career-freelance'] },
+      { name: 'NestJS', usedIn: ['paribelle'] },
+      { name: 'LangGraph', usedIn: ['anchorate', 'spoin'] },
+      { name: 'SQLAlchemy', usedIn: ['anchorate', 'spoin', 'career-freelance'] },
+      { name: 'TypeORM', usedIn: ['paribelle'] },
+      { name: 'OpenCV', usedIn: ['anchorate', 'career-pde'] },
+      { name: 'PyTorch', usedIn: ['anchorate', 'career-pde'] },
+    ],
   },
   {
     label: 'Data',
     icon: 'server',
     accent: 'green',
-    items: ['PostgreSQL', 'PgBouncer', 'pgvector', 'Redis', 'Pinecone'],
+    items: [
+      { name: 'PostgreSQL', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-freelance'] },
+      { name: 'PgBouncer', usedIn: ['anchorate'] },
+      { name: 'pgvector', usedIn: ['paribelle', 'spoin', 'anchorate'] },
+      { name: 'Redis', usedIn: ['paribelle', 'anchorate'] },
+      { name: 'Pinecone', usedIn: ['anchorate'] },
+    ],
   },
   {
     label: 'Infrastructure',
     icon: 'cloud',
     accent: 'ochre',
-    items: ['AWS', 'Docker', 'Docker Compose', 'Kubernetes', 'Linux', 'Caddy', 'cloudflared', 'age'],
+    items: [
+      { name: 'AWS', usedIn: ['anchorate'] },
+      { name: 'Docker', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
+      { name: 'Docker Compose', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
+      { name: 'Kubernetes', usedIn: ['anchorate'] },
+      { name: 'Linux', usedIn: ['paribelle', 'breader'] },
+      { name: 'Caddy', usedIn: ['paribelle', 'career-freelance'] },
+      { name: 'cloudflared', usedIn: ['paribelle', 'breader', 'career-freelance'] },
+      { name: 'age', usedIn: ['paribelle', 'breader'] },
+    ],
   },
   {
     label: 'Frontend',
     icon: 'device',
     accent: 'rose',
-    items: ['Next.js', 'React', 'React Native', 'Tailwind CSS'],
+    items: [
+      { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'trotter', 'career-freelance'] },
+      { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'trotter', 'career-freelance'] },
+      { name: 'React Native', usedIn: ['career-freelance'] },
+      { name: 'Tailwind CSS', usedIn: ['paribelle', 'trotter', 'career-freelance'] },
+    ],
   },
 ];
 

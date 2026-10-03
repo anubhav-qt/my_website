@@ -34,7 +34,7 @@ const CHANNELS = [
 
 const CONTEXT = [
   { label: 'Timezone', value: 'IST, UTC+5:30', accent: 'sky' as const },
-  { label: 'Open to', value: 'Backend, AI Infrastructure, and Systems Engineering', accent: 'green' as const },
+  { label: 'Open to', value: 'Freelancing and Software Engineering roles', accent: 'green' as const },
 ];
 
 export default function Contact() {
