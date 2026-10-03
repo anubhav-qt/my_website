@@ -45,7 +45,7 @@ const TEXT = {
 export default function Contact() {
   useSEO({
     title: 'Contact',
-    description: `Get in touch with ${PROFILE.name}, open to Backend, AI Infrastructure, and Systems Engineering roles.`,
+    description: `Get in touch with ${PROFILE.name}, open to freelancing.`,
     path: '/contact',
   });
 

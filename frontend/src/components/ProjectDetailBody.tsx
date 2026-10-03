@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import type { ProjectItem } from '@/content/projects';
 
 // Shared between the inline Spoin accordion on /projects and the standalone
@@ -30,6 +30,23 @@ export function ProjectDetailBody({ p, isCaseStudy = false }: { p: ProjectItem; 
             {p.writeup.title}
             <ChevronRight size={12} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
+        </div>
+      )}
+
+      {p.links && p.links.length > 0 && (
+        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+          {p.links.map((l) => (
+            <a
+              key={l.url}
+              href={l.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 text-amber text-xs font-bold hover:text-heading transition-colors"
+            >
+              {l.label}
+              <ArrowUpRight size={11} />
+            </a>
+          ))}
         </div>
       )}
 

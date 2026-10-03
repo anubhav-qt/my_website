@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, ChevronDown, ChevronRight } from 'lucide-react';
+import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, Lock, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   SiPython,
   SiTypescript,
@@ -20,6 +20,15 @@ import {
   SiCockroachlabs,
   SiLangchain,
   SiKubernetes,
+  SiRust,
+  SiNestjs,
+  SiSqlalchemy,
+  SiTypeorm,
+  SiOpencv,
+  SiLinux,
+  SiCaddy,
+  SiCloudflare,
+  SiTailwindcss,
 } from '@icons-pack/react-simple-icons';
 import { STACK_GROUPS, EXPERIENCE, EDUCATION, type Accent, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
@@ -37,6 +46,19 @@ const TABS: { id: Tab; label: string }[] = [
 const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   Python: SiPython,
   TypeScript: SiTypescript,
+  Rust: SiRust,
+  NestJS: SiNestjs,
+  SQLAlchemy: SiSqlalchemy,
+  TypeORM: SiTypeorm,
+  OpenCV: SiOpencv,
+  PgBouncer: Database,
+  'Docker Compose': SiDocker,
+  Linux: SiLinux,
+  Caddy: SiCaddy,
+  cloudflared: SiCloudflare,
+  age: Lock,
+  React: SiReact,
+  'Tailwind CSS': SiTailwindcss,
   'SQL (PostgreSQL / ClickHouse)': Database,
   FastAPI: SiFastapi,
   PyTorch: SiPytorch,
@@ -89,6 +111,8 @@ function projectsUsing(item: string) {
       if (needle.includes('langchain') && tLower.includes('langchain')) return true;
       if (needle.includes('kubernetes') && tLower.includes('kubernetes')) return true;
       if (needle === 'aws' && (tLower.includes('aws') || tLower.includes('amazon'))) return true;
+      // Too short to substring-match: "age" sits inside "Cloudflare Pages", "image", "storage".
+      if (needle === 'age') return tLower === 'age';
       if (needle.includes('agent builder') && tLower.includes('agent builder')) return true;
       if (needle.includes('mcp') && tLower.includes('mcp')) return true;
       if (needle.includes('next.js') && tLower.includes('next.js')) return true;
@@ -243,15 +267,17 @@ function CareerItem({
               </p>
             ))}
           </div>
-          {/* The long first-person account of both jobs lives in one scratchpad
-              writeup. The home page keeps the brief and links out to it. */}
-          <Link
-            to="/scratchpad/my-professional-journey-till-now"
-            className="inline-flex items-center gap-1 text-amber text-[11px] font-bold hover:text-heading transition-colors mt-2"
-          >
-            Read the full story
-            <ChevronRight size={11} />
-          </Link>
+          {/* The long first-person account lives in a scratchpad writeup. The
+              home page keeps the brief and links out to it, where one exists. */}
+          {entry.story && (
+            <Link
+              to={entry.story}
+              className="inline-flex items-center gap-1 text-amber text-[11px] font-bold hover:text-heading transition-colors mt-2"
+            >
+              Read the full story
+              <ChevronRight size={11} />
+            </Link>
+          )}
 
           <CommentThread targetType="project" targetId={targetId} accent="amber" />
         </div>

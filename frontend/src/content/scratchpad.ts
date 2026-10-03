@@ -32,11 +32,78 @@ export interface LinkEntry {
 
 export const WRITEUPS: WriteupEntry[] = [
   {
+    "id": "paribelle-family-business",
+    "slug": "i-built-the-software-for-my-familys-business",
+    "title": "I Built the Software for My Family's Business",
+    "dek": "My family's business was running on WhatsApp and calls. So I built it a storefront, POM and Seelie.",
+    "date": "03/10/2026",
+    "tags": [
+      "paribelle",
+      "pom",
+      "seelie",
+      "family"
+    ],
+    "readTime": "4 min",
+    "body": [
+      "PariBelle is my family's fashion business.",
+      "We mostly sell women's clothing, kurtis, coord sets and stuff like that. There's a physical store, and a lot of the business around it was handled manually through WhatsApp, calls, etc. There wasn't any proper software running the whole thing.",
+      "So I decided to build it.",
+      "Not on Shopify. I wanted the software to fit the business instead of forcing the business into whatever Shopify gives you. And I just wanted to build the systems myself.",
+      "That was the dangerous part, because once I built one thing, there were more and more things where having our own system just made more sense lol.",
+      "I started before July and went pretty deep pretty quickly. By July, paribelle.in was live and taking real orders.",
+      "The first version was basic. A storefront, and the core backend you need to sell stuff. That's it.",
+      "Then real people started ordering, and stuff showed up that never showed up while I was building it. Some of it was stupid edge cases that never occurred to me. Some of it was more serious, around inventory, order state and payments. A lot of the backend got hardened because of those.",
+      "Since then it's grown a lot. Payments, inventory, GST/HSN, invoices, customer stuff, admin operations, exchanges, notifications, and a bunch of other things that only become obvious once real orders start happening. I never sat down and decided to build 50 features. Each one got built because we needed it.",
+      "One thing I did think about early was the data model. It's one family business, but I didn't want the database to assume there will only ever be one seller, because that would make expanding it later annoying. So it can handle multiple vendors, even though right now there's one.",
+      "Then there's POM.",
+      "The storefront is for customers, and the normal admin side manages the commerce system. POM is the operations side. It pulls in orders from paribelle.in, Amazon, Meesho and Flipkart, and handles the warehouse work, stock, reports, invoices and profit, basically everything that happens after someone places an order. It's its own app because it's doing a different job, and because I didn't want one giant app turning into a giant fucking admin dashboard.",
+      "My family and I use POM every day. It was pretty funny seeing my family run the business on stuff I wrote. There was a getting-used-to-it phase, but once the useful parts were there it was way easier than doing everything manually.",
+      "They loved it. They kept getting more impressed with every feature I added, like the downloadable profit report, or the reels POM makes on its own.",
+      "Then I added Seelie, and their amazement knew no bounds lol.",
+      "Seelie is an AI agent for the shop. There were enough repetitive things happening around the business that I didn't want every one of them to need me doing it manually. So now Seelie helps with shop operations, product photos and videos, Instagram and Meta ads, and routines and memories. It's only been in POM since 2nd October, so it's very new.",
+      "On 27th September I moved the whole thing onto my ThinkPad.",
+      "It was already running my other stuff, and I realized I could just run PariBelle myself too. I wasn't paying for hosting before, it was all free tier, but I might have had to if it grew. Not anymore haha. I also wanted more control, and it got a lot faster in a lot of places.",
+      "So my ThinkPad now runs production software, not just random homelab experiments lol. I wrote about the setup in Homelabbing journey begins!",
+      "I'm also exploring whether the same system can run other storefronts too.",
+      "So yeah."
+    ],
+    "audience": "non-technical"
+  },
+  {
+    "id": "homelabbing-journey-begins",
+    "slug": "homelabbing-journey-begins",
+    "title": "Homelabbing journey begins!",
+    "dek": "In August I said I wanted to turn my ThinkPad into a little server. Now it runs Breader and my family's store.",
+    "date": "03/10/2026",
+    "tags": [
+      "homelab",
+      "infra",
+      "breader",
+      "paribelle"
+    ],
+    "readTime": "3 min",
+    "body": [
+      "Back in August I wrote that I was thinking about getting into homelabbing, turning my ThinkPad into a little server and splitting it into a bunch of virtual machines. \"No real end goal yet, I just think it would be pretty fun to set up.\"",
+      "Well, I did it. Mostly.",
+      "I skipped the VMs. Once I started setting things up, Docker made way more sense for what I was doing. I didn't need full separate operating systems for these services, so I just went straight with Docker.",
+      "It's my ThinkPad running Arch Linux. It's always on now, lid shut. If the power goes, it goes with it lol. No UPS setup yet.",
+      "The two things on it I care about here are Breader and PariBelle. Breader went live on it on 26th September, and PariBelle moved onto it the day after.",
+      "Cloudflare Tunnel is how the outside world reaches the laptop. For PariBelle, a Cloudflare Worker sends requests through the tunnel to a Caddy gate in front of the apps.",
+      "Both apps have somewhere to go when the laptop is off. Breader switches to a free Render server. PariBelle falls back to Vercel, Render and Supabase.",
+      "The funny part is that the two apps do it in opposite directions. Breader already had Supabase as its main database, so Supabase stays the source of truth and the ThinkPad keeps a live copy it can take over with. PariBelle was built around the ThinkPad being the main system, so the ThinkPad's Postgres is the main copy and it syncs back to Supabase. No deep reason. They just evolved differently.",
+      "Backups get encrypted and go to Cloudflare R2, Breader's with age. A Healthchecks heartbeat tells me if something stops.",
+      "Everything is on free plans. The domains are the only thing I'm paying for.",
+      "One of the things running on that \"pretty fun to set up\" ThinkPad now takes real orders for my family's business lol.",
+      "So yeah."
+    ],
+    "audience": "technical"
+  },
+  {
     "title": "I Lost to Gemini. Fuck You.",
     "dek": "I started with Gemini generating cards from “trust me bro.” Then it pissed me off enough that I rebuilt Spoin so the model stopped being the system.",
     "date": "12/09/2026",
     "tags": [
-      "spoi",
+      "spoin",
       "llm",
       "systems",
       "rag",
@@ -211,7 +278,7 @@ export const WRITEUPS: WriteupEntry[] = [
       "It is still a PyPI SDK package on pip (pip install anchor8) and importing it in your agentic workflows is pretty easy: just 3 lines of code of importing and adding the decorator on top of the agent you wanna secure. It can be used for both LangChain and standalone agents, with more frameworks to be added later if this project was continued.",
       "The main problem we reached from this project after months of building was that it sold security and governance for high-risk, fully automated AI systems (like fully autonomous algorithmic trading with AI, AI banking systems, AI healthcare systems, AI law-based systems, etc.) and there were no such products in the market at that time, and even right now, so we decided to hold off/pause the project and work on some other ideas for now.",
       "Anchor8 was the core of the company, without that we were all blank slates with nothing to build, however we still got to another idea \"Cargonto\" for fully automatic workflows for freight exporters and Customs House Agents (CHAs) about their entire documentation process. However, learning from our previous lack of market research mistake, we were able to verify it within 2 weeks that this won't work, especially in India, mainly because most of the bank-related documents are all required as physical copies and for digitization, RBI (Reserve Bank of India) itself has provided designated softwares. So, although we started building it and shipped a few features and frontend locally, we never completed it or deployed it and scrapped it off.",
-      "The main learnings and experience I got from this startup was how to operate and manage a team of people (we were a team of 7 while building anchor8), and designing and building on a system-level scale, and not just feature-level.",
+      "The main learnings and experience I got from this startup was how to operate and manage a team of people (we were a team of 5 while building anchor8), and designing and building on a system-level scale, and not just feature-level.",
       "My past interviews in my 3rd year for Google, Dell, Watchguard, and Namekart were all cleared by me at the technical stages. However, I always lacked the teamwork experience at that time since all my projects were solo, and even the internship I worked in at that time was a very small team of 5 people, so there was not too much in terms of collaboration by my side. That costed me all those interviews (although I do admit I was really arrogant about it at that time and said that I work better alone and prefer to work solo) and Anchorate helped me grow in that area of my life.",
       "I can confidently say now that I have matured as an engineer and working in teams is really worthwhile too haha."
     ],
@@ -261,6 +328,48 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "id": "started-at-pde",
+    "date": "03/10/2026",
+    "title": "Started at PDE",
+    "body": "In September I started at Precision Design & Engineering as a Generative AI Engineer Trainee. In my first two weeks I created an algorithm, and it's now in discussion for potential patenting. It needed a name, so I asked my coworker and he randomly said \"welga\", so Welga it is.",
+    "audience": "non-technical"
+  },
+  {
+    "id": "started-freelancing",
+    "date": "03/10/2026",
+    "title": "Freelancing",
+    "body": "Since September I've been doing two paid freelance projects alongside PDE and my own projects. They're separate projects for separate businesses, and I'm doing both of them on my own.",
+    "audience": "non-technical"
+  },
+  {
+    "id": "library-of-babel-converging-search",
+    "date": "03/10/2026",
+    "title": "A Converging Search for the Library of Babel",
+    "body": "The idea came after I learned about the Library of Babel. Instead of storing every possible book, store a pointer for each real book and then progressively converge toward its exact location. Like use the first few pages to narrow it down, then more of the book when needed, until you find the exact book. I haven't built this. It's just an idea I thought was pretty cool.",
+    "audience": "technical"
+  },
+  {
+    "id": "reusing-my-own-stuff",
+    "date": "03/10/2026",
+    "title": "I Keep Reusing My Own Stuff",
+    "body": "A lot of the stuff I've been building lately keeps getting reused in other projects. Failover, syncing, background workers, caching, deployment patterns and general infrastructure pieces. Breader and PariBelle are completely different things, but some of their infrastructure ended up being very similar, and some of the code I write for one project ends up in another later. I'm basically getting to the point where I don't have to solve the same kind of problem from scratch every time.",
+    "audience": "technical"
+  },
+  {
+    "id": "started-breader-writer",
+    "date": "02/10/2026",
+    "title": "Started Breader Writer",
+    "body": "Started working on Breader Writer on 2nd October. It's basically a story writer that you live inside. It's invite-only right now and not playable yet, so it's still very early. It's at breader.site/writer.",
+    "audience": "non-technical"
+  },
+  {
+    "id": "breader-is-live",
+    "date": "26/09/2026",
+    "title": "Breader Is Live",
+    "body": "Breader went live on 26th September 2026. It's an immersive web-first e-reader PWA, free and open source, at breader.site. I was building it for myself and kept adding things to it until it became a proper app.",
+    "audience": "non-technical"
+  },
+  {
     "date": "28/08/2026",
     "title": "My First Tattoo",
     "body": "I got my first tattoo on 12th August, 2026. I always wanted to have a tattoo and had been searching for the design for months now. Then I randomly saw the \"Ensō\" symbol, which is a circle drawn in one single brush stroke. It has many meanings but for me it reminds me to stay focused, calm and complete on my own.",
@@ -292,10 +401,10 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
 
 export const RANDOM_IDEAS: CollapsibleEntry[] = [
   {
-    "id": "context-filling-without-tokens",
-    "date": "26/08/2026",
-    "title": "Filling Context in AI Coding IDEs Without Consuming Tokens",
-    "body": "AI harness coding IDEs on every new chat use tokens to fetch all the required context. Can we make it such that that context is filled every time without consuming any tokens except for the first time?",
+    "id": "where-breader-goes-next",
+    "date": "03/10/2026",
+    "title": "Where Breader Goes Next",
+    "body": "Breader Music, same idea as Breader but for listening. A self-hosted music library I can stream from my own infra. Breader TV, the same thing for shows and movies, stream it from anywhere. The media could get pretty fucking large, so keep the big, slow, cheap storage on external HDDs and use the 350GB SSD as the hot cache. Whatever gets played a lot stays on the SSD, everything else sits on the HDDs until it's needed. Not built, just where I want to take Breader.",
     "audience": "technical"
   },
   {
@@ -329,6 +438,15 @@ export const RANDOM_IDEAS: CollapsibleEntry[] = [
 ];
 
 export const LINKS: LinkEntry[] = [
+  {
+    "id": "breader",
+    "date": "03/10/2026",
+    "title": "Breader",
+    "url": "https://breader.site",
+    "domain": "breader.site",
+    "commentary": "My immersive web-first e-reader PWA, free and open source.",
+    "audience": "non-technical"
+  },
   {
     "id": "anilist",
     "date": "26/08/2026",

@@ -45,7 +45,7 @@ function ProjectListItem({ p, isOpen, onToggleOpen }: { p: ProjectItem; isOpen: 
               <SiGithub size={12} />
             </a>
           )}
-          {p.id === 'spoin' && (
+          {p.caseStudyDescription && (
             <Link
               to={`/projects/${p.id}`}
               onClick={(e) => e.stopPropagation()}
@@ -124,18 +124,18 @@ function OtherProjectRow({ p }: { p: ProjectItem }) {
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: 'Case studies and a runnable simulator, from Spoin, a retrieval-grounded card factory, down to smaller things I have shipped.',
+    description: "What I've built: the PariBelle Ecosystem that runs my family's business, Breader, Spoin, and some smaller things.",
     path: '/projects',
   });
 
   const location = useLocation();
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const projects = PROJECTS.filter((p) => p.id !== 'secondary-screen');
-  const building = CURRENTLY_MAKING[FEATURED_IDS[0]];
+  const projects = PROJECTS;
+  const building = CURRENTLY_MAKING[FEATURED_IDS[0]]!;
 
-  // Every featured project expands inline (Spoin included). Everything else is
-  // a single static line, no expand, no page.
+  // Every featured project expands inline. Everything else is a single static
+  // line, no expand, no page.
   const featured = projects.filter((p) => p.featured);
   const nonFeatured = projects.filter((p) => !p.featured);
 
@@ -170,12 +170,16 @@ export default function Projects() {
               <div className="flex-1 bg-border" />
             </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="flex-1 h-1 bg-border overflow-hidden">
-              <div className="h-full bg-amber" style={{ width: `${building.progress}%` }} />
+          {building.progress !== undefined ? (
+            <div className="flex items-center gap-1.5">
+              <div className="flex-1 h-1 bg-border overflow-hidden">
+                <div className="h-full bg-amber" style={{ width: `${building.progress}%` }} />
+              </div>
+              <span className="text-amber text-[11px] font-bold shrink-0">{building.progress}%</span>
             </div>
-            <span className="text-amber text-[11px] font-bold shrink-0">{building.progress}%</span>
-          </div>
+          ) : (
+            building.status && <span className="text-amber text-[11px] font-bold leading-snug">{building.status}</span>
+          )}
         </div>
         <div className="relative min-w-0">
           <p className="text-sm font-bold text-heading leading-snug">{building.title}</p>
