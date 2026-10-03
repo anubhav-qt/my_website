@@ -11,8 +11,7 @@ Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tai
 > the home page stopped holding paragraphs, numbers stopped appearing without the sentence
 > that explains them, the site-wide lowercase came off everything except the nav, and the
 > project list narrowed to one flagship. v4 traded the plum and amber terminal look for
-> Breader's black and white one, on the same layout. See `README.md` for the full backend rundown, the
-> CLI tools for managing it, and how the responsive system fits together.
+> Breader's black and white one, on the same layout.
 
 Design direction: Breader's look (github.com/anubhav-qt/breader) on the same dense,
 list-based dev-log layout. A pure black page with white ink and hairline-edged rounded

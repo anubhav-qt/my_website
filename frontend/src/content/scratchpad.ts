@@ -64,8 +64,7 @@ export const WRITEUPS: WriteupEntry[] = [
       "On 27th September I moved the whole thing onto my ThinkPad.",
       "It was already running my other stuff, and I realized I could just run PariBelle myself too. I wasn't paying for hosting before, it was all free tier, but I might have had to if it grew. Not anymore haha. I also wanted more control, and it got a lot faster in a lot of places.",
       "So my ThinkPad now runs production software, not just random homelab experiments lol. I wrote about the setup in Homelabbing journey begins!",
-      "I'm also exploring whether the same system can run other storefronts too.",
-      "So yeah."
+      "I'm also exploring whether the same system can run other storefronts too."
     ],
     "audience": "non-technical"
   },
@@ -93,8 +92,7 @@ export const WRITEUPS: WriteupEntry[] = [
       "The funny part is that the two apps do it in opposite directions. Breader already had Supabase as its main database, so Supabase stays the source of truth and the ThinkPad keeps a live copy it can take over with. PariBelle was built around the ThinkPad being the main system, so the ThinkPad's Postgres is the main copy and it syncs back to Supabase. No deep reason. They just evolved differently.",
       "Backups get encrypted and go to Cloudflare R2, Breader's with age. A Healthchecks heartbeat tells me if something stops.",
       "Everything is on free plans. The domains are the only thing I'm paying for.",
-      "One of the things running on that \"pretty fun to set up\" ThinkPad now takes real orders for my family's business lol.",
-      "So yeah."
+      "One of the things running on that \"pretty fun to set up\" ThinkPad now takes real orders for my family's business lol."
     ],
     "audience": "technical"
   },
