@@ -150,25 +150,21 @@ export const RAW_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'anchorate',
-    title: 'Anchor8: Cognitive Firewall for AI Agents',
-    category: 'Production & Systems',
+    title: 'Anchor8: A Control Layer for Autonomous AI Agents',
+    category: 'Architecture Spec',
     featured: true,
     skimDescription:
-      'A security and governance layer for autonomous AI agents. It monitors tool calls and enforces policy before risky actions reach the real system.',
+      'A control layer between autonomous AI agents and their tools. One classifier checks every tool call and tool result and says SAFE, DANGEROUS or REVIEW.',
     deepDescription: [
-      'Anchor8 is a security and governance layer that sits in front of autonomous AI agents and watches what they do in real time.',
-      'It monitors tool calls, checks arguments and context, detects suspicious behavior, and can block or escalate high-risk actions before they reach the underlying system.',
-      'The SDK is designed to drop into agent workflows with minimal integration while keeping the security layer independent from the agent framework.',
-      "Still going. I'm building on it on weekends, making its security checks stronger and faster.",
+      'Anchor8 sits between an AI agent and its tools. Every tool call going out and every result coming back gets a verdict: SAFE runs, DANGEROUS is blocked and the agent gets feedback so it can carry on without it, and REVIEW goes to a human.',
+      'The first version ran every request through lanes of gates, code detectors and LLM debate. That was solving a classification problem like a reasoning problem, so the rebuild is one proprietary classifier with no LLM in the hot path.',
+      "Humans only see the cases it isn't sure about, and their decisions become training data for that company's own model, so each company should see fewer reviews over time.",
+      'Every step lands in an append-only decision log, hash-chained per company. On top of it, the Harness is a Claude-powered workspace that explains why a step was blocked and can open PRs against your code.',
+      'The repo is 29 ADRs and a system design so far: a Rust gateway, Python services for classification, training and the Harness, TypeScript and Python SDKs, planned for Kubernetes on AWS. Apart from the public website, the code is still stubs.',
     ],
-    metrics: [
-      { label: 'Pipeline', value: '3-Lane Design', detail: 'Observer, Guard, Courtroom' },
-      { label: 'Identity', value: 'DID + VCs', detail: 'Know-Your-Agent credentials, kill switch' },
-      { label: 'Integration', value: '3 lines', detail: 'LangChain callback handler' },
-    ],
-    tech: ['Python', 'FastAPI', 'LangChain', 'Redis', 'pgvector', 'DeepSeek', 'Gemini'],
+    tech: ['Rust', 'Python', 'TypeScript', 'FastAPI', 'Next.js', 'Tailwind CSS', 'PostgreSQL', 'PgBouncer', 'Redis', 'Amazon S3', 'Kubernetes', 'AWS', 'MLflow', 'Claude API'],
     team: {
-      note: 'Built by a 5-person founding team at Anchorate, our first startup.',
+      note: "I'm the system designer and architect. Anchorate is the startup I cofounded with Vasu.",
       collaborators: [],
     },
   },
@@ -216,6 +212,12 @@ export const RAW_PROJECTS: ProjectItem[] = [
     tech: ['Rust', 'wgpu', 'egui', 'cpal', 'WASAPI', 'MIDI'],
   },
 ];
+
+// The project's live site, if it has one: the link labelled with its own
+// domain (paribelle.in, breader.site), as opposed to its repos.
+export function liveSite(p: ProjectItem) {
+  return p.links?.find((l) => l.url.replace(/^https?:\/\//, '').replace(/\/$/, '') === l.label);
+}
 
 // Overrides RAW_PROJECTS's static metrics with whatever fetch-metrics.mjs
 // last pulled from Supabase at build time (see scripts/fetch-metrics.mjs).

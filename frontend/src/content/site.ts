@@ -76,8 +76,8 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'sky',
     items: [
       { name: 'Python', usedIn: ['anchorate', 'spoin', 'career-pde', 'career-freelance'] },
-      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'trotter', 'career-freelance'] },
-      { name: 'Rust', usedIn: ['trippinator'] },
+      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'anchorate', 'trotter', 'career-freelance'] },
+      { name: 'Rust', usedIn: ['anchorate', 'trippinator'] },
     ],
   },
   {
@@ -88,10 +88,10 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'FastAPI', usedIn: ['anchorate', 'spoin', 'career-freelance'] },
       { name: 'NestJS', usedIn: ['paribelle'] },
       { name: 'LangGraph', usedIn: ['anchorate', 'spoin'] },
-      { name: 'SQLAlchemy', usedIn: ['anchorate', 'spoin', 'career-freelance'] },
+      { name: 'SQLAlchemy', usedIn: ['spoin', 'career-freelance'] },
       { name: 'TypeORM', usedIn: ['paribelle'] },
-      { name: 'OpenCV', usedIn: ['anchorate', 'career-pde'] },
-      { name: 'PyTorch', usedIn: ['anchorate', 'career-pde'] },
+      { name: 'OpenCV', usedIn: ['career-pde'] },
+      { name: 'PyTorch', usedIn: ['career-pde'] },
     ],
   },
   {
@@ -101,7 +101,7 @@ export const STACK_GROUPS: StackGroup[] = [
     items: [
       { name: 'PostgreSQL', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-freelance'] },
       { name: 'PgBouncer', usedIn: ['anchorate'] },
-      { name: 'pgvector', usedIn: ['paribelle', 'spoin', 'anchorate'] },
+      { name: 'pgvector', usedIn: ['paribelle', 'spoin'] },
       { name: 'Redis', usedIn: ['paribelle', 'anchorate'] },
       { name: 'Pinecone', usedIn: ['anchorate'] },
     ],
@@ -126,10 +126,10 @@ export const STACK_GROUPS: StackGroup[] = [
     icon: 'device',
     accent: 'rose',
     items: [
-      { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'trotter', 'career-freelance'] },
-      { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'trotter', 'career-freelance'] },
+      { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
+      { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'React Native', usedIn: ['career-freelance'] },
-      { name: 'Tailwind CSS', usedIn: ['paribelle', 'trotter', 'career-freelance'] },
+      { name: 'Tailwind CSS', usedIn: ['paribelle', 'anchorate', 'trotter', 'career-freelance'] },
     ],
   },
 ];
@@ -153,7 +153,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     period: 'Sep 2026 to Present',
     headline: 'Generative AI for document and engineering work, full-time and on-site.',
     bullets: [
-      'In my first two weeks I created Welga, an algorithm.',
+      'In my first two weeks I created Welga, a computer vision algorithm for engineering drawings and structural notes processing.',
       'Welga is currently in discussion for potential patenting.',
     ],
   },
@@ -176,9 +176,9 @@ export const EXPERIENCE: ExperienceEntry[] = [
     period: 'Jan 2026 to Present',
     headline: 'Built Anchor8, Cargonto, managed a team of 5, and grown as an engineer.',
     bullets: [
-      'Cofounded with my friend Vasu. We built Anchor8, a security and governance layer that sits between AI agents and their tools, monitoring and securing every autonomous agent in a system. It is still on pip as `pip install anchor8`.',
+      'Cofounded with my friend Vasu. Anchor8 sits between AI agents and their tools and checks every step. The first version is still on pip as `pip install anchor8`.',
       'Ran a team of 5, and designed at system level instead of feature level for the first time.',
-      "Still going. Weekends I'm building on Anchor8, making its security checks stronger and faster. Weeknights are for managing the team, system design, infra and PR reviews.",
+      "Still going. Weekends I'm rebuilding Anchor8 from scratch as its system designer and architect. Weeknights are for managing the team, system design, infra and PR reviews.",
     ],
     story: '/scratchpad/my-professional-journey-till-now',
   },
