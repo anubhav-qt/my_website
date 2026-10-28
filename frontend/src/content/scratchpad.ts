@@ -326,6 +326,27 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "id": "anthology-found-me",
+    "date": "28/10/2026",
+    "title": "Anthology Found Me",
+    "body": "I only knew C++ and CUDA in theory. Then Anthology invited me themselves to work with exactly that, as an ML Engineer on inference optimization, remote, with their team in San Francisco. How is this possible!? Very cool.",
+    "audience": "non-technical"
+  },
+  {
+    "id": "my-pc-is-my-instrument",
+    "date": "28/10/2026",
+    "title": "My PC Is My Instrument Now",
+    "body": "I was a drummer in school, played fingerstyle guitar for a few years and was very good at it, and picked up intermediate music theory along the way. So now I'm making my PC my instrument with Jello, and hopefully I'll make music of my own someday!",
+    "audience": "non-technical"
+  },
+  {
+    "id": "breader-reads-manga",
+    "date": "28/10/2026",
+    "title": "Breader Reads Manga Now",
+    "body": "Breader has manga now, with a panel model that finds the panels on every page. More than 500 people use it now.",
+    "audience": "non-technical"
+  },
+  {
     "id": "started-at-pde",
     "date": "03/10/2026",
     "title": "Started at PDE",
