@@ -41,6 +41,7 @@ const PROJECT: Record<string, Accent> = {
   breader: 'lilac',
   spoin: 'green',
   jello: 'sage',
+  dodo: 'sand',
   anchorate: 'sky',
   trotter: 'teal',
   trippinator: 'blush',

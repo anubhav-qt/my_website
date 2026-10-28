@@ -132,6 +132,29 @@ export const RAW_PROJECTS: ProjectItem[] = [
     tech: ['Rust', 'C++', 'TypeScript', 'Tauri'],
   },
   {
+    id: 'dodo',
+    title: 'Dodo: A Mojo Web Framework',
+    category: 'Open Source',
+    featured: true,
+    skimDescription:
+      'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process. Pre-alpha, but the networking core works.',
+    deepDescription: [
+      "Dodo is a web framework for Mojo where your HTTP server, AI models, GPU kernels, computer vision and agents run in one process, in one language. One process is the default, not a rule: models can also run in separate worker processes, or on remote servers.",
+      "The networking core is what works right now: HTTP/1.1, HTTP/2, TLS and WebSockets on a thread-per-core server, with every parser fuzzed. Blocking handlers run on their own thread pool so they don't hold up the server.",
+      'Next is the app API and the CLI, then AI, GPU and streaming, an agent kit, computer vision and profiling.',
+      "Started on 26th October 2026, so it's very new.",
+    ],
+    repoUrl: 'https://github.com/dodo-mojo/dodo',
+    homeCard: {
+      summary: 'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process.',
+      bullets: [
+        'Pre-alpha, but the networking core works.',
+        'HTTP/1.1, HTTP/2, TLS and WebSockets, with every parser fuzzed.',
+      ],
+    },
+    tech: ['Mojo', 'pixi'],
+  },
+  {
     id: 'spoin',
     title: 'Spoin: For the Curious',
     category: 'AI & Machine Learning',
