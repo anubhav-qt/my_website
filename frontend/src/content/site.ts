@@ -3,7 +3,7 @@ import type { Accent } from '../lib/palette';
 export const PROFILE = {
   name: 'Anubhav Joshi',
   role: 'Software Engineer',
-  status: 'Generative AI Engineer Trainee at Precision Design & Engineering; Co-Founder & CTO at Anchorate; Open to Freelancing.',
+  status: 'ML Engineer at Anthology; Generative AI Engineer Trainee at Precision Design & Engineering; Co-Founder & CTO at Anchorate.',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
@@ -148,6 +148,17 @@ export interface ExperienceEntry {
 }
 
 export const EXPERIENCE: ExperienceEntry[] = [
+  {
+    id: 'anthology',
+    company: 'Anthology',
+    role: 'ML Engineer',
+    period: 'Oct 2026 to Present',
+    headline: 'Inference optimization in C++ and CUDA, freelance and remote, for a team in SF.',
+    bullets: [
+      'Working remotely with a team in San Francisco, alongside PDE.',
+      'Inference optimization in C++ and CUDA.',
+    ],
+  },
   {
     id: 'pde',
     company: 'Precision Design & Engineering',

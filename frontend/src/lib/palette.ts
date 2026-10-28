@@ -50,6 +50,7 @@ const PROJECT: Record<string, Accent> = {
 export const projectAccent = (id: string): Accent => PROJECT[id] ?? accentFor(id);
 
 const CAREER: Record<string, Accent> = {
+  anthology: 'moss',
   pde: 'indigo',
   freelance: 'teal',
   anchorate: 'sky',
