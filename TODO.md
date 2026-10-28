@@ -1,7 +1,7 @@
 # TODO
 
-- Featured projects UI: the featured set is now PariBelle Ecosystem first, Breader second,
-  Spoin third. Find a better way to represent the three than the current stack of identical
+- Featured projects UI: the featured set is now Breader first, PariBelle Ecosystem second,
+  Jello third. Find a better way to represent the three than the current stack of identical
   expandable cards, including PariBelle's sub-products (PariBelle, POM, Seelie). Do this after
   the content changes land, not alongside them.
 
