@@ -59,7 +59,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'A panel model finds the panels on every manga page, right on your device. Once anyone has read a page, its panels are kept for everyone.',
       "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
       'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
-      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
+      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off, with manga from a small AWS server. No ads, no subscriptions.",
     ],
     repoUrl: 'https://github.com/anubhav-qt/breader',
     links: [{ label: 'breader.site', url: 'https://breader.site' }],
