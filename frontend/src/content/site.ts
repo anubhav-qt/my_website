@@ -168,6 +168,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     bullets: [
       'In my first two weeks I created Welga, a computer vision algorithm for engineering drawings and structural notes processing.',
       'Welga is currently in discussion for potential patenting.',
+      'I also built a custom harness for all the data extraction and the steel detailing work from engineering drawings, and it works remarkably well.',
     ],
   },
   {
