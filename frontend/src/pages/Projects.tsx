@@ -129,7 +129,7 @@ function OtherProjectRow({ p }: { p: ProjectItem }) {
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: "What I've built: the PariBelle Ecosystem that runs my family's business, Breader, Spoin, and some smaller things.",
+    description: "What I've built: Breader, the PariBelle Ecosystem that runs my family's business, Jello, and some smaller things.",
     path: '/projects',
   });
 

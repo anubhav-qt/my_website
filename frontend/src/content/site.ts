@@ -13,7 +13,7 @@ export const PROFILE = {
 
 // Home's featured cards, in this order. Each one also gets a tab on the
 // card at the top of /projects, and the first is the one it opens on.
-export const FEATURED_IDS = ['paribelle', 'breader', 'spoin'] as const;
+export const FEATURED_IDS = ['breader', 'paribelle', 'jello'] as const;
 
 export interface CurrentlyMaking {
   title: string;
@@ -27,6 +27,14 @@ export interface CurrentlyMaking {
 }
 
 export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], CurrentlyMaking> = {
+  breader: {
+    title: 'Breader',
+    status: 'Live since 26th September 2026',
+    description: 'An immersive web-first e-reader PWA. ',
+    highlight: 'Free and open source',
+    descriptionEnd: '.',
+    tags: [{ label: 'writeup', href: '/scratchpad/homelabbing-journey-begins' }],
+  },
   paribelle: {
     title: 'PariBelle Ecosystem',
     description: 'Live on paribelle.in since July 2026, with POM and Seelie running next to it. I keep ',
@@ -36,21 +44,13 @@ export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], CurrentlyMa
       { label: 'writeup', href: '/scratchpad/i-built-the-software-for-my-familys-business' },
     ],
   },
-  breader: {
-    title: 'Breader',
-    status: 'Live since 26th September 2026',
-    description: 'An immersive web-first e-reader PWA. ',
+  jello: {
+    title: 'Jello',
+    status: 'Very early',
+    description: "A desktop synth and music studio you play on your PC's keyboard. ",
     highlight: 'Free and open source',
     descriptionEnd: '.',
-    tags: [{ label: 'writeup', href: '/scratchpad/homelabbing-journey-begins' }],
-  },
-  spoin: {
-    title: 'Spoin',
-    status: 'Paused for now',
-    description: 'Spoin is a scrollable feed of cards with bite-sized knowledge, ',
-    highlight: 'for topics you want to learn',
-    descriptionEnd: '.',
-    tags: [{ label: 'writeup', href: '/scratchpad/i-lost-to-gemini-fuck-you' }],
+    tags: [],
   },
 };
 

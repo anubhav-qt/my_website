@@ -40,6 +40,7 @@ const PROJECT: Record<string, Accent> = {
   paribelle: 'plum',
   breader: 'lilac',
   spoin: 'green',
+  jello: 'sage',
   anchorate: 'sky',
   trotter: 'teal',
   trippinator: 'blush',

@@ -46,6 +46,35 @@ export interface ProjectItem {
 // still record what each number actually read at that build.
 export const RAW_PROJECTS: ProjectItem[] = [
   {
+    id: 'breader',
+    title: 'Breader: An Immersive Web-First E-Reader',
+    category: 'Open Source',
+    featured: true,
+    skimDescription:
+      'An immersive web-first e-reader PWA. Free, open source, nothing to install and no sign-up.',
+    deepDescription: [
+      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It's a PWA, so it can go on your home screen and open like an app, and it works offline and syncs when it can.",
+      'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
+      "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
+      'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
+      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
+    ],
+    repoUrl: 'https://github.com/anubhav-qt/breader',
+    links: [{ label: 'breader.site', url: 'https://breader.site' }],
+    homeCard: {
+      summary: 'An immersive web-first e-reader PWA. Free and open source.',
+      bullets: [
+        'Live on breader.site since 26th September 2026.',
+        'Immersive dims the page and lights up the words as it reads to you.',
+      ],
+    },
+    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age'],
+    writeup: {
+      title: 'Writeup: Homelabbing journey begins!',
+      href: '/scratchpad/homelabbing-journey-begins',
+    },
+  },
+  {
     id: 'paribelle',
     title: "PariBelle Ecosystem: Software for My Family's Fashion Business",
     category: 'Flagship',
@@ -79,33 +108,28 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'breader',
-    title: 'Breader: An Immersive Web-First E-Reader',
+    id: 'jello',
+    title: 'Jello: A Synth and Music Studio for My Keyboard',
     category: 'Open Source',
     featured: true,
     skimDescription:
-      'An immersive web-first e-reader PWA. Free, open source, nothing to install and no sign-up.',
+      "A desktop synth and music studio you play on your PC's keyboard. I want to release my own style of music with it once it's done.",
     deepDescription: [
-      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It's a PWA, so it can go on your home screen and open like an app, and it works offline and syncs when it can.",
-      'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
-      "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
-      'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
-      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
+      'Jello runs on macOS and Windows, and you play it on your computer keyboard. 24 chords, 24 melody notes, loops you can layer, and a three-oscillator sound you shape yourself.',
+      'Compose follows what you play, keeps a history of your tries, and lets you pick and reorder the final progression. Songs save themselves as text files as you go, and sounds save as presets.',
+      'It also has a sampler, tracks and sections with automation, and an agent mode that can listen to you hum, with sign-in for Anthropic, ChatGPT and Google.',
+      'Rust core, a C++ audio engine, and a TypeScript UI in Tauri.',
+      'Still very early.',
     ],
-    repoUrl: 'https://github.com/anubhav-qt/breader',
-    links: [{ label: 'breader.site', url: 'https://breader.site' }],
+    repoUrl: 'https://github.com/anubhav-qt/jello',
     homeCard: {
-      summary: 'An immersive web-first e-reader PWA. Free and open source.',
+      summary: "A desktop synth and music studio you play on your PC's keyboard.",
       bullets: [
-        'Live on breader.site since 26th September 2026.',
-        'Immersive dims the page and lights up the words as it reads to you.',
+        'Chords, melody, loops and a three-oscillator sound, all from the keyboard.',
+        'The goal is to release my own style of music with it.',
       ],
     },
-    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age'],
-    writeup: {
-      title: 'Writeup: Homelabbing journey begins!',
-      href: '/scratchpad/homelabbing-journey-begins',
-    },
+    tech: ['Rust', 'C++', 'TypeScript', 'Tauri'],
   },
   {
     id: 'spoin',
