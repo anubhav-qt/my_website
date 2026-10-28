@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, Lock, ChevronDown, ChevronRight } from 'lucide-react';
+import { Cloud, Waypoints, Bot, Cpu, Database, Workflow, Lock, Flame, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   SiPython,
   SiTypescript,
@@ -29,6 +29,9 @@ import {
   SiCaddy,
   SiCloudflare,
   SiTailwindcss,
+  SiCplusplus,
+  SiNvidia,
+  SiTauri,
 } from '@icons-pack/react-simple-icons';
 import { STACK_GROUPS, EXPERIENCE, EDUCATION, type ExperienceEntry } from '@/content/site';
 import { PROJECTS } from '@/content/projects';
@@ -48,6 +51,11 @@ const TECH_ICON: Record<string, ComponentType<{ size?: number; className?: strin
   Python: SiPython,
   TypeScript: SiTypescript,
   Rust: SiRust,
+  'C++': SiCplusplus,
+  // Mojo's logo is a flame, and simple-icons has no Mojo.
+  Mojo: Flame,
+  CUDA: SiNvidia,
+  Tauri: SiTauri,
   NestJS: SiNestjs,
   SQLAlchemy: SiSqlalchemy,
   TypeORM: SiTypeorm,

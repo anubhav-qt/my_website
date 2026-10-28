@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { PROJECTS, liveSite, type ProjectItem } from '@/content/projects';
-import { CURRENTLY_MAKING, FEATURED_IDS } from '@/content/site';
+import { CURRENTLY_MAKING, BUILDING_IDS } from '@/content/site';
 import { CommentThread } from '@/components/CommentThread';
 import { ProjectDetailBody } from '@/components/ProjectDetailBody';
 import { LiveSiteLink } from '@/components/LiveSiteLink';
@@ -129,7 +129,7 @@ function OtherProjectRow({ p }: { p: ProjectItem }) {
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: "What I've built: the PariBelle Ecosystem that runs my family's business, Breader, Spoin, and some smaller things.",
+    description: "What I've built: Breader, the PariBelle Ecosystem that runs my family's business, Jello, Dodo, and some smaller things.",
     path: '/projects',
   });
 
@@ -137,7 +137,7 @@ export default function Projects() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const projects = PROJECTS;
-  const [buildingId, setBuildingId] = useState<(typeof FEATURED_IDS)[number]>(FEATURED_IDS[0]);
+  const [buildingId, setBuildingId] = useState<(typeof BUILDING_IDS)[number]>(BUILDING_IDS[0]);
   const building = CURRENTLY_MAKING[buildingId];
   const buildingSite = liveSite(PROJECTS.find((p) => p.id === buildingId)!);
 
@@ -162,9 +162,9 @@ export default function Projects() {
         {/* Not shrink-0 like the other labels: it's too long for a 240px screen, so it wraps there. */}
         <span className="font-dot text-dim text-[11px] uppercase tracking-widest">Building / Upgrading / Maintaining</span>
         <span className="hidden sm:block flex-1 border-t border-dashed border-border min-w-[20px]" />
-        {/* The same rounded-rectangle toggles as the scratchpad filters, one per home page featured project. */}
+        {/* The same rounded-rectangle toggles as the scratchpad filters, one per ongoing project. */}
         <div role="tablist" aria-label="Featured projects" className="flex flex-wrap gap-1">
-          {FEATURED_IDS.map((id) => {
+          {BUILDING_IDS.map((id) => {
             const isActive = buildingId === id;
             return (
               <button

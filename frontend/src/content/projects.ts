@@ -46,6 +46,37 @@ export interface ProjectItem {
 // still record what each number actually read at that build.
 export const RAW_PROJECTS: ProjectItem[] = [
   {
+    id: 'breader',
+    title: 'Breader: An Immersive E-Reader',
+    category: 'Open Source',
+    featured: true,
+    skimDescription:
+      'An immersive e-reader for books and manga. Free, open source, nothing to install and no sign-up.',
+    deepDescription: [
+      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It can go on your home screen and open like an app, and it works offline and syncs when it can.",
+      'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
+      'Manga has a shelf of its own. CBZ files open in a reader made for pictures, down the screen or a page at a time. One search covers MangaDex and the sites Breader\'s own Suwayomi reads.',
+      'A panel model finds the panels on every manga page, right on your device. Once anyone has read a page, its panels are kept for everyone.',
+      "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
+      'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
+      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off, with manga from a small AWS server. No ads, no subscriptions.",
+    ],
+    repoUrl: 'https://github.com/anubhav-qt/breader',
+    links: [{ label: 'breader.site', url: 'https://breader.site' }],
+    homeCard: {
+      summary: 'An immersive e-reader for books and manga. Free and open source.',
+      bullets: [
+        'Live on breader.site since 26th September 2026, with 500+ users.',
+        'Books and manga, read aloud by voices that run in your browser.',
+      ],
+    },
+    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age', 'AWS'],
+    writeup: {
+      title: 'Writeup: Homelabbing journey begins!',
+      href: '/scratchpad/homelabbing-journey-begins',
+    },
+  },
+  {
     id: 'paribelle',
     title: "PariBelle Ecosystem: Software for My Family's Fashion Business",
     category: 'Flagship',
@@ -54,9 +85,9 @@ export const RAW_PROJECTS: ProjectItem[] = [
       "The software I built for my family's fashion business: the paribelle.in storefront, POM for orders and operations, and Seelie, an AI agent for the shop.",
     deepDescription: [
       "PariBelle is my family's fashion business, mostly women's clothing like kurtis and coord sets. There's a physical store, and a lot of the business around it was handled manually over WhatsApp and calls, with no proper software running the whole thing. So I built it myself instead of using Shopify.",
-      "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying.",
-      'POM is the operations side, and its own app instead of an /admin page. It pulls in orders from paribelle.in, Amazon, Meesho and Flipkart, and handles the warehouse work, stock, reports, invoices and profit. My family and I use it every day.',
-      "Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos and videos, Instagram and Meta ads, and routines and memories. It landed on 2nd October, so it's very new.",
+      "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying. Find Your Pick on paribelle.in is a styling session. It asks who you're shopping for and picks from what's in stock.",
+      'POM is the operations side, and its own app instead of an /admin page. It pulls in orders from paribelle.in, Amazon, Meesho and Flipkart, and handles the warehouse work, stock, reports, invoices and profit. My family and I use it every day. paribelle.in is a channel in POM now too, synced like Amazon.',
+      'Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos, Instagram reels, Meta ads, PDFs, and routines and memories. It watches its own draft of a reel before anyone sees it. Posts, ad spend and photoshoots ask first, and every change it makes can be undone.',
       "Since 27th September all of it runs on my ThinkPad, with Vercel, Render and Supabase as the fallback. I'm also exploring whether the same system can run other storefronts.",
     ],
     links: [
@@ -79,33 +110,51 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'breader',
-    title: 'Breader: An Immersive Web-First E-Reader',
+    id: 'jello',
+    title: 'Jello: A Synth and Music Studio for My Keyboard',
     category: 'Open Source',
     featured: true,
     skimDescription:
-      'An immersive web-first e-reader PWA. Free, open source, nothing to install and no sign-up.',
+      "A desktop synth and music studio you play on your PC's keyboard. I want to release my own style of music with it once it's done.",
     deepDescription: [
-      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It's a PWA, so it can go on your home screen and open like an app, and it works offline and syncs when it can.",
-      'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
-      "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
-      'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
-      "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
+      'Jello runs on macOS and Windows, and you play it on your computer keyboard. 24 chords, 24 melody notes, loops you can layer, and a three-oscillator sound you shape yourself.',
+      'Compose follows what you play, keeps a history of your tries, and lets you pick and reorder the final progression. Songs save themselves as text files as you go, and sounds save as presets.',
+      'It also has a sampler, tracks and sections with automation, and an agent mode that can listen to you hum, with sign-in for Anthropic, ChatGPT and Google.',
+      'Rust core, a C++ audio engine, and a TypeScript UI in Tauri.',
+      'Still very early.',
     ],
-    repoUrl: 'https://github.com/anubhav-qt/breader',
-    links: [{ label: 'breader.site', url: 'https://breader.site' }],
+    repoUrl: 'https://github.com/anubhav-qt/jello',
     homeCard: {
-      summary: 'An immersive web-first e-reader PWA. Free and open source.',
+      summary: "A desktop synth and music studio you play on your PC's keyboard.",
       bullets: [
-        'Live on breader.site since 26th September 2026.',
-        'Immersive dims the page and lights up the words as it reads to you.',
+        'Chords, melody, loops and a three-oscillator sound, all from the keyboard.',
+        'The goal is to release my own style of music with it.',
       ],
     },
-    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age'],
-    writeup: {
-      title: 'Writeup: Homelabbing journey begins!',
-      href: '/scratchpad/homelabbing-journey-begins',
+    tech: ['Rust', 'C++', 'TypeScript', 'Tauri'],
+  },
+  {
+    id: 'dodo',
+    title: 'Dodo: A Mojo Web Framework',
+    category: 'Open Source',
+    featured: true,
+    skimDescription:
+      'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process. Pre-alpha, but the networking core works.',
+    deepDescription: [
+      "Dodo is a web framework for Mojo where your HTTP server, AI models, GPU kernels, computer vision and agents run in one process, in one language. One process is the default, not a rule: models can also run in separate worker processes, or on remote servers.",
+      "The networking core is what works right now: HTTP/1.1, HTTP/2, TLS and WebSockets on a thread-per-core server, with every parser fuzzed. Blocking handlers run on their own thread pool so they don't hold up the server.",
+      'Next is the app API and the CLI, then AI, GPU and streaming, an agent kit, computer vision and profiling.',
+      "Started on 26th October 2026, so it's very new.",
+    ],
+    repoUrl: 'https://github.com/dodo-mojo/dodo',
+    homeCard: {
+      summary: 'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process.',
+      bullets: [
+        'Pre-alpha, but the networking core works.',
+        'HTTP/1.1, HTTP/2, TLS and WebSockets, with every parser fuzzed.',
+      ],
     },
+    tech: ['Mojo', 'pixi'],
   },
   {
     id: 'spoin',

@@ -3,7 +3,7 @@ import type { Accent } from '../lib/palette';
 export const PROFILE = {
   name: 'Anubhav Joshi',
   role: 'Software Engineer',
-  status: 'Generative AI Engineer Trainee at Precision Design & Engineering; Co-Founder & CTO at Anchorate; Open to Freelancing.',
+  status: 'ML Engineer at Anthology; Generative AI Engineer Trainee at Precision Design & Engineering; Co-Founder & CTO at Anchorate.',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
@@ -11,9 +11,12 @@ export const PROFILE = {
   resume: '/resume.pdf',
 };
 
-// Home's featured cards, in this order. Each one also gets a tab on the
-// card at the top of /projects, and the first is the one it opens on.
-export const FEATURED_IDS = ['paribelle', 'breader', 'spoin'] as const;
+// Home's featured cards, in this order.
+export const FEATURED_IDS = ['breader', 'paribelle', 'jello', 'dodo'] as const;
+
+// The ongoing ones: each gets a tab on the card at the top of /projects, in
+// this order, and the first is the one it opens on.
+export const BUILDING_IDS = ['breader', 'jello', 'dodo'] as const;
 
 export interface CurrentlyMaking {
   title: string;
@@ -26,31 +29,30 @@ export interface CurrentlyMaking {
   tags: { label: string; href: string }[];
 }
 
-export const CURRENTLY_MAKING: Record<(typeof FEATURED_IDS)[number], CurrentlyMaking> = {
-  paribelle: {
-    title: 'PariBelle Ecosystem',
-    description: 'Live on paribelle.in since July 2026, with POM and Seelie running next to it. I keep ',
-    highlight: 'adding things as the business needs them',
-    descriptionEnd: '.',
-    tags: [
-      { label: 'writeup', href: '/scratchpad/i-built-the-software-for-my-familys-business' },
-    ],
-  },
+export const CURRENTLY_MAKING: Record<(typeof BUILDING_IDS)[number], CurrentlyMaking> = {
   breader: {
     title: 'Breader',
     status: 'Live since 26th September 2026',
-    description: 'An immersive web-first e-reader PWA. ',
+    description: 'An immersive e-reader for books and manga. ',
     highlight: 'Free and open source',
     descriptionEnd: '.',
     tags: [{ label: 'writeup', href: '/scratchpad/homelabbing-journey-begins' }],
   },
-  spoin: {
-    title: 'Spoin',
-    status: 'Paused for now',
-    description: 'Spoin is a scrollable feed of cards with bite-sized knowledge, ',
-    highlight: 'for topics you want to learn',
+  jello: {
+    title: 'Jello',
+    status: 'Very early',
+    description: "A desktop synth and music studio you play on your PC's keyboard. ",
+    highlight: 'Free and open source',
     descriptionEnd: '.',
-    tags: [{ label: 'writeup', href: '/scratchpad/i-lost-to-gemini-fuck-you' }],
+    tags: [],
+  },
+  dodo: {
+    title: 'Dodo',
+    status: 'Pre-alpha',
+    description: 'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents ',
+    highlight: 'in one process',
+    descriptionEnd: '.',
+    tags: [],
   },
 };
 
@@ -76,8 +78,10 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'sky',
     items: [
       { name: 'Python', usedIn: ['anchorate', 'spoin', 'career-pde', 'career-freelance'] },
-      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'anchorate', 'trotter', 'career-freelance'] },
-      { name: 'Rust', usedIn: ['anchorate', 'trippinator'] },
+      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'jello', 'anchorate', 'trotter', 'career-freelance'] },
+      { name: 'Rust', usedIn: ['jello', 'anchorate', 'trippinator'] },
+      { name: 'C++', usedIn: ['jello', 'career-anthology'] },
+      { name: 'Mojo', usedIn: ['dodo'] },
     ],
   },
   {
@@ -92,6 +96,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'TypeORM', usedIn: ['paribelle'] },
       { name: 'OpenCV', usedIn: ['career-pde'] },
       { name: 'PyTorch', usedIn: ['career-pde'] },
+      { name: 'CUDA', usedIn: ['career-anthology'] },
     ],
   },
   {
@@ -129,6 +134,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'React Native', usedIn: ['career-freelance'] },
+      { name: 'Tauri', usedIn: ['jello'] },
       { name: 'Tailwind CSS', usedIn: ['paribelle', 'anchorate', 'trotter', 'career-freelance'] },
     ],
   },
@@ -147,6 +153,17 @@ export interface ExperienceEntry {
 
 export const EXPERIENCE: ExperienceEntry[] = [
   {
+    id: 'anthology',
+    company: 'Anthology',
+    role: 'ML Engineer',
+    period: 'Oct 2026 to Present',
+    headline: 'Inference optimization in C++ and CUDA, freelance and remote, for a team in SF.',
+    bullets: [
+      'Working remotely with a team in San Francisco, alongside PDE.',
+      'Inference optimization in C++ and CUDA.',
+    ],
+  },
+  {
     id: 'pde',
     company: 'Precision Design & Engineering',
     role: 'Generative AI Engineer Trainee',
@@ -155,6 +172,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     bullets: [
       'In my first two weeks I created Welga, a computer vision algorithm for engineering drawings and structural notes processing.',
       'Welga is currently in discussion for potential patenting.',
+      'I also built a custom harness for all the data extraction and the steel detailing work from engineering drawings, and it works remarkably well.',
     ],
   },
   {
