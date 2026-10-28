@@ -78,8 +78,10 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'sky',
     items: [
       { name: 'Python', usedIn: ['anchorate', 'spoin', 'career-pde', 'career-freelance'] },
-      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'anchorate', 'trotter', 'career-freelance'] },
-      { name: 'Rust', usedIn: ['anchorate', 'trippinator'] },
+      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'jello', 'anchorate', 'trotter', 'career-freelance'] },
+      { name: 'Rust', usedIn: ['jello', 'anchorate', 'trippinator'] },
+      { name: 'C++', usedIn: ['jello', 'career-anthology'] },
+      { name: 'Mojo', usedIn: ['dodo'] },
     ],
   },
   {
@@ -94,6 +96,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'TypeORM', usedIn: ['paribelle'] },
       { name: 'OpenCV', usedIn: ['career-pde'] },
       { name: 'PyTorch', usedIn: ['career-pde'] },
+      { name: 'CUDA', usedIn: ['career-anthology'] },
     ],
   },
   {
@@ -131,6 +134,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'React Native', usedIn: ['career-freelance'] },
+      { name: 'Tauri', usedIn: ['jello'] },
       { name: 'Tailwind CSS', usedIn: ['paribelle', 'anchorate', 'trotter', 'career-freelance'] },
     ],
   },
