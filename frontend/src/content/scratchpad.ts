@@ -458,6 +458,15 @@ export const RANDOM_IDEAS: CollapsibleEntry[] = [
 
 export const LINKS: LinkEntry[] = [
   {
+    "id": "dodo",
+    "date": "28/10/2026",
+    "title": "Dodo",
+    "url": "https://github.com/dodo-mojo/dodo",
+    "domain": "github.com",
+    "commentary": "My web framework for Mojo, where the server, AI models and GPU kernels run in one process.",
+    "audience": "technical"
+  },
+  {
     "id": "breader",
     "date": "03/10/2026",
     "title": "Breader",
