@@ -33,7 +33,7 @@ export const CURRENTLY_MAKING: Record<(typeof BUILDING_IDS)[number], CurrentlyMa
   breader: {
     title: 'Breader',
     status: 'Live since 26th September 2026',
-    description: 'An immersive web-first e-reader PWA. ',
+    description: 'An immersive e-reader for books and manga. ',
     highlight: 'Free and open source',
     descriptionEnd: '.',
     tags: [{ label: 'writeup', href: '/scratchpad/homelabbing-journey-begins' }],

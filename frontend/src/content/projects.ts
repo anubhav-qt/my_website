@@ -47,14 +47,16 @@ export interface ProjectItem {
 export const RAW_PROJECTS: ProjectItem[] = [
   {
     id: 'breader',
-    title: 'Breader: An Immersive Web-First E-Reader',
+    title: 'Breader: An Immersive E-Reader',
     category: 'Open Source',
     featured: true,
     skimDescription:
-      'An immersive web-first e-reader PWA. Free, open source, nothing to install and no sign-up.',
+      'An immersive e-reader for books and manga. Free, open source, nothing to install and no sign-up.',
     deepDescription: [
-      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It's a PWA, so it can go on your home screen and open like an app, and it works offline and syncs when it can.",
+      "Breader is an e-reader that lives on the web. Open breader.site, add a book and read. It can go on your home screen and open like an app, and it works offline and syncs when it can.",
       'It takes EPUB, PDF, plain text, Markdown, or text you paste. Your place is saved to the character, not the page. Book turns pages and Modern scrolls, with five themes and five typefaces. Every book fills up with its own colour as you read it, and the library has shelves by genre, series or date.',
+      'Manga has a shelf of its own. CBZ files open in a reader made for pictures, down the screen or a page at a time. One search covers MangaDex and the sites Breader\'s own Suwayomi reads.',
+      'A panel model finds the panels on every manga page, right on your device. Once anyone has read a page, its panels are kept for everyone.',
       "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
       'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
       "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off. No ads, no subscriptions.",
@@ -62,13 +64,13 @@ export const RAW_PROJECTS: ProjectItem[] = [
     repoUrl: 'https://github.com/anubhav-qt/breader',
     links: [{ label: 'breader.site', url: 'https://breader.site' }],
     homeCard: {
-      summary: 'An immersive web-first e-reader PWA. Free and open source.',
+      summary: 'An immersive e-reader for books and manga. Free and open source.',
       bullets: [
-        'Live on breader.site since 26th September 2026.',
-        'Immersive dims the page and lights up the words as it reads to you.',
+        'Live on breader.site since 26th September 2026, with 500+ users.',
+        'Books and manga, read aloud by voices that run in your browser.',
       ],
     },
-    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age'],
+    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age', 'AWS'],
     writeup: {
       title: 'Writeup: Homelabbing journey begins!',
       href: '/scratchpad/homelabbing-journey-begins',

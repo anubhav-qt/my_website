@@ -442,7 +442,7 @@ export const LINKS: LinkEntry[] = [
     "title": "Breader",
     "url": "https://breader.site",
     "domain": "breader.site",
-    "commentary": "My immersive web-first e-reader PWA, free and open source.",
+    "commentary": "My immersive e-reader for books and manga, free and open source.",
     "audience": "non-technical"
   },
   {
