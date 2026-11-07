@@ -40,8 +40,8 @@ export const CURRENTLY_MAKING: Record<(typeof BUILDING_IDS)[number], CurrentlyMa
   },
   jello: {
     title: 'Jello',
-    status: 'Very early',
-    description: "A desktop synth and music studio you play on your PC's keyboard. ",
+    status: 'Tracks, mixing and an AI partner',
+    description: 'A music studio to play, compose, mix and practice on a computer keyboard. ',
     highlight: 'Free and open source',
     descriptionEnd: '.',
     tags: [],
@@ -137,6 +137,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'anchorate', 'career-freelance'] },
       { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-freelance'] },
       { name: 'React Native', usedIn: ['career-freelance'] },
+      { name: 'Svelte', usedIn: ['jello'] },
       { name: 'Tauri', usedIn: ['jello', 'trotter'] },
       { name: 'Tailwind CSS', usedIn: ['paribelle', 'anchorate', 'career-freelance'] },
     ],

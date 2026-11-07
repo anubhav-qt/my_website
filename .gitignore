@@ -3,6 +3,7 @@ node_modules/
 
 # build output
 .vercel/
+supabase/.temp/
 dist/
 build/
 *.tsbuildinfo

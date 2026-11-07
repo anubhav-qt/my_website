@@ -61,6 +61,8 @@ function WriteupCard({ w }: { w: WriteupEntry }) {
 
 function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: CollapsibleEntry; accent: Accent; isOpen: boolean; onToggleOpen: () => void }) {
   useViewTracking('scratchpad', entry.id, isOpen); // still records the view; no longer displayed
+  const link = entry.bodyLink;
+  const linkStart = link ? entry.body.indexOf(link.text) : -1;
 
   return (
     <div data-row={entry.id} style={tint(accent)} className="border-b border-dashed border-border">
@@ -76,7 +78,15 @@ function CollapsibleRow({ entry, accent, isOpen, onToggleOpen }: { entry: Collap
       </div>
       {isOpen && (
         <div className="pl-3 sm:pl-[97px] pr-1 pb-1.5">
-          <p className="text-xs text-body leading-relaxed mb-1">{entry.body}</p>
+          <p className="text-xs text-body leading-relaxed mb-1">
+            {link && linkStart >= 0 ? <>
+              {entry.body.slice(0, linkStart)}
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="font-bold underline underline-offset-4 hover:text-heading">
+                {link.text}
+              </a>
+              {entry.body.slice(linkStart + link.text.length)}
+            </> : entry.body}
+          </p>
           <CommentThread targetType="scratchpad" targetId={entry.id} accent={accent} />
         </div>
       )}

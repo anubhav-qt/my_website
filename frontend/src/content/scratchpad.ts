@@ -17,6 +17,7 @@ export interface CollapsibleEntry {
   date: string;
   title: string;
   body: string;
+  bodyLink?: { text: string; url: string };
   audience: Audience;
 }
 
@@ -330,6 +331,7 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
     "date": "08/11/2026",
     "title": "dodo",
     "body": "My PR to add Dodo 0.0.1 to modular-community was merged on 7th November. It packages the HTTP server, client and database drivers together, with builds checked on macOS and Linux. Started this thing on 26th October, so seeing it accepted into the community channel already feels pretty cool.",
+    "bodyLink": { "text": "PR", "url": "https://github.com/modular/modular-community/pull/447" },
     "audience": "non-technical"
   },
   {

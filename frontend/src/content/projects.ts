@@ -48,7 +48,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
   {
     id: 'breader',
     title: 'Breader: An Immersive E-Reader',
-    category: 'Open Source',
+    category: 'Flagship',
     featured: true,
     skimDescription:
       'An immersive e-reader for books and manga. Free, open source, nothing to install and no sign-up.',
@@ -119,27 +119,29 @@ export const RAW_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'jello',
-    title: 'Jello: A Synth and Music Studio for My Keyboard',
+    title: 'Jello: A Music Studio for My Keyboard',
     category: 'Open Source',
     featured: true,
     skimDescription:
-      "A desktop synth and music studio you play on your PC's keyboard. I want to release my own style of music with it once it's done.",
+      'A desktop music studio I play from my computer keyboard. Synths, piano, drums and guitar, with tracks, mixing and an AI partner to help make music.',
     deepDescription: [
-      'Jello runs on macOS and Windows, and you play it on your computer keyboard. 24 chords, 24 melody notes, loops you can layer, and a three-oscillator sound you shape yourself.',
-      'Compose follows what you play, keeps a history of your tries, and lets you pick and reorder the final progression. Songs save themselves as text files as you go, and sounds save as presets.',
-      "Play's Tutor uses the pinned pi agent with Jello's own observation and exercise tools. It follows measured pitches and timing to suggest practice and give feedback, once a model is connected.",
-      'Rust core, a C++ audio engine, and a TypeScript UI in Tauri.',
-      'Still very early.',
+      'Jello is a desktop music studio for macOS and Windows, played entirely from a computer keyboard. It started as a synth, but now I can build a song across instruments and tracks instead of just playing one sound.',
+      'There is a three-oscillator synth, sampled piano and drums, and a guitar made from modeled strings rather than recordings. The piano has different touches and a sustain pedal. The guitar turns the keys into strings and chord shapes, with down and up strums.',
+      'Compose follows what I play and suggests what might fit next. I can layer loops of different lengths, record tracks, arrange sections, change keys and automate settings. Songs save themselves as readable text, and the arrangement can render to WAV.',
+      'Mix has effect chains for tracks, send buses and the master, with EQ, compression, gate, saturation, chorus, delay, reverb, filter and volume shaping. Effects can listen to other tracks, and the master has a limiter and loudness meters.',
+      'One AI agent sits beside the studio, using tools to read and change the song, instruments, arrangement and mix. It can render a phrase and inspect measurements without interrupting what is playing. Its changes arrive as a take I can compare with mine, keep or drop.',
+      'Learning happens on my own songs: practice a section in two hand lanes, work through lessons and taste drills, or trade phrases with the AI jam partner. The practice and feedback use the notes and timing Jello measures.',
+      'Svelte and TypeScript in Tauri, Rust for the song and tools, and a C++ audio engine. Still building it toward the same goal: release my own music using instruments and a studio I wrote myself.',
     ],
     repoUrl: 'https://github.com/anubhav-qt/jello',
     homeCard: {
-      summary: "A desktop synth and music studio you play on your PC's keyboard.",
+      summary: 'A music studio I play from my computer keyboard, from the first idea to a mixed WAV.',
       bullets: [
-        'Chords, melody, loops and a three-oscillator sound, all from the keyboard.',
-        'The goal is to release my own style of music with it.',
+        'Synths, piano, drums and modeled guitar, with tracks, sections and effects.',
+        'One AI agent helps compose, edit and practice, with takes I can keep or drop.',
       ],
     },
-    tech: ['Rust', 'C++', 'TypeScript', 'Tauri'],
+    tech: ['Rust', 'C++', 'TypeScript', 'Svelte', 'Tauri'],
   },
   {
     id: 'dodo',
