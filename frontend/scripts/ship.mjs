@@ -2,7 +2,7 @@
 // Breader's local shipping flow, adapted to this site's existing Vercel project.
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
@@ -65,8 +65,33 @@ function test() {
 }
 function build() {
   vercel(['pull', '--yes', '--environment=production', '--scope=paribelle']);
-  vercel(['build', '--prod', '--scope=paribelle']);
-  if (!existsSync(path.join(ROOT, '.vercel/output/config.json'))) throw new Error('Vercel prebuilt output was not generated.');
+  const production = parseEnv(readFileSync(path.join(ROOT, '.vercel/.env.production.local'), 'utf8'));
+  for (const [key, value] of Object.entries(production)) {
+    if (!value.includes('[SENSITIVE]')) env[key] = value;
+  }
+  // Sensitive values cannot be pulled from Vercel. Keep local admin secrets local.
+  const secrets = path.join(FRONTEND, '.secrets.local');
+  if (existsSync(secrets)) Object.assign(env, parseEnv(readFileSync(secrets, 'utf8')));
+  for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'ADMIN_SECRET']) {
+    if (!env[key] || env[key].includes('[SENSITIVE]')) throw new Error(`Set ${key} locally before building.`);
+  }
+  npm(['run', 'build']);
+  // This site is entirely static. Emit the documented Build Output API directly,
+  // avoiding Vercel's builder dependency symlinks, which require extra Windows privileges.
+  // https://vercel.com/docs/build-output-api/configuration
+  const output = path.resolve(ROOT, '.vercel/output');
+  if (path.dirname(output) !== path.join(ROOT, '.vercel')) throw new Error('Unexpected output directory.');
+  rmSync(output, { recursive: true, force: true });
+  mkdirSync(output, { recursive: true });
+  cpSync(path.join(FRONTEND, 'dist'), path.join(output, 'static'), { recursive: true });
+  writeFileSync(path.join(output, 'config.json'), JSON.stringify({
+    version: 3,
+    routes: [
+      { src: '^/(projects|scratchpad|contact)/?$', dest: '/$1/index.html' },
+      { handle: 'filesystem' },
+      { src: '/(.*)', dest: '/index.html' },
+    ],
+  }, null, 2) + '\n');
   const pdf = readFileSync(path.join(FRONTEND, 'public/resume.pdf'));
   const html = readFileSync(path.join(FRONTEND, 'dist/index.html'), 'utf8');
   const bundle = html.match(/src="([^"]*\/assets\/[^"?]+\.js)"/)?.[1];
