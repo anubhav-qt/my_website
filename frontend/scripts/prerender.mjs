@@ -56,10 +56,10 @@ async function outPathFor(route) {
 }
 
 async function main() {
-  const preview = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
+  const preview = spawn(process.execPath, [path.join(ROOT, 'node_modules/vite/bin/vite.js'), 'preview', '--port', String(PORT), '--strictPort'], {
     cwd: ROOT,
-    shell: true,
     stdio: 'inherit',
+    windowsHide: true,
   });
 
   const cleanup = () => preview.kill();
