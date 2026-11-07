@@ -88,8 +88,8 @@ UI text) should sound like the person talking, not like resume bullet points.
 ## Resume and manual publishing
 
 `frontend/public/resume.pdf` is the public resume button's asset. Anubhav's approved editable
-base lives outside this public repo at `E:/resumes/anubhav/resume.json`, with
-`E:/resumes/anubhav/render_resume.py` and the personal `$anubhav-resume` skill. Update the
+base lives outside this public repo at `E:/career/resumes/base/resume.json`, with
+`E:/career/resumes/base/render_resume.py` and the personal `$anubhav-resume` skill. Update the
 public asset only when requested; application-specific variants belong in the resume workspace.
 
 `npm run ship` in `frontend/` is the manual local pipeline, modeled on Breader's `infra/ship.sh`:

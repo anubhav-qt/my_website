@@ -41,5 +41,5 @@ Vercel cannot pull sensitive values. Vercel login, pulled settings and release r
 in ignored local files. The existing Git integration can still make previews from `dev`.
 
 The public resume lives at `frontend/public/resume.pdf`. Its editable base is kept separately
-at `E:/resumes/anubhav/resume.json` with `render_resume.py`; the personal `$anubhav-resume` skill
+at `E:/career/resumes/base/resume.json` with `render_resume.py`; the personal `$anubhav-resume` skill
 finds it across chats. Tailored application copies do not automatically replace the public PDF.
