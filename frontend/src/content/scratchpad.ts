@@ -326,6 +326,20 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "id": "dodo-community-package",
+    "date": "08/11/2026",
+    "title": "dodo",
+    "body": "My PR to add Dodo 0.0.1 to modular-community was merged on 7th November. It packages the HTTP server, client and database drivers together, with builds checked on macOS and Linux. Started this thing on 26th October, so seeing it accepted into the community channel already feels pretty cool.",
+    "audience": "non-technical"
+  },
+  {
+    "id": "breader-is-pretty-big-now",
+    "date": "08/11/2026",
+    "title": "breader is pretty big now",
+    "body": "Breader started because I wanted a reader for myself. Now 6,600 people use it, and I've learned way more about databases, profiling, caching and failover than I expected from an app for reading books. Now I'm working on free Render and Supabase servers near readers around the world, while my ThinkPad stays the main computer. Hosting bill: still zero. Pretty cool.",
+    "audience": "non-technical"
+  },
+  {
     "id": "anthology-found-me",
     "date": "28/10/2026",
     "title": "Anthology Found Me",

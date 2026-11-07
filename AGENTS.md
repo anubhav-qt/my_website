@@ -84,3 +84,20 @@ UI text) should sound like the person talking, not like resume bullet points.
   their own casing, title case for headings and anything that is a name.
 - Contractions and a direct, first-person-adjacent tone are fine. Write it the way you'd
   explain it to another engineer, not the way you'd summarize it for a recruiter.
+
+## Resume and manual publishing
+
+`frontend/public/resume.pdf` is the public resume button's asset. Anubhav's approved editable
+base lives outside this public repo at `E:/resumes/anubhav/resume.json`, with
+`E:/resumes/anubhav/render_resume.py` and the personal `$anubhav-resume` skill. Update the
+public asset only when requested; application-specific variants belong in the resume workspace.
+
+`npm run ship` in `frontend/` is the manual local pipeline, modeled on Breader's `infra/ship.sh`:
+check a clean up-to-date dev branch, test, build locally with Vercel's production settings, push
+dev, upload the prebuilt output, then verify the live bundle and resume hash. Setup and partial
+steps are in README.md. Keep `.vercel/`, environment settings and credentials untracked.
+
+The November 8 Mildly Interesting titles `breader is pretty big now` and `dodo` are deliberately
+lowercase at Anubhav's request. The `trotter` project id now represents the Bloop rebuild; keep
+that id for existing links and archive continuity. Distinguish new implementation from its
+archived Next.js research app.

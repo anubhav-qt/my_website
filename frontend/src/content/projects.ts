@@ -58,19 +58,27 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'Manga has a shelf of its own. CBZ files open in a reader made for pictures, down the screen or a page at a time. One search covers MangaDex and the sites Breader\'s own Suwayomi reads.',
       'A panel model finds the panels on every manga page, right on your device. Once anyone has read a page, its panels are kept for everyone.',
       "It reads aloud with voices that run in your browser, and Immersive dims the page and lights up the words at your pace. You can tap a word to tell it how to say it, or bring your own Piper or Kokoro voice.",
+      'It can make a whole audiobook on your device or on my ThinkPad, keep it as MP3 chapters, and carry on playing when the audiobook dialog is closed. There is also a guide to what the app does and a few tips when a library is empty.',
       'Your library opens with a key only you hold, or you can log in with email or Google. Anyone can put a book in the Shared Library for everyone to read.',
       "Supabase holds the data, my ThinkPad keeps a live copy and serves it, and a free Render server takes over when the laptop's off, with manga from a small AWS server. No ads, no subscriptions.",
+      '6,600 people use it now. In local Docker load tests, one API copy handled 1,200 simulated readers at 583 requests a second, with 15 to 17 ms p95 latency and no failures. Those are test-stack numbers, not a claim about every reader on the live site.',
+      "I'm now working on a global setup: free Render servers with Supabase read copies in their regions, while the ThinkPad stays the main computer. Readers will pick a server by how quickly it answers, with one database still handling writes. The regional rollout is in progress.",
+    ],
+    metrics: [
+      { label: 'Readers', value: '6,600', detail: 'People using Breader, updated November 8, 2026' },
+      { label: 'Local Load Test', value: '583 requests/s', detail: '1,200 simulated readers, one API copy, local Docker test on November 7' },
+      { label: 'Local p95 Latency', value: '15 to 17 ms', detail: 'Two after-optimization test runs, with no failures' },
     ],
     repoUrl: 'https://github.com/anubhav-qt/breader',
     links: [{ label: 'breader.site', url: 'https://breader.site' }],
     homeCard: {
       summary: 'An immersive e-reader for books and manga. Free and open source.',
       bullets: [
-        'Live on breader.site since 26th September 2026, with 500+ users.',
-        'Books and manga, read aloud by voices that run in your browser.',
+        'Live since 26th September 2026, now with 6,600 readers.',
+        'Books, manga and audiobooks, with voices that run on your device.',
       ],
     },
-    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age', 'AWS'],
+    tech: ['React', 'TypeScript', 'Vite', 'Hono', 'PostgreSQL', 'Drizzle', 'Redis', 'ONNX Runtime Web', 'Cloudflare R2', 'Docker', 'cloudflared', 'age', 'AWS'],
     writeup: {
       title: 'Writeup: Homelabbing journey begins!',
       href: '/scratchpad/homelabbing-journey-begins',
@@ -86,7 +94,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     deepDescription: [
       "PariBelle is my family's fashion business, mostly women's clothing like kurtis and coord sets. There's a physical store, and a lot of the business around it was handled manually over WhatsApp and calls, with no proper software running the whole thing. So I built it myself instead of using Shopify.",
       "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying. Find Your Pick on paribelle.in is a styling session. It asks who you're shopping for and picks from what's in stock.",
-      'POM is the operations side, and its own app instead of an /admin page. It pulls in orders from paribelle.in, Amazon, Meesho and Flipkart, and handles the warehouse work, stock, reports, invoices and profit. My family and I use it every day. paribelle.in is a channel in POM now too, synced like Amazon.',
+      'POM is the operations side, and its own app instead of an /admin page. Amazon syncs through SP-API, and Flipkart and Meesho orders, returns and settlements come through the seller-portal workflows. It handles dispatch, returns and profit across the channels. My family and I use it every day, and it replaced the INR 42,000 a year SaaS subscription we used to pay for.',
       'Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos, Instagram reels, Meta ads, PDFs, and routines and memories. It watches its own draft of a reel before anyone sees it. Posts, ad spend and photoshoots ask first, and every change it makes can be undone.',
       "Since 27th September all of it runs on my ThinkPad, with Vercel, Render and Supabase as the fallback. I'm also exploring whether the same system can run other storefronts.",
     ],
@@ -100,7 +108,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
       summary: "I built the software for my family's fashion business: the storefront, POM and Seelie.",
       bullets: [
         'paribelle.in has been live since July 2026, taking real orders.',
-        'POM handles orders from paribelle.in, Amazon, Meesho and Flipkart.',
+        'POM replaced our INR 42,000 a year order-management subscription.',
       ],
     },
     tech: ['Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Drizzle', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Docker', 'Caddy', 'cloudflared'],
@@ -119,7 +127,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     deepDescription: [
       'Jello runs on macOS and Windows, and you play it on your computer keyboard. 24 chords, 24 melody notes, loops you can layer, and a three-oscillator sound you shape yourself.',
       'Compose follows what you play, keeps a history of your tries, and lets you pick and reorder the final progression. Songs save themselves as text files as you go, and sounds save as presets.',
-      'It also has a sampler, tracks and sections with automation, and an agent mode that can listen to you hum, with sign-in for Anthropic, ChatGPT and Google.',
+      "Play's Tutor uses the pinned pi agent with Jello's own observation and exercise tools. It follows measured pitches and timing to suggest practice and give feedback, once a model is connected.",
       'Rust core, a C++ audio engine, and a TypeScript UI in Tauri.',
       'Still very early.',
     ],
@@ -139,19 +147,21 @@ export const RAW_PROJECTS: ProjectItem[] = [
     category: 'Open Source',
     featured: true,
     skimDescription:
-      'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process. Pre-alpha, but the networking core works.',
+      'A Mojo web framework with HTTP, typed handlers and database drivers in one package. Pre-alpha, with AI and GPU work next.',
     deepDescription: [
       "Dodo is a web framework for Mojo where your HTTP server, AI models, GPU kernels, computer vision and agents run in one process, in one language. One process is the default, not a rule: models can also run in separate worker processes, or on remote servers.",
-      "The networking core is what works right now: HTTP/1.1, HTTP/2, TLS and WebSockets on a thread-per-core server, with every parser fuzzed. Blocking handlers run on their own thread pool so they don't hold up the server.",
-      'Next is the app API and the CLI, then AI, GPU and streaming, an agent kit, computer vision and profiling.',
-      "Started on 26th October 2026, so it's very new.",
+      "HTTP/1.1, HTTP/2, TLS, WebSockets and the HTTP client work, along with the typed App API, native database drivers and SQL migrations. Parsers are fuzzed, and blocking handlers have their own thread pool so they don't hold up the server.",
+      'I packaged 0.0.1 for modular-community, and PR #447 was merged on November 7. The package was built and tested on macOS ARM64 and Linux ARM64 and x86-64.',
+      'Next is profiling the server hot paths, the CLI and MCP tooling, then supervised AI and GPU workers, the agent kit and computer vision.',
+      "Started on 26th October 2026, so it's still very new.",
     ],
     repoUrl: 'https://github.com/dodo-mojo/dodo',
+    links: [{ label: 'modular-community PR', url: 'https://github.com/modular/modular-community/pull/447' }],
     homeCard: {
-      summary: 'A web framework for Mojo that runs your HTTP server, AI models, GPU kernels and agents in one process.',
+      summary: 'A Mojo web framework, with the server, typed app API and database drivers in one package.',
       bullets: [
-        'Pre-alpha, but the networking core works.',
-        'HTTP/1.1, HTTP/2, TLS and WebSockets, with every parser fuzzed.',
+        '0.0.1 was accepted into modular-community on November 7.',
+        'AI, GPU workers and computer vision are next.',
       ],
     },
     tech: ['Mojo', 'pixi'],
@@ -167,8 +177,8 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'Spoin is a scrollable knowledge feed built around grounded generation and mastery-based learning. Cards are generated ahead of time and served without an LLM call on the read path.',
       'The knowledge layer is the_spoin_universe, a curated source of truth that feeds FROG, a custom and faster RAG implementation built specifically for Spoin. Generation uses broad retrieval, while verification uses precise retrieval against the same knowledge base.',
       'Curricula are built around prerequisites and learning progression rather than isolated topic lists, with separate generation, verification and deterministic validation layers. Users can also report broken cards, bad diagrams, broken art and other issues, which feeds another quality-control loop through the admin panel.',
-      '103 ADRs.',
-      'Paused for now. My time is going to PDE, PariBelle and Breader.',
+      '110 architecture decisions are written down in the repo now, including how the corpus, retrieval and generation fit together.',
+      'Paused for now. My time is going to PDE, Anthology, PariBelle, Breader and the newer projects.',
     ],
     caseStudyDescription: [
       "Starting with the constraints that I put on myself: I don't want to pay anything to the LLM providers for as long as possible, so I built a simple load balancer that is LLM-independent. I provide the .env file with a lot of free-tier API keys, and it consumes all the top models first and then the mediocre models, for all the keys in parallel while doing all the generation, keeping Requests Per Minute and Tokens Per Minute limits in mind.",
@@ -181,16 +191,16 @@ export const RAW_PROJECTS: ProjectItem[] = [
       href: '/scratchpad/i-lost-to-gemini-fuck-you',
     },
     metrics: [
-      { label: 'Grounded Throughput', value: '24.85 cards/min', detail: '523 cards in 21m 03s, 2.2x the ungrounded run' },
-      { label: 'Architecture', value: '103 ADRs', detail: 'Sole system architect' },
+      { label: 'Grounded Throughput', value: '24.85 cards/min', detail: '523 cards in 21m 03s in the September 7 Astronomy benchmark' },
+      { label: 'Architecture', value: '110 ADRs', detail: 'Decision files in the local repo, checked November 8, 2026' },
       { label: 'Rate-Limit Shedding', value: '0 HTTP 429s', detail: 'Down from 917 on the free-tier Gemini ladder' },
-      { label: 'Read Latency', value: '< 50ms', detail: 'No LLM on the read path' },
+      { label: 'Feed Read Path', value: 'No LLM calls', detail: 'Reads stored cards while generation runs separately' },
       { label: 'Grounding Per Card', value: 'Top 2 chunks', detail: 'Chunk IDs recorded on the card' },
     ],
     homeCard: {
       summary: 'Spoin is a scrollable feed of cards with bite-sized knowledge, for topics you want to learn.',
       bullets: [
-        'Paused for now, my time is going to PDE, PariBelle and Breader.',
+        'Paused while I work on PDE, Anthology and the newer projects.',
         'Built a custom fast RAG implementation "frog".',
       ],
     },
@@ -209,37 +219,28 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'The first version ran every request through lanes of gates, code detectors and LLM debate. That was solving a classification problem like a reasoning problem, so the rebuild is one proprietary classifier with no LLM in the hot path.',
       "Humans only see the cases it isn't sure about, and their decisions become training data for that company's own model, so each company should see fewer reviews over time.",
       'Every step lands in an append-only decision log, hash-chained per company. On top of it, the Harness is a Claude-powered workspace that explains why a step was blocked and can open PRs against your code.',
-      'The repo is 29 ADRs and a system design so far: a Rust gateway, Python services for classification, training and the Harness, TypeScript and Python SDKs, planned for Kubernetes on AWS. Apart from the public website, the code is still stubs.',
+      'The product design has a Rust gateway, Python services for classification, training and the Harness, and TypeScript and Python SDKs. The separate a8 model repo now has a prototype, a synthetic-data generator and its first training run. The model is not wired into the product yet, and the first synthetic results are not production accuracy.',
     ],
     tech: ['Rust', 'Python', 'TypeScript', 'FastAPI', 'Next.js', 'Tailwind CSS', 'PostgreSQL', 'PgBouncer', 'Redis', 'Amazon S3', 'Kubernetes', 'AWS', 'MLflow', 'Claude API'],
     team: {
-      note: "I'm the system designer and architect. Anchorate is the startup I cofounded with Vasu.",
+      note: 'I cofounded Anchorate with Vasu and led its team of 7 from January through October 2026. I designed the system and the later classifier-based rebuild.',
       collaborators: [],
     },
   },
   {
+    // Preserve the old id so existing links and content history survive the Bloop rename.
     id: 'trotter',
-    title: 'Trotter: Deterministic Quantitative Stock Engine',
+    title: 'Bloop: A Personal Algorithmic Trading System',
     category: 'Production & Systems',
     featured: false,
-    skimDescription: 'Type in a stock ticker, get a real analysis: a score, a verdict, a target price.',
-    deepDescription:
-      'Type in a ticker and Trotter gives you a real analysis, a score, a verdict, and a target price, across weekly, monthly, and long-term horizons, without a hallucinated number anywhere in it. Every indicator, momentum, valuation, volume, FinBERT sentiment off Yahoo and Google News, volatility, is computed straight from market data in TypeScript. Gemini 2.5 Flash writes the narrative and estimated targets on top of the fixed scores, with Tavily grounding the industry P/E comparisons in current data, and can nudge a chart pattern into the verdict, but only within a capped range.',
-    repoUrl: 'https://github.com/anubhav-qt/trotter',
-    metrics: [
-      { label: 'Calculations', value: 'Deterministic core', detail: 'Momentum, valuation, volume, volatility in code' },
-      { label: 'Horizons', value: '3 timeframes', detail: 'Weekly, monthly, long-term' },
-      { label: 'Vision Cap', value: '±10 to 15 pts', detail: 'Chart patterns can nudge, never override' },
+    skimDescription: 'A personal trading system for NSE equities, being rebuilt from scratch to run on one PC.',
+    deepDescription: [
+      'This started as Trotter, the Next.js stock research app. That version is archived as v0.5.0 in the repo, so I can look up its features while rebuilding them.',
+      'The current project is Bloop, a Tauri desktop app and the name of its AI agent. The harness is a fork of pi, using models from my own subscriptions through CLIProxyAPI.',
+      'The new code is TypeScript on Node 24, with Python for training models. The data, scoring, risk and order engine is still to come.',
     ],
-    tech: ['Next.js (App Router)', 'TypeScript', 'FinBERT', 'Gemini 2.5 Flash', 'Tavily Search', 'Vanilla CSS'],
-    audit: {
-      problem: 'Traders want a fast read across multiple time horizons, without a hallucinated price or a valuation that flips between identical queries.',
-      constraint: "LLMs can't be trusted to compute a Bollinger Band or a financial ratio reliably. The answer changes depending on the random seed.",
-      decision:
-        'A deterministic scoring core computes momentum, valuation, volume, sentiment, and volatility straight from market data across all three horizons. Gemini only ever sees the finished numbers, writes the narrative, and estimates targets on top of them, with results cached per symbol for 10 minutes.',
-      whatBroke:
-        'Chart vision was initially free to overwrite the quantitative verdict outright, and during volatile setups it would hallucinate right over solid fundamentals. Capped it to a shift of at most 10 to 15 points out of 100 from the baseline score.',
-    },
+    repoUrl: 'https://github.com/anubhav-qt/bloop',
+    tech: ['TypeScript', 'Node.js', 'Tauri', 'Python', 'pi', 'CLIProxyAPI'],
   },
   {
     id: 'trippinator',
@@ -251,6 +252,7 @@ export const RAW_PROJECTS: ProjectItem[] = [
     deepDescription: [
       'Trippinator is an open-source music visualizer built for a second monitor.',
       'It continuously analyzes whatever is playing and turns it into a live audiovisual scene, with multiple visual archetypes, time-varying transitions and a procedural warp system running at high frame rates.',
+      'It runs on Windows and chooses a secondary monitor, portrait or landscape. Every frame samples the last one through a warp and adds new audio-driven light, so the picture keeps a history of what was playing.',
     ],
     repoUrl: 'https://github.com/anubhav-qt/trippinator',
     metrics: [
