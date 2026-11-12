@@ -12,7 +12,7 @@ export const PROFILE = {
 };
 
 // Home's featured cards, in this order.
-export const FEATURED_IDS = ['breader', 'paribelle', 'jello', 'dodo'] as const;
+export const FEATURED_IDS = ['breader', 'jello', 'dodo', 'paribelle'] as const;
 
 // The ongoing ones: each gets a tab on the card at the top of /projects, in
 // this order, and the first is the one it opens on.
@@ -40,11 +40,11 @@ export const CURRENTLY_MAKING: Record<(typeof BUILDING_IDS)[number], CurrentlyMa
   },
   jello: {
     title: 'Jello',
-    status: 'Tracks, mixing and an AI partner',
+    status: 'v1.0.0',
     description: 'A music studio to play, compose, mix and practice on a computer keyboard. ',
     highlight: 'Free and open source',
     descriptionEnd: '.',
-    tags: [],
+    tags: [{ label: 'writeup', href: '/scratchpad/the-start-of-something-big' }],
   },
   dodo: {
     title: 'Dodo',
@@ -78,7 +78,7 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'sky',
     items: [
       { name: 'Python', usedIn: ['anchorate', 'spoin', 'career-anthology', 'career-pde', 'career-freelance'] },
-      { name: 'TypeScript', usedIn: ['paribelle', 'breader', 'jello', 'anchorate', 'trotter', 'career-freelance'] },
+      { name: 'TypeScript', usedIn: ['breader', 'jello', 'paribelle', 'anchorate', 'trotter', 'career-freelance'] },
       { name: 'Rust', usedIn: ['jello', 'anchorate', 'trippinator'] },
       { name: 'C++', usedIn: ['jello', 'career-anthology'] },
       { name: 'Mojo', usedIn: ['dodo'] },
@@ -95,7 +95,7 @@ export const STACK_GROUPS: StackGroup[] = [
       { name: 'LangGraph', usedIn: ['anchorate', 'spoin'] },
       { name: 'SQLAlchemy', usedIn: ['spoin', 'career-freelance'] },
       { name: 'TypeORM', usedIn: ['paribelle'] },
-      { name: 'Drizzle', usedIn: ['paribelle', 'breader'] },
+      { name: 'Drizzle', usedIn: ['breader', 'paribelle'] },
       { name: 'OpenCV', usedIn: ['career-pde'] },
       { name: 'PyTorch', usedIn: ['career-pde', 'career-anthology'] },
       { name: 'Triton', usedIn: ['career-anthology'] },
@@ -107,10 +107,10 @@ export const STACK_GROUPS: StackGroup[] = [
     icon: 'server',
     accent: 'green',
     items: [
-      { name: 'PostgreSQL', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-freelance'] },
+      { name: 'PostgreSQL', usedIn: ['breader', 'paribelle', 'spoin', 'anchorate', 'career-freelance'] },
       { name: 'PgBouncer', usedIn: ['anchorate'] },
       { name: 'pgvector', usedIn: ['paribelle', 'spoin'] },
-      { name: 'Redis', usedIn: ['paribelle', 'breader', 'anchorate'] },
+      { name: 'Redis', usedIn: ['breader', 'paribelle', 'anchorate'] },
       { name: 'Pinecone', usedIn: ['anchorate'] },
     ],
   },
@@ -120,13 +120,13 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'ochre',
     items: [
       { name: 'AWS', usedIn: ['anchorate', 'breader'] },
-      { name: 'Docker', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
-      { name: 'Docker Compose', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
+      { name: 'Docker', usedIn: ['breader', 'paribelle', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
+      { name: 'Docker Compose', usedIn: ['breader', 'paribelle', 'spoin', 'anchorate', 'career-pde', 'career-freelance'] },
       { name: 'Kubernetes', usedIn: ['anchorate'] },
-      { name: 'Linux', usedIn: ['paribelle', 'breader'] },
+      { name: 'Linux', usedIn: ['breader', 'paribelle'] },
       { name: 'Caddy', usedIn: ['paribelle', 'career-freelance'] },
-      { name: 'cloudflared', usedIn: ['paribelle', 'breader', 'career-freelance'] },
-      { name: 'age', usedIn: ['paribelle', 'breader'] },
+      { name: 'cloudflared', usedIn: ['breader', 'paribelle', 'career-freelance'] },
+      { name: 'age', usedIn: ['breader', 'paribelle'] },
     ],
   },
   {
@@ -135,7 +135,7 @@ export const STACK_GROUPS: StackGroup[] = [
     accent: 'rose',
     items: [
       { name: 'Next.js', usedIn: ['paribelle', 'spoin', 'anchorate', 'career-freelance'] },
-      { name: 'React', usedIn: ['paribelle', 'breader', 'spoin', 'anchorate', 'career-freelance'] },
+      { name: 'React', usedIn: ['breader', 'paribelle', 'spoin', 'anchorate', 'career-freelance'] },
       { name: 'React Native', usedIn: ['career-freelance'] },
       { name: 'Svelte', usedIn: ['jello'] },
       { name: 'Tauri', usedIn: ['jello', 'trotter'] },

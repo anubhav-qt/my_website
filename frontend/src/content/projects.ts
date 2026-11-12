@@ -85,42 +85,9 @@ export const RAW_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'paribelle',
-    title: "PariBelle Ecosystem: Software for My Family's Fashion Business",
-    category: 'Flagship',
-    featured: true,
-    skimDescription:
-      "The software I built for my family's fashion business: the paribelle.in storefront, POM for orders and operations, and Seelie, an AI agent for the shop.",
-    deepDescription: [
-      "PariBelle is my family's fashion business, mostly women's clothing like kurtis and coord sets. There's a physical store, and a lot of the business around it was handled manually over WhatsApp and calls, with no proper software running the whole thing. So I built it myself instead of using Shopify.",
-      "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying. Find Your Pick on paribelle.in is a styling session. It asks who you're shopping for and picks from what's in stock.",
-      'POM is the operations side, and its own app instead of an /admin page. Amazon syncs through SP-API, and Flipkart and Meesho orders, returns and settlements come through the seller-portal workflows. It handles dispatch, returns and profit across the channels. My family and I use it every day, and it replaced the INR 42,000 a year SaaS subscription we used to pay for.',
-      'Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos, Instagram reels, Meta ads, PDFs, and routines and memories. It watches its own draft of a reel before anyone sees it. Posts, ad spend and photoshoots ask first, and every change it makes can be undone.',
-      "Since 27th September all of it runs on my ThinkPad, with Vercel, Render and Supabase as the fallback. I'm also exploring whether the same system can run other storefronts.",
-    ],
-    links: [
-      { label: 'paribelle.in', url: 'https://paribelle.in' },
-      { label: 'POM repo', url: 'https://github.com/anubhav-qt/pom' },
-      { label: 'Storefront repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
-      { label: 'Backend repo', url: 'https://github.com/anubhav-qt/paribelle-backend' },
-    ],
-    homeCard: {
-      summary: "I built the software for my family's fashion business: the storefront, POM and Seelie.",
-      bullets: [
-        'paribelle.in has been live since July 2026, taking real orders.',
-        'POM replaced our INR 42,000 a year order-management subscription.',
-      ],
-    },
-    tech: ['Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Drizzle', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Docker', 'Caddy', 'cloudflared'],
-    writeup: {
-      title: "Writeup: I Built the Software for My Family's Business",
-      href: '/scratchpad/i-built-the-software-for-my-familys-business',
-    },
-  },
-  {
     id: 'jello',
     title: 'Jello: A Music Studio for My Keyboard',
-    category: 'Open Source',
+    category: 'Flagship',
     featured: true,
     skimDescription:
       'A desktop music studio I play from my computer keyboard. Synths, piano, drums and guitar, with tracks, mixing and an AI partner to help make music.',
@@ -131,8 +98,13 @@ export const RAW_PROJECTS: ProjectItem[] = [
       'Mix has effect chains for tracks, send buses and the master, with EQ, compression, gate, saturation, chorus, delay, reverb, filter and volume shaping. Effects can listen to other tracks, and the master has a limiter and loudness meters.',
       'One AI agent sits beside the studio, using tools to read and change the song, instruments, arrangement and mix. It can render a phrase and inspect measurements without interrupting what is playing. Its changes arrive as a take I can compare with mine, keep or drop.',
       'Learning happens on my own songs: practice a section in two hand lanes, work through lessons and taste drills, or trade phrases with the AI jam partner. The practice and feedback use the notes and timing Jello measures.',
-      'Svelte and TypeScript in Tauri, Rust for the song and tools, and a C++ audio engine. Still building it toward the same goal: release my own music using instruments and a studio I wrote myself.',
+      'Sketch is the newest part. I hear every sound in a short phrase, describe a song in words, and the agent splits it into parts before it becomes a real song in Compose. There are 15 starting sounds, more than one drum kit, and vocals have started on the engine side.',
+      'Svelte and TypeScript in Tauri, Rust for the song and tools, and a C++ audio engine. The first song made fully in it is out: jellybean. Still building it toward the same goal: release my own music using instruments and a studio I wrote myself.',
     ],
+    writeup: {
+      title: 'Writeup: The start of something big?',
+      href: '/scratchpad/the-start-of-something-big',
+    },
     repoUrl: 'https://github.com/anubhav-qt/jello',
     homeCard: {
       summary: 'A music studio I play from my computer keyboard, from the first idea to a mixed WAV.',
@@ -167,6 +139,39 @@ export const RAW_PROJECTS: ProjectItem[] = [
       ],
     },
     tech: ['Mojo', 'pixi'],
+  },
+  {
+    id: 'paribelle',
+    title: "PariBelle Ecosystem: Software for My Family's Fashion Business",
+    category: 'Production & Systems',
+    featured: true,
+    skimDescription:
+      "The software I built for my family's fashion business: the paribelle.in storefront, POM for orders and operations, and Seelie, an AI agent for the shop.",
+    deepDescription: [
+      "PariBelle is my family's fashion business, mostly women's clothing like kurtis and coord sets. There's a physical store, and a lot of the business around it was handled manually over WhatsApp and calls, with no proper software running the whole thing. So I built it myself instead of using Shopify.",
+      "The storefront went live on paribelle.in in July 2026 and takes real orders. The first version was just the storefront and the core backend needed to sell. Everything after that got added because real orders needed it: payments, inventory, GST/HSN invoices, customer stuff, exchanges, notifications and admin operations. The data model also handles multiple vendors even though it's one store right now, so expanding later isn't annoying. Find Your Pick on paribelle.in is a styling session. It asks who you're shopping for and picks from what's in stock.",
+      'POM is the operations side, and its own app instead of an /admin page. Amazon syncs through SP-API, and Flipkart and Meesho orders, returns and settlements come through the seller-portal workflows. It handles dispatch, returns and profit across the channels. My family and I use it every day, and it replaced the INR 42,000 a year SaaS subscription we used to pay for.',
+      'Seelie is an AI agent for the shop, inside POM. It helps with shop operations, product photos, Instagram reels, Meta ads, PDFs, and routines and memories. It watches its own draft of a reel before anyone sees it. Posts, ad spend and photoshoots ask first, and every change it makes can be undone.',
+      "Since 27th September all of it runs on my ThinkPad, with Vercel, Render and Supabase as the fallback. I'm also exploring whether the same system can run other storefronts.",
+    ],
+    links: [
+      { label: 'paribelle.in', url: 'https://paribelle.in' },
+      { label: 'POM repo', url: 'https://github.com/anubhav-qt/pom' },
+      { label: 'Storefront repo', url: 'https://github.com/anubhav-qt/paribelle-web' },
+      { label: 'Backend repo', url: 'https://github.com/anubhav-qt/paribelle-backend' },
+    ],
+    homeCard: {
+      summary: "I built the software for my family's fashion business: the storefront, POM and Seelie.",
+      bullets: [
+        'paribelle.in has been live since July 2026, taking real orders.',
+        'POM replaced our INR 42,000 a year order-management subscription.',
+      ],
+    },
+    tech: ['Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'TypeORM', 'Drizzle', 'Razorpay', 'TanStack Query', 'Socket.IO', 'Docker', 'Caddy', 'cloudflared'],
+    writeup: {
+      title: "Writeup: I Built the Software for My Family's Business",
+      href: '/scratchpad/i-built-the-software-for-my-familys-business',
+    },
   },
   {
     id: 'spoin',
