@@ -48,7 +48,7 @@ export const WRITEUPS: WriteupEntry[] = [
     "readTime": "4 min",
     "video": {
       "src": "/media/jellybean.mp4",
-      "poster": "/media/jellybean-poster.png",
+      "poster": "/media/jellybean-poster.jpg",
       "caption": "jellybean, first piece of music created by me in Jello (4:26)"
     },
     "body": [
