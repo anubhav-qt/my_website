@@ -367,6 +367,13 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "id": "my-artist-name",
+    "date": "12/11/2026",
+    "title": "My Artist Name",
+    "body": "I decided on a pretty cool artist name to use for me if I make music, Jelly Breeder.",
+    "audience": "non-technical"
+  },
+  {
     "id": "dodo-community-package",
     "date": "08/11/2026",
     "title": "dodo",
@@ -377,7 +384,7 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
     "id": "breader-is-pretty-big-now",
     "date": "08/11/2026",
-    "title": "breader is pretty big now",
+    "title": "Breader Is Pretty Big Now",
     "body": "Breader started because I wanted a reader for myself. Now 6,600 people use it, and I've learned way more about databases, profiling, caching and failover than I expected from an app for reading books. Now I'm working on free Render and Supabase servers near readers around the world, while my ThinkPad stays the main computer. Hosting bill: still zero. Pretty cool.",
     "audience": "non-technical"
   },

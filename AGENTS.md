@@ -97,7 +97,6 @@ check a clean up-to-date dev branch, test, build locally with Vercel's productio
 dev, upload the prebuilt output, then verify the live bundle and resume hash. Setup and partial
 steps are in README.md. Keep `.vercel/`, environment settings and credentials untracked.
 
-The November 8 Mildly Interesting titles `breader is pretty big now` and `dodo` are deliberately
-lowercase at Anubhav's request. The `trotter` project id now represents the Bloop rebuild; keep
+The November 8 Mildly Interesting title `dodo` is deliberately lowercase at Anubhav's request. The `trotter` project id now represents the Bloop rebuild; keep
 that id for existing links and archive continuity. Distinguish new implementation from its
 archived Next.js research app.
