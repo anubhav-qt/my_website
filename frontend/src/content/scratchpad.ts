@@ -10,6 +10,8 @@ export interface WriteupEntry {
   readTime: string;
   body: string[];
   audience: Audience;
+  // A video shown above the body, served from public/.
+  video?: { src: string; poster: string; caption: string };
 }
 
 export interface CollapsibleEntry {
@@ -17,6 +19,7 @@ export interface CollapsibleEntry {
   date: string;
   title: string;
   body: string;
+  bodyLink?: { text: string; url: string };
   audience: Audience;
 }
 
@@ -31,6 +34,44 @@ export interface LinkEntry {
 }
 
 export const WRITEUPS: WriteupEntry[] = [
+  {
+    "id": "jellybean",
+    "slug": "the-start-of-something-big",
+    "title": "The start of something big?",
+    "dek": "In October I said I hoped to make music of my own someday. Now I'm closer to my dream of making music that people would listen and enjoy!",
+    "date": "12/11/2026",
+    "tags": [
+      "jello",
+      "music",
+      "jellybean"
+    ],
+    "readTime": "4 min",
+    "video": {
+      "src": "/media/jellybean.mp4",
+      "poster": "/media/jellybean-poster.png",
+      "caption": "jellybean, first piece of music created by me in Jello (4:26)"
+    },
+    "body": [
+      "On 28th October I wrote that I was making my PC my instrument with Jello, and that hopefully I'd make music of my own someday.",
+      "This is jellybean. Every sound in it is from Jello.",
+      "Some background. I was a drummer in school, played fingerstyle guitar for a few years, and picked up intermediate music theory along the way. I never wanted a MIDI keyboard. What I do have is a laptop keyboard I type on all day, so the whole idea of Jello was to make that my instrument.",
+      "My dream is to release a track that sounds really good, and when someone asks which DAW and synths I used, tell them I made the software myself.",
+      "jellybean is my first song made fully in Jello, so I'm a lot closer to that now.",
+      "It's in D major at 72 bpm, 4 minutes 26 seconds long. Four tracks: an acoustic guitar, a grand piano, drums and a solo guitar. Nine sections: Alone, Heartbeat, Rise, Bloom, Drift, Jellybean, Solo, Goodbye and End.",
+      "The guitars are modeled strings, not recordings. The keys play strings and chord shapes, and J and K strum down and up. The piano is sampled, with a sustain pedal on Space. The drums are laid out so I can roll them with four fingers.",
+      "The song is saved as a text file while I play. It has the key, which keys play which notes, the tracks, the loops and the order of the sections. The AI agent inside Jello reads and edits the same file.",
+      "Jello's first commit was on 18th October, literally called \"write down the grand plan before making a single sound\". jellybean was done by 12th November.",
+      "New since I last wrote about Jello:",
+      "v1.0.0. Jello builds as a proper app now, with its AI agent bundled inside, instead of being a dev setup that only runs on my laptop.",
+      "Sound packs. 15 starting sounds styled after Arctic Monkeys, Pink Floyd and YOASOBI: basses, guitars, keys, organs, leads, strings and a pluck.",
+      "Different drums. More than one drum kit now, each on its own drums track, and Tab steps between them.",
+      "Sketch. The newest one. It's a tab between Play and Compose where I don't need a song at all. I click through every sound Jello has and hear a short phrase that suits it, a bass line for a bass, chords for keys, a beat for a kit. Then I describe the song in my head, typed or spoken, and the agent splits it into parts like Intro, Verse and Chorus, each with its bars, sounds and words. When it feels right, Open in Compose turns the sketch into a real song.",
+      "Vocals have started too. The engine side is built, with takes, pitch and autotune, but I haven't sung into it yet, so that's next.",
+      "There's still a lot left to build.",
+      "Jello is open source, at github.com/anubhav-qt/jello."
+    ],
+    "audience": "non-technical"
+  },
   {
     "id": "paribelle-family-business",
     "slug": "i-built-the-software-for-my-familys-business",
@@ -326,6 +367,21 @@ export const WRITEUPS: WriteupEntry[] = [
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
   {
+    "id": "dodo-community-package",
+    "date": "08/11/2026",
+    "title": "dodo",
+    "body": "My PR to add Dodo 0.0.1 to modular-community was merged on 7th November. It packages the HTTP server, client and database drivers together, with builds checked on macOS and Linux. Started this thing on 26th October, so seeing it accepted into the community channel already feels pretty cool.",
+    "bodyLink": { "text": "PR", "url": "https://github.com/modular/modular-community/pull/447" },
+    "audience": "non-technical"
+  },
+  {
+    "id": "breader-is-pretty-big-now",
+    "date": "08/11/2026",
+    "title": "breader is pretty big now",
+    "body": "Breader started because I wanted a reader for myself. Now 6,600 people use it, and I've learned way more about databases, profiling, caching and failover than I expected from an app for reading books. Now I'm working on free Render and Supabase servers near readers around the world, while my ThinkPad stays the main computer. Hosting bill: still zero. Pretty cool.",
+    "audience": "non-technical"
+  },
+  {
     "id": "anthology-found-me",
     "date": "28/10/2026",
     "title": "Anthology Found Me",
@@ -420,6 +476,14 @@ export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
 
 export const RANDOM_IDEAS: CollapsibleEntry[] = [
   {
+    "id": "my-own-youtube-suite",
+    "date": "12/11/2026",
+    "title": "My Own YouTube Suite",
+    "body": "Basically Jello, but for YouTube. A full video editor built on Kdenlive's editor, restyled to look and work the way I want, with an agent harness inside. I say what I want, it turns that into an exact edit plan, applies it, and I can look at it, change it or undo it, so I don't need to properly know how to edit videos. It can narrate too: write the script, make the voice, put it on the timeline and cut the pictures to its sentences. Then the whole channel around it, from uploading with titles, descriptions, chapters, captions and thumbnails, to collecting analytics and learning from how each video did for the next one. Anything people can see waits for my OK first. Only planning docs in the repo so far, nothing built yet.",
+    "bodyLink": { "text": "repo", "url": "https://github.com/anubhav-qt/youtube_suite" },
+    "audience": "technical"
+  },
+  {
     "id": "where-breader-goes-next",
     "date": "03/10/2026",
     "title": "Where Breader Goes Next",
@@ -463,7 +527,7 @@ export const LINKS: LinkEntry[] = [
     "title": "Dodo",
     "url": "https://github.com/dodo-mojo/dodo",
     "domain": "github.com",
-    "commentary": "My web framework for Mojo, where the server, AI models and GPU kernels run in one process.",
+    "commentary": "My web framework for Mojo, with the server, client and database drivers in one package. AI and GPU work are next.",
     "audience": "technical"
   },
   {

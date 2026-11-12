@@ -54,6 +54,20 @@ export default function ScratchpadEntry() {
           <span className="flex-1" />
         </div>
 
+        {entry.video && (
+          <figure className="mb-5">
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              src={entry.video.src}
+              poster={entry.video.poster}
+              className="w-full rounded-[18px] border border-border bg-black"
+            />
+            <figcaption className="font-dot text-dim text-[11px] mt-2">{entry.video.caption}</figcaption>
+          </figure>
+        )}
+
         {entry.body.map((p, i) => (
           <p key={i} className="text-sm text-body leading-relaxed mb-4">
             {p}
