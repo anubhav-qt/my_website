@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "ship": "node scripts/ship.mjs",
     "ship:link": "npm exec --yes --package=vercel@65.12.1 -- vercel link --yes --project=my-website --scope=paribelle --cwd=..",
-    "test": "tsx src/lib/simulator/__tests__/engine.test.ts",
+    "test": "tsx src/lib/simulator/__tests__/engine.test.ts && tsx src/lib/__tests__/guideTabs.test.ts",
     "sync-docs": "tsx scripts/sync-docs.ts"
   },
   "dependencies": {

@@ -18,6 +18,7 @@ import { execFileSync } from 'node:child_process';
 import { PROFILE, EXPERIENCE, EDUCATION, STACK_GROUPS, CURRENTLY_MAKING } from '../src/content/site.ts';
 import { WRITEUPS, MILDLY_INTERESTING_STUFF, RANDOM_IDEAS, LINKS } from '../src/content/scratchpad.ts';
 import { PROJECTS, RAW_PROJECTS } from '../src/content/projects.ts';
+import { NOTCH_CLIPBOARD } from '../src/content/notchClipboard.ts';
 
 const url = process.env.VITE_SUPABASE_URL;
 const adminSecret = process.env.ADMIN_SECRET;
@@ -63,6 +64,7 @@ async function main() {
   const SITE = 'src/content/site.ts';
   const SCRATCHPAD = 'src/content/scratchpad.ts';
   const PROJECTS_SRC = 'src/content/projects.ts';
+  const GUIDES_SRC = 'src/content/notchClipboard.ts';
 
   const entries: Entry[] = [
     { contentType: 'profile', contentId: 'profile', data: PROFILE, source: SITE },
@@ -83,6 +85,9 @@ async function main() {
     // What the page actually rendered, live metric values included. Churns
     // whenever a metric moves, which is the point: it dates every number.
     ...PROJECTS.map((p) => ({ contentType: 'project', contentId: p.id, data: p, source: PROJECTS_SRC })),
+
+    // App guides with a page of their own. One so far.
+    { contentType: 'guide', contentId: 'notch-clipboard', data: NOTCH_CLIPBOARD, source: GUIDES_SRC },
   ];
 
   // Every type above is enumerated exhaustively from its module, so the Edge

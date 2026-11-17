@@ -109,17 +109,28 @@ function OtherProjectRow({ p }: { p: ProjectItem }) {
             {p.title.split(':')[0]}
           </span>
         </div>
-        {p.repoUrl && (
-          <a
-            href={p.repoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-dim hover:text-heading transition-colors p-1 -m-1 shrink-0"
-            aria-label={`${p.title} on GitHub`}
-          >
-            <SiGithub size={12} />
-          </a>
-        )}
+        <div className="flex items-center gap-3 shrink-0">
+          {p.guide && (
+            <Link
+              to={p.guide.href}
+              className="inline-flex items-center gap-0.5 font-dot text-heading text-[12px] underline underline-offset-4 decoration-(--c) hover:opacity-70 transition-opacity"
+            >
+              {p.guide.label}
+              <ChevronRight size={11} />
+            </Link>
+          )}
+          {p.repoUrl && (
+            <a
+              href={p.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-dim hover:text-heading transition-colors p-1 -m-1"
+              aria-label={`${p.title} on GitHub`}
+            >
+              <SiGithub size={12} />
+            </a>
+          )}
+        </div>
       </div>
       <p className="text-xs text-dim leading-relaxed mt-1 pl-3.5">{p.skimDescription}</p>
     </div>

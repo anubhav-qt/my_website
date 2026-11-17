@@ -12,6 +12,10 @@ Personal site. Frontend lives in `frontend/` (React 19 + Vite + TypeScript + Tai
 > that explains them, the site-wide lowercase came off everything except the nav, and the
 > project list narrowed to one flagship. v4 traded the plum and amber terminal look for
 > Breader's black and white one, on the same layout.
+> `/notch-clipboard` is a two-tab guide (Overview with install, Help) for the Notch Clipboard
+> Mac app. Its copy is `src/content/notchClipboard.ts`, checked against that app's repo, and
+> its video is `public/media/notch-clipboard-demo.mp4`. Tabs are linked by hash
+> (`src/lib/guideTabs.ts`). The app also has a one-line row in Other Projects with a Guide link.
 
 Design direction: Breader's look (github.com/anubhav-qt/breader) on the same dense,
 list-based dev-log layout. A pure black page with white ink and hairline-edged rounded

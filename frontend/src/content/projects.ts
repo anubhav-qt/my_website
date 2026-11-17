@@ -35,6 +35,8 @@ export interface ProjectItem {
   homeCard?: { summary: string; bullets: string[] };
   caseStudyHref?: string;
   writeup?: { title: string; href: string };
+  // A page of its own on this site, like the /notch-clipboard guide.
+  guide?: { label: string; href: string };
   audit?: ProjectAudit;
   featured?: boolean;
   team?: { note: string; collaborators: Collaborator[] };
@@ -268,6 +270,21 @@ export const RAW_PROJECTS: ProjectItem[] = [
       { label: 'Warp Motion', value: '6 components', detail: 'Radial, rotation, spiral, shear, turbulence, kick' },
     ],
     tech: ['Rust', 'wgpu', 'egui', 'cpal', 'WASAPI', 'MIDI'],
+  },
+  {
+    id: 'notch-clipboard',
+    title: 'Notch Clipboard: Clipboard History in the Notch',
+    category: 'Open Source',
+    featured: false,
+    skimDescription:
+      "Clipboard history that lives in your MacBook's notch. Hover the notch and your recent copies drop down.",
+    deepDescription: [
+      'A menu bar app for Apple silicon Macs on macOS 14 or later. Click a clip to copy it again, save the ones you reuse, and search or filter the rest.',
+      'Apple Intelligence sorts each clip into categories you can rename, on your Mac. Nothing leaves it.',
+    ],
+    repoUrl: 'https://github.com/anubhav-qt/notch-clipboard',
+    guide: { label: 'Guide', href: '/notch-clipboard' },
+    tech: ['Swift', 'SwiftUI', 'AppKit', 'FoundationModels'],
   },
 ];
 

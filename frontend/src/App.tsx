@@ -7,6 +7,7 @@ import ProjectEntry from './pages/ProjectEntry';
 import Scratchpad from './pages/Scratchpad';
 import ScratchpadEntry from './pages/ScratchpadEntry';
 import Contact from './pages/Contact';
+import NotchClipboard from './pages/NotchClipboard';
 import { supabase } from './lib/supabase';
 import { recordSiteVisit } from './hooks/useViewTracking';
 import { isLikelyBot } from './lib/bot';
@@ -51,6 +52,7 @@ export default function App() {
                 <Route path="/scratchpad" element={<Scratchpad />} />
                 <Route path="/scratchpad/:slug" element={<ScratchpadEntry />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/notch-clipboard" element={<NotchClipboard />} />
               </Routes>
             </div>
           );

@@ -45,6 +45,7 @@ const PROJECT: Record<string, Accent> = {
   anchorate: 'sky',
   trotter: 'teal',
   trippinator: 'blush',
+  'notch-clipboard': 'indigo',
 };
 
 export const projectAccent = (id: string): Accent => PROJECT[id] ?? accentFor(id);

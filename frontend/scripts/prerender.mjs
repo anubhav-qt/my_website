@@ -33,7 +33,7 @@ const DIST = path.join(ROOT, 'dist');
 const PORT = 4173;
 const BASE_URL = `http://localhost:${PORT}`;
 
-const ROUTES = ['/', '/projects', '/scratchpad', '/contact'];
+const ROUTES = ['/', '/projects', '/scratchpad', '/contact', '/notch-clipboard'];
 
 async function waitForServer(url, timeoutMs = 15000) {
   const start = Date.now();
