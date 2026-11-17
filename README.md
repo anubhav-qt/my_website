@@ -28,6 +28,7 @@ npx vercel login
 npm run ship:link                  # once per checkout, links paribelle/my-website
 npm run ship                      # clean dev: checks, tests, local build, push, deploy, verify
 npm run ship -- build deploy live  # repeat selected steps; check always runs first
+npm run ship -- --no-archive      # no ADMIN_SECRET here: ship, skip the content archive
 ```
 
 Commit changes before shipping. The script refuses to overwrite a newer `origin/dev` and checks

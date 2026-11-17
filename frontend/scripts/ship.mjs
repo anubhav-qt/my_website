@@ -11,9 +11,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const FRONTEND = path.join(ROOT, 'frontend');
 const NPM = process.env.npm_execpath ?? path.join(path.dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
 const STEPS = ['check', 'test', 'build', 'push', 'deploy', 'live'];
-const wanted = process.argv.slice(2);
+const args = process.argv.slice(2);
+// --no-archive ships without ADMIN_SECRET, so the build skips the content_log
+// archive. The next build that has the secret logs whatever changed.
+const skipArchive = args.includes('--no-archive');
+const wanted = args.filter((arg) => arg !== '--no-archive');
 if (wanted.includes('--help') || wanted.includes('-h')) {
-  console.log('npm run ship -- [check test build push deploy live]\nWith no steps, runs all of them. check always runs first. Use npm run ship:link once after npx vercel login.');
+  console.log('npm run ship -- [check test build push deploy live] [--no-archive]\nWith no steps, runs all of them. check always runs first. Use npm run ship:link once after npx vercel login.\n--no-archive builds without ADMIN_SECRET and skips the content archive.');
   process.exit(0);
 }
 const selected = wanted.length ? wanted : STEPS;
@@ -72,7 +76,14 @@ function build() {
   // Sensitive values cannot be pulled from Vercel. Keep local admin secrets local.
   const secrets = path.join(FRONTEND, '.secrets.local');
   if (existsSync(secrets)) Object.assign(env, parseEnv(readFileSync(secrets, 'utf8')));
-  for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'ADMIN_SECRET']) {
+  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'];
+  if (skipArchive) {
+    delete env.ADMIN_SECRET;
+    console.log('Skipping the content archive (--no-archive).');
+  } else {
+    required.push('ADMIN_SECRET');
+  }
+  for (const key of required) {
     if (!env[key] || env[key].includes('[SENSITIVE]')) throw new Error(`Set ${key} locally before building.`);
   }
   npm(['run', 'build']);
@@ -87,7 +98,7 @@ function build() {
   writeFileSync(path.join(output, 'config.json'), JSON.stringify({
     version: 3,
     routes: [
-      { src: '^/(projects|scratchpad|contact)/?$', dest: '/$1/index.html' },
+      { src: '^/(projects|scratchpad|contact|notch-clipboard)/?$', dest: '/$1/index.html' },
       { handle: 'filesystem' },
       { src: '/(.*)', dest: '/index.html' },
     ],
