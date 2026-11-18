@@ -73,6 +73,34 @@ export const WRITEUPS: WriteupEntry[] = [
     "audience": "non-technical"
   },
   {
+    "id": "homelabbing-journey-begins",
+    "slug": "homelabbing-journey-begins",
+    "title": "Homelabbing journey begins!",
+    "dek": "In August I said I wanted to turn my ThinkPad into a little server. Now it runs Breader and my family's store.",
+    "date": "03/10/2026",
+    "tags": [
+      "homelab",
+      "infra",
+      "breader",
+      "paribelle"
+    ],
+    "readTime": "3 min",
+    "body": [
+      "Back in August I wrote that I was thinking about getting into homelabbing, turning my ThinkPad into a little server and splitting it into a bunch of virtual machines. \"No real end goal yet, I just think it would be pretty fun to set up.\"",
+      "Well, I did it. Mostly.",
+      "I skipped the VMs. Once I started setting things up, Docker made way more sense for what I was doing. I didn't need full separate operating systems for these services, so I just went straight with Docker.",
+      "It's my ThinkPad running Arch (btw). It's always on now, lid shut. If the power goes, it goes with it lol. No UPS setup yet.",
+      "The two things on it I care about here are Breader and PariBelle. Breader went live on it on 26th September, and PariBelle moved onto it the day after.",
+      "Cloudflare Tunnel is how the outside world reaches the laptop. For PariBelle, a Cloudflare Worker sends requests through the tunnel to a Caddy gate in front of the apps.",
+      "Both apps have somewhere to go when the laptop is off. Breader switches to a free Render server. PariBelle falls back to Vercel, Render and Supabase.",
+      "The funny part is that the two apps do it in opposite directions. Breader already had Supabase as its main database, so Supabase stays the source of truth and the ThinkPad keeps a live copy it can take over with. PariBelle was built around the ThinkPad being the main system, so the ThinkPad's Postgres is the main copy and it syncs back to Supabase. No deep reason. They just evolved differently.",
+      "Backups get encrypted and go to Cloudflare R2, Breader's with age. A Healthchecks heartbeat tells me if something stops.",
+      "Everything is on free plans. The domains are the only thing I'm paying for.",
+      "One of the things running on that \"pretty fun to set up\" ThinkPad now takes real orders for my family's business lol."
+    ],
+    "audience": "technical"
+  },
+  {
     "id": "paribelle-family-business",
     "slug": "i-built-the-software-for-my-familys-business",
     "title": "I Built the Software for My Family's Business",
@@ -108,34 +136,6 @@ export const WRITEUPS: WriteupEntry[] = [
       "I'm also exploring whether the same system can run other storefronts too."
     ],
     "audience": "non-technical"
-  },
-  {
-    "id": "homelabbing-journey-begins",
-    "slug": "homelabbing-journey-begins",
-    "title": "Homelabbing journey begins!",
-    "dek": "In August I said I wanted to turn my ThinkPad into a little server. Now it runs Breader and my family's store.",
-    "date": "03/10/2026",
-    "tags": [
-      "homelab",
-      "infra",
-      "breader",
-      "paribelle"
-    ],
-    "readTime": "3 min",
-    "body": [
-      "Back in August I wrote that I was thinking about getting into homelabbing, turning my ThinkPad into a little server and splitting it into a bunch of virtual machines. \"No real end goal yet, I just think it would be pretty fun to set up.\"",
-      "Well, I did it. Mostly.",
-      "I skipped the VMs. Once I started setting things up, Docker made way more sense for what I was doing. I didn't need full separate operating systems for these services, so I just went straight with Docker.",
-      "It's my ThinkPad running Arch (btw). It's always on now, lid shut. If the power goes, it goes with it lol. No UPS setup yet.",
-      "The two things on it I care about here are Breader and PariBelle. Breader went live on it on 26th September, and PariBelle moved onto it the day after.",
-      "Cloudflare Tunnel is how the outside world reaches the laptop. For PariBelle, a Cloudflare Worker sends requests through the tunnel to a Caddy gate in front of the apps.",
-      "Both apps have somewhere to go when the laptop is off. Breader switches to a free Render server. PariBelle falls back to Vercel, Render and Supabase.",
-      "The funny part is that the two apps do it in opposite directions. Breader already had Supabase as its main database, so Supabase stays the source of truth and the ThinkPad keeps a live copy it can take over with. PariBelle was built around the ThinkPad being the main system, so the ThinkPad's Postgres is the main copy and it syncs back to Supabase. No deep reason. They just evolved differently.",
-      "Backups get encrypted and go to Cloudflare R2, Breader's with age. A Healthchecks heartbeat tells me if something stops.",
-      "Everything is on free plans. The domains are the only thing I'm paying for.",
-      "One of the things running on that \"pretty fun to set up\" ThinkPad now takes real orders for my family's business lol."
-    ],
-    "audience": "technical"
   },
   {
     "title": "I Lost to Gemini. Fuck You.",
@@ -366,6 +366,13 @@ export const WRITEUPS: WriteupEntry[] = [
 ];
 
 export const MILDLY_INTERESTING_STUFF: CollapsibleEntry[] = [
+  {
+    "id": "heisenbug",
+    "date": "18/11/2026",
+    "title": "Heisenbug, the ultimate witchcraft",
+    "body": "Three times in an hour the UI lagged or got stuck when I hovered, then worked fine as soon as I turned on screen recording. Apparently that's a Heisenbug, a bug that disappears when you try to observe it.",
+    "audience": "non-technical"
+  },
   {
     "id": "my-artist-name",
     "date": "12/11/2026",

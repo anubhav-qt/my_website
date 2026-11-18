@@ -2,8 +2,8 @@ import type { Accent } from '../lib/palette';
 
 export const PROFILE = {
   name: 'Anubhav Joshi',
-  role: 'Software Engineer',
-  status: 'ML Engineer at Anthology; Generative AI Engineer Trainee at Precision Design & Engineering; previously Co-Founder & CTO at Anchorate.',
+  role: 'Applied AI Engineer',
+  status: 'ML Engineer at Anthology, Polymath (YC Backed AI Research Startup); Generative AI Engineer Trainee at Precision Design & Engineering',
   location: 'Jaipur, India',
   email: 'magicalfizz@gmail.com',
   github: 'https://github.com/anubhav-qt',
@@ -175,9 +175,10 @@ export const EXPERIENCE: ExperienceEntry[] = [
     period: 'Sep 2026 to Present',
     headline: 'Welga and a custom AI harness for engineering drawings, full-time and on-site.',
     bullets: [
-      'I built a custom harness for the extraction and steel detailing work. A new task mostly means adding tools and context now, instead of starting over.',
-      'Costs and response times dropped by more than half, and development is about ten times faster. On our internal tasks, less capable models with this harness do better than GPT-6-astra and Claude-Opus-5.5.',
-      'Welga, the computer vision algorithm I made in my first two weeks, is being prepared for patenting. We now reuse it across the codebase for new engineering-drawing tasks.',
+      'The team builds new features on the AI harness I made by adding tools and context for each task.',
+      'On our internal tasks, the harness cut costs and response times by more than half and made development about ten times faster.',
+      "We use Welga, the computer vision algorithm I made, daily for engineering drawings and reuse it in new features. It's being prepared for patenting.",
+      "Now I'm working on a recursive self-learning loop so the harness can learn on its own.",
     ],
   },
   {
